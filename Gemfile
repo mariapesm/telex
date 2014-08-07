@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 ruby "2.1.2"
 
+gem "bcrypt"
 gem "multi_json"
 gem "oj"
 gem "pg"
