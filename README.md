@@ -1,4 +1,4 @@
-# Telex
+# 𝕋𝔼𝕃𝔼𝕏
 
 This is the template app used by the [Pliny](https://github.com/12-oz/pliny) gem.
 
