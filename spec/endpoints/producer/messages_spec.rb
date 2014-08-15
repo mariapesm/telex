@@ -6,10 +6,10 @@ describe Endpoints::Producer::Messages do
   def app
     Endpoints::Producer::Messages  end
 
-  describe "GET /messages" do
+  describe "POST /messages" do
     it "succeeds" do
-      get "/messages"
-      expect(last_response.status).to eq(200)
+      post "/messages",MultiJson.encode({})
+      expect(last_response.status).to eq(201)
     end
   end
 end
