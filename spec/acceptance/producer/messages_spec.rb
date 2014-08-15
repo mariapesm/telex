@@ -9,7 +9,7 @@ describe Endpoints::Producer::Messages do
   end
 
   def schema_path
-    "./docs/schema.json"
+    "./docs/producer/schema.json"
   end
 
   describe 'GET /producer/messages' do
