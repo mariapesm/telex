@@ -14,17 +14,14 @@ describe Endpoints::Producer::Messages do
     before do
       @producer = Fabricate(:producer)
       Pliny::RequestStore.store[:current_producer] = @producer
+      @message_body = {
+        title: 'Congratulations',
+        body: 'You are a winner',
+        target: {type: 'user', id: 'whatever'}
+      }
     end
 
     context 'with good params' do
-      before do
-        @message_body = {
-          title: 'Congratulations',
-          body: 'You are a winner',
-          target: {type: 'user', id: 'whatever'}
-        }
-      end
-
       it "succeeds" do
         do_post
         expect(last_response.status).to eq(201)
@@ -40,6 +37,17 @@ describe Endpoints::Producer::Messages do
         do_post
         response = MultiJson.decode(last_response.body)
         expect( Message[uuid: response['id']] ).to_not be_nil
+      end
+    end
+
+    context 'with bad params' do
+      before do
+        @message_body[:body] = ''
+      end
+
+      it "fails" do
+        do_post
+        expect(last_response.status).to eq(406)
       end
     end
 

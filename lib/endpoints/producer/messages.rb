@@ -14,9 +14,13 @@ module Endpoints
           target_id:   data['target']['id']
         )
 
-        message = creator.call
-        status 201
-        MultiJson.encode({id: message.uuid})
+        begin
+          message = creator.call
+          status 201
+          MultiJson.encode({id: message.uuid})
+        rescue
+          raise Pliny::Errors::NotAcceptable
+        end
       end
 
     end
