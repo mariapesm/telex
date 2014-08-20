@@ -2,6 +2,5 @@
 
 [![Build Status](https://travis-ci.org/heroku/telex.svg)](https://travis-ci.org/heroku/telex)
 
-This is the template app used by the [Pliny](https://github.com/12-oz/pliny) gem.
+![telex](docs/telex-cc-by-sa-jens-ohlig.jpg)
 
-For more information please refer to the gem docs.
