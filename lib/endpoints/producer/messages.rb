@@ -17,7 +17,7 @@ module Endpoints
         begin
           message = creator.call
           status 201
-          MultiJson.encode({id: message.uuid})
+          MultiJson.encode({id: message.id})
         rescue
           raise Pliny::Errors::NotAcceptable
         end

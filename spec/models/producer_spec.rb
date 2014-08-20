@@ -4,18 +4,18 @@ describe Producer, '.find_by_creds' do
   let(:p) { Producer.create(name: 'foo', api_key: 'abc123') }
 
   it 'returns the producer if the creds match' do
-    result = Producer.find_by_creds(uuid: p.uuid, api_key: 'abc123')
-    expect(result.uuid).to_not be_nil
-    expect(result.uuid).to eq(p.uuid)
+    result = Producer.find_by_creds(id: p.id, api_key: 'abc123')
+    expect(result.id).to_not be_nil
+    expect(result.id).to eq(p.id)
   end
 
-  it 'returns nil if the uuid is wrong' do
-    result = Producer.find_by_creds(uuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', api_key: 'abc123')
+  it 'returns nil if the id is wrong' do
+    result = Producer.find_by_creds(id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', api_key: 'abc123')
     expect(result).to be_nil
   end
 
   it 'returns nil if the api_key is wrong' do
-    result = Producer.find_by_creds(uuid: p.uuid, api_key: 'wrong')
+    result = Producer.find_by_creds(id: p.id, api_key: 'wrong')
     expect(result).to be_nil
   end
 end

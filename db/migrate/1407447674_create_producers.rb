@@ -2,7 +2,7 @@ Sequel.migration do
   up do
     execute 'create extension "uuid-ossp"'
     create_table(:producers) do
-      uuid         :uuid, default: Sequel.function(:uuid_generate_v4), primary_key: true
+      uuid         :id, default: Sequel.function(:uuid_generate_v4), primary_key: true
       text         :name,              null: false
       text         :encrypted_api_key, null: false
       timestamptz  :created_at, default: Sequel.function(:now), null: false

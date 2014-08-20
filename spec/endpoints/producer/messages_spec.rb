@@ -28,15 +28,15 @@ describe Endpoints::Producer::Messages do
       end
 
       it 'creates a message' do
-        expect(Message.where(producer_uuid: @producer.uuid).count).to eq(0)
+        expect(Message.where(producer_id: @producer.id).count).to eq(0)
         do_post
-        expect(Message.where(producer_uuid: @producer.uuid).count).to eq(1)
+        expect(Message.where(producer_id: @producer.id).count).to eq(1)
       end
 
-      it "returns the message's uuid" do
+      it "returns the message's id" do
         do_post
         response = MultiJson.decode(last_response.body)
-        expect( Message[uuid: response['id']] ).to_not be_nil
+        expect( Message[id: response['id']] ).to_not be_nil
       end
     end
 

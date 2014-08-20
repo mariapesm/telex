@@ -4,6 +4,6 @@ class Message < Sequel::Model
 
   def validate
     super
-    validates_presence %i(target_type target_id title body producer_uuid)
+    validates_presence %i(target_type target_id title body producer_id)
   end
 end

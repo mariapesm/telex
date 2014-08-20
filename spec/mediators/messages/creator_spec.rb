@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe Mediators::Messages::Creator do
   it 'creates a message' do
-    creator = described_class.new(producer: double('producer', uuid: SecureRandom.uuid),
+    creator = described_class.new(producer: double('producer', id: SecureRandom.uuid),
                                   title: Faker::Company.bs,
                                   body: Faker::Company.catch_phrase,
                                   target_type: 'user',
