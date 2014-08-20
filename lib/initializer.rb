@@ -16,6 +16,7 @@ module Initializer
       lib/endpoints/**/*
       lib/mediators/base
       lib/mediators/**/*
+      lib/middleware/**/*
       lib/routes
       lib/serializers/base
       lib/serializers/**/*
