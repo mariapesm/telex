@@ -31,6 +31,7 @@ end
 group :test do
   gem "committee"
   gem "database_cleaner"
+  gem "fabrication"
   gem "faker"
   gem "guard-rspec"
   gem "rack-test"
