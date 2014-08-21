@@ -6,15 +6,15 @@ module Endpoints
       end
 
       post do
-        creator = Mediators::Messages::Creator.new(
-          producer: current_producer,
-          title:       data['title'],
-          body:        data['body'],
-          target_type: data['target']['type'],
-          target_id:   data['target']['id']
-        )
-
         begin
+          creator = Mediators::Messages::Creator.new(
+            producer: current_producer,
+            title:       data['title'],
+            body:        data['body'],
+            target_type: data['target'] && data['target']['type'],
+            target_id:   data['target'] && data['target']['id']
+          )
+
           message = creator.call
           status 201
           MultiJson.encode({id: message.id})

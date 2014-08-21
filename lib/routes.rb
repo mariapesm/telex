@@ -12,6 +12,7 @@ Routes = Rack::Builder.new do
   use Rack::SSL if Config.force_ssl?
 
   map('/producer') do
+    use Middleware::ProducerAuthenticator
     use Pliny::Router do
       mount Endpoints::Producer::Messages
     end
