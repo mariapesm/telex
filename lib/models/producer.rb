@@ -8,6 +8,6 @@ class Producer < Sequel::Model
   end
 
   def api_key=(raw_key)
-    self.encrypted_api_key = Telex::ApiKey.generate(raw_key)
+    self.encrypted_api_key = Telex::ApiKey.encrypt(raw_key)
   end
 end

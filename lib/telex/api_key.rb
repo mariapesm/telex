@@ -4,12 +4,12 @@ module Telex
   module ApiKey
     extend self
 
-    def generate(raw_key)
+    def encrypt(raw_key)
       OpenSSL::HMAC.hexdigest("sha256", Config.api_key_hmac_secret, raw_key)
     end
 
     def compare(encrypted_key, given_key)
-      time_constant_compare(encrypted_key, generate(given_key))
+      time_constant_compare(encrypted_key, encrypt(given_key))
     end
 
     private
