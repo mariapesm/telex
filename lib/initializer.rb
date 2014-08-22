@@ -1,3 +1,5 @@
+Telex = Module.new
+
 module Initializer
   def self.run
     require_config
@@ -12,6 +14,7 @@ module Initializer
 
   def self.require_lib
     require! %w(
+      lib/telex/**/*
       lib/endpoints/base
       lib/endpoints/**/*
       lib/mediators/base
