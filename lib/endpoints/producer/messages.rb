@@ -7,7 +7,7 @@ module Endpoints
 
       post do
         begin
-          creator = Mediators::Messages::Creator.new(
+          message = Mediators::Messages::Creator.run(
             producer: current_producer,
             title:       data['title'],
             body:        data['body'],
@@ -15,7 +15,6 @@ module Endpoints
             target_id:   data['target'] && data['target']['id']
           )
 
-          message = creator.call
           status 201
           MultiJson.encode({id: message.id})
         rescue
