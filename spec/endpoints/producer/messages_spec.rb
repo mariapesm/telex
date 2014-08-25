@@ -17,7 +17,7 @@ describe Endpoints::Producer::Messages do
       @message_body = {
         title: 'Congratulations',
         body: 'You are a winner',
-        target: {type: 'user', id: 'whatever'}
+        target: {type: 'user', id: SecureRandom.uuid}
       }
     end
 

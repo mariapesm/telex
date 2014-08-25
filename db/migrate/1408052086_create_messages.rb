@@ -1,7 +1,7 @@
 Sequel.migration do
   change do
     execute <<-SQL
-      CREATE TYPE message_target AS ENUM ('user', 'app', 'resource');
+      CREATE TYPE message_target AS ENUM ('user', 'app');
     SQL
 
     create_table(:messages) do
@@ -10,7 +10,7 @@ Sequel.migration do
       timestamptz    :created_at,    null: false,  default: Sequel.function(:now)
 
       message_target :target_type,   null: false
-      text           :target_id,     null: false
+      uuid           :target_id,     null: false
 
       text           :title,         null: false
       text           :body,          null: false
