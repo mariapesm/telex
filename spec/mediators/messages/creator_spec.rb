@@ -9,6 +9,7 @@ describe Mediators::Messages::Creator do
                                   target_id: SecureRandom.uuid)
 
   end
+
   it 'creates a message' do
     result = nil
     expect{ result = @creator.call }.to change(Message, :count).by(1)
@@ -16,6 +17,6 @@ describe Mediators::Messages::Creator do
   end
 
   it 'enqueues a MessagePlex job' do
-    expect { @creator.call }.to change(MessagePlex.jobs, :size).by(1)
+    expect { @creator.call }.to change(Jobs::MessagePlex.jobs, :size).by(1)
   end
 end

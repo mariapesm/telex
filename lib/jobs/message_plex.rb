@@ -1,7 +1,10 @@
-class MessagePlex
-  include Sidekiq::Worker
+module Jobs
+  class MessagePlex
+    include Sidekiq::Worker
 
-  def perform(message_id)
-
+    def perform(message_id)
+      message = Message[id: message_id]
+      Mediators::Messages::Plexer.run(message: message)
+    end
   end
 end
