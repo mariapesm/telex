@@ -1,0 +1,18 @@
+{
+  "command": "ruby -rubygems -r./config/zeus -eZeus.go",
+
+  "plan": {
+    "boot": {
+      "development": {
+        "console": ["c"],
+        "prerake": {
+          "rake": []
+        },
+        "server": ["s"]
+      },
+      "test": {
+        "rspec": ["r"]
+      }
+    }
+  }
+}
