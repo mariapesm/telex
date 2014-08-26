@@ -11,6 +11,8 @@ module Mediators::Messages
 
     def call
       @message.save
+      MessagePlex.perform_async(@message.id)
+      @message
     end
   end
 end

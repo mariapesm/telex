@@ -23,6 +23,7 @@ module Initializer
       lib/routes
       lib/serializers/base
       lib/serializers/**/*
+      lib/jobs/**/*
     )
   end
 

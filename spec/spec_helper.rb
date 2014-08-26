@@ -8,6 +8,8 @@ ENV.update(Pliny::Utils.parse_env("#{root}/.env.test"))
 
 require_relative "../lib/initializer"
 
+require 'sidekiq/testing'
+
 DatabaseCleaner.strategy = :transaction
 
 # pull in test initializers
