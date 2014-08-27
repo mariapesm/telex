@@ -2,14 +2,20 @@ require 'zeus/rails'
 
 class CustomPlan < Zeus::Rails
   def boot
+    ENV["RACK_ENV"] = "test"
 
+    require "bundler"
+    Bundler.require(:default, :test)
+
+    root = File.expand_path("../../", __FILE__)
+    ENV.update(Pliny::Utils.parse_env("#{root}/.env.test"))
   end
 
   def test
-    require_relative "../spec/spec_helper"
   end
 
   def rspec(argv=ARGV)
+    require_relative "../spec/spec_helper"
     exit RSpec::Core::Runner.run(argv)
   end
 
