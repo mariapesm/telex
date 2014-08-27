@@ -1,27 +1,30 @@
 module Mediators::Messages
   class Plexer < Mediators::Base
-    attr_reader :user_ids
+    attr_reader :users
+    attr_writer :user_finder
 
-    def initialize(message:, user_finder: nil)
+    def initialize(message:)
       @message = message
-      @user_finder = user_finder
-      @user_ids = []
+      @users = []
     end
 
     def call
       get_users
-    end
-
-    def get_users
-      @user_ids = user_finder.call(@message)
+      create_notifications
     end
 
     private
 
-    def user_finder
-      @user_finder ||= begin
+    def get_users
+      @users = user_finder.call(@message)
+    end
 
-                       end
+    def create_notifications
+
+    end
+
+    def user_finder
+      @user_finder
     end
   end
 end
