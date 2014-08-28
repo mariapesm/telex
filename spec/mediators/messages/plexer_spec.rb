@@ -6,7 +6,6 @@ describe Plexer, '#call' do
   before do
     @message = instance_double(Message)
     @plexer = Plexer.new(message: @message)
-    @plexer.user_finder = double('null user finder', call: [])
   end
 
   it 'uses the user finder to set @users' do
@@ -20,7 +19,15 @@ describe Plexer, '#call' do
     expect(@plexer.users).to eq(users)
   end
 
+  it 'picks the appropriate user finder'
+
+  it 'creates a Notificaton for each user' do
+    users = Array.new(2) { instance_double(User) }
+    @plexer.user_finder = double('user finder', call: users)
+
+    expect(Mediators::Notifications::Creator).to receive(:run).with(message: @message, user: users[0])
+    expect(Mediators::Notifications::Creator).to receive(:run).with(message: @message, user: users[1])
+    @plexer.call
+  end
 
 end
-
-

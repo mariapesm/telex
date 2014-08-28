@@ -20,7 +20,9 @@ module Mediators::Messages
     end
 
     def create_notifications
-
+      users.each do |user|
+        Mediators::Notifications::Creator.run(message: @message, user: user)
+      end
     end
 
     def user_finder
