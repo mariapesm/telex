@@ -1,11 +1,12 @@
 module Mediators::Messages
   class Plexer < Mediators::Base
-    attr_reader :users
-    attr_writer :user_finder
+    attr_accessor :user_finder, :message, :users
+    private :users=, :message=
 
     def initialize(message:)
-      @message = message
-      @users = []
+      self.message = message
+      self.users = []
+      self.user_finder = Mediators::Messages::UserFinder.from_message(message)
     end
 
     def call
@@ -16,17 +17,13 @@ module Mediators::Messages
     private
 
     def get_users
-      @users = user_finder.call(@message)
+      self.users = user_finder.call(message)
     end
 
     def create_notifications
       users.each do |user|
-        Mediators::Notifications::Creator.run(message: @message, user: user)
+        Mediators::Notifications::Creator.run(message: message, user: user)
       end
-    end
-
-    def user_finder
-      @user_finder
     end
   end
 end

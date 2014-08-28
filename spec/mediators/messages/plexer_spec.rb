@@ -19,7 +19,11 @@ describe Plexer, '#call' do
     expect(@plexer.users).to eq(users)
   end
 
-  it 'picks the appropriate user finder'
+  it 'picks the appropriate user finder' do
+    allow(@message).to receive(:target_type).and_return('app')
+    plexer = Plexer.new(message: @message)
+    expect(plexer.user_finder).to be_instance_of(Mediators::Messages::AppUserFinder)
+  end
 
   it 'creates a Notificaton for each user' do
     users = Array.new(2) { instance_double(User) }
