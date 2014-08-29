@@ -5,6 +5,7 @@ Sequel.migration do
       uuid         :heroku_id, null: false, unique: true
       timestamptz  :created_at, default: Sequel.function(:now), null: false
       timestamptz  :updated_at
+      text         :email
     end
   end
 end
