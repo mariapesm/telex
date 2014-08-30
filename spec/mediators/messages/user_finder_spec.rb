@@ -55,15 +55,91 @@ describe UserUserFinder, "#call" do
     expect(user.email).to eq('username@example.com')
   end
 
-  it 'returns the user' do
+  it 'returns an array of one user with role' do
     response = @finder.call
     expect(response).to be_kind_of(Array)
     expect(response.size).to eq(1)
-    expect(response.first.heroku_id).to eq(@id)
+
+    uwr = response.first
+    expect(uwr.role).to eq(:self)
+    expect(uwr.user.heroku_id).to eq(@id)
   end
 end
 
 describe AppUserFinder, "#call" do
-  it 'creates users locally if needed'
-  it 'updates the email for users'
+  before do
+    @id = "01234567-89ab-cdef-0123-456789abcdef"
+    @finder = AppUserFinder.new(target_id: @id)
+
+    @owner_id   = SecureRandom.uuid
+    @collab1_id = SecureRandom.uuid
+    @collab2_id = SecureRandom.uuid
+
+    allow(Telex::HerokuClient).to receive(:app_info)
+      .with(@id)
+      .and_return({
+        "name" => "example",
+        "owner" => {
+          "email" => "username@example.com",
+          "id" => @owner_id
+         }
+      })
+    allow(Telex::HerokuClient).to receive(:app_collaborators)
+      .with(@id)
+      .and_return(
+        [
+          {
+            "created_at" => "2012-01-01T12:00:00Z",
+            "id" => SecureRandom.uuid,
+            "updated_at" => "2012-01-01T12:00:00Z",
+            "user" => {
+              "email" => "username2@example.com",
+              "id" => @collab1_id,
+              "two_factor_authentication" => false
+            }
+          },
+          {
+            "created_at" => "2012-01-01T12:00:00Z",
+            "id" => SecureRandom.uuid,
+            "updated_at" => "2012-01-01T12:00:00Z",
+            "user" => {
+              "email" => "username3@example.com",
+              "id" => @collab2_id,
+              "two_factor_authentication" => false
+            }
+          }
+        ]
+      )
+
+  end
+
+  it 'creates users locally if needed' do
+    expect(User[heroku_id: @owner_id]).to   be_nil
+    expect(User[heroku_id: @collab1_id]).to be_nil
+    expect(User[heroku_id: @collab2_id]).to be_nil
+    @finder.call
+
+    owner   = User[heroku_id: @owner_id]
+    expect(owner.email).to eq('username@example.com')
+    collab1 = User[heroku_id: @collab1_id]
+    expect(collab1.email).to eq('username2@example.com')
+    collab2 = User[heroku_id: @collab2_id]
+    expect(collab2.email).to eq('username3@example.com')
+  end
+
+  it 'updates the email for users' do
+    User.create(heroku_id: @owner_id, email: 'outdated@email.com')
+    @finder.call
+    user = User[heroku_id: @owner_id]
+    expect(user.email).to eq('username@example.com')
+  end
+
+  it 'returns an array of users with roles' do
+    result = @finder.call
+    owner = result.detect {|uwr| uwr.role == :owner }
+    expect(owner.user.heroku_id).to eq(@owner_id)
+
+    collab1 = result.detect {|uwr| uwr.user.heroku_id == @collab1_id }
+    expect(collab1.role).to eq(:collaborator)
+  end
 end
