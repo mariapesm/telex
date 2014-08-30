@@ -4,19 +4,19 @@ include Mediators::Messages
 
 describe Plexer, '#call' do
   before do
-    @message = instance_double(Message)
+    @message = instance_double(Message, target_type: 'app', target_id: SecureRandom.uuid)
     @plexer = Plexer.new(message: @message)
+    @uwrs = Array.new(2) { UserWithRole.new(role: :whatever, user: instance_double(User)) }
   end
 
-  it 'uses the user finder to set @users' do
+  it 'uses the user finder to set @users_with_role' do
     user_finder = double('user finder')
     @plexer.user_finder = user_finder
-    users = Array.new(2) { instance_double(User) }
 
-    expect(@plexer.users).to eq([])
-    expect(user_finder).to receive(:call).with(@message).and_return( users )
+    expect(@plexer.users_with_role).to eq([])
+    expect(user_finder).to receive(:call).with(@message).and_return( @uwrs )
     @plexer.call
-    expect(@plexer.users).to eq(users)
+    expect(@plexer.users_with_role).to eq(@uwrs)
   end
 
   it 'picks the appropriate user finder' do
@@ -26,12 +26,14 @@ describe Plexer, '#call' do
   end
 
   it 'creates a Notificaton for each user' do
-    users = Array.new(2) { instance_double(User) }
-    @plexer.user_finder = double('user finder', call: users)
+    @plexer.user_finder = double('user finder', call: @uwrs)
 
-    expect(Mediators::Notifications::Creator).to receive(:run).with(message: @message, user: users[0])
-    expect(Mediators::Notifications::Creator).to receive(:run).with(message: @message, user: users[1])
+    expect(Mediators::Notifications::Creator).to receive(:run).with(
+      message: @message, user: @uwrs[0].user
+    )
+    expect(Mediators::Notifications::Creator).to receive(:run).with(
+      message: @message, user: @uwrs[1].user
+    )
     @plexer.call
   end
-
 end

@@ -1,7 +1,5 @@
 module Mediators::Messages
   class UserFinder < Mediators::Base
-    UserWithRole = Struct.new(:role, :user)
-
     attr_accessor :target_id
 
     def self.from_message(message)
