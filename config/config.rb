@@ -15,8 +15,9 @@ module Config
 
   # Mandatory -- exception is raised for these variables when missing.
   mandatory \
+    :api_key_hmac_secret,
     :database_url,
-    :api_key_hmac_secret
+    :heroku_api_key
 
   # Optional -- value is returned or `nil` if it wasn't present.
   optional \

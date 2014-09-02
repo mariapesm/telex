@@ -28,6 +28,7 @@ GEM
       dotenv-deployment (~> 0.0.2)
     dotenv-deployment (0.0.2)
     erubis (2.7.0)
+    excon (0.39.5)
     fabrication (2.11.3)
     faker (1.4.3)
       i18n (~> 0.5)
@@ -153,6 +154,7 @@ PLATFORMS
 DEPENDENCIES
   committee
   database_cleaner
+  excon
   fabrication
   faker
   foreman
