@@ -17,7 +17,7 @@ module Mediators::Messages
     private
 
     def get_users
-      self.users_with_role = user_finder.call(message)
+      self.users_with_role = user_finder.call
     end
 
     def create_notifications

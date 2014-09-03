@@ -14,7 +14,7 @@ describe Plexer, '#call' do
     @plexer.user_finder = user_finder
 
     expect(@plexer.users_with_role).to eq([])
-    expect(user_finder).to receive(:call).with(@message).and_return( @uwrs )
+    expect(user_finder).to receive(:call).and_return( @uwrs )
     @plexer.call
     expect(@plexer.users_with_role).to eq(@uwrs)
   end

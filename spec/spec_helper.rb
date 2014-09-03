@@ -9,6 +9,7 @@ ENV.update(Pliny::Utils.parse_env("#{root}/.env.test"))
 require_relative "../lib/initializer"
 
 require 'sidekiq/testing'
+require 'webmock/rspec'
 
 DatabaseCleaner.strategy = :transaction
 

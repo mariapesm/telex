@@ -37,4 +37,5 @@ group :test do
   gem "guard-rspec"
   gem "rack-test"
   gem "rspec"
+  gem "webmock"
 end

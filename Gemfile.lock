@@ -7,6 +7,7 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
+    addressable (2.3.6)
     backports (3.6.0)
     byebug (3.4.0)
       columnize (~> 0.8)
@@ -21,6 +22,8 @@ GEM
       multi_json (~> 1.10)
       rack (~> 1.5)
     connection_pool (2.0.0)
+    crack (0.4.2)
+      safe_yaml (~> 1.0.0)
     database_cleaner (1.3.0)
     debugger-linecache (1.2.0)
     diff-lcs (1.2.5)
@@ -112,6 +115,7 @@ GEM
     rspec-mocks (3.0.4)
       rspec-support (~> 3.0.0)
     rspec-support (3.0.4)
+    safe_yaml (1.0.2)
     sequel (4.14.0)
     sequel-paranoid (0.4.3)
       sequel
@@ -146,6 +150,9 @@ GEM
     timers (1.1.0)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
+    webmock (1.17.4)
+      addressable (>= 2.2.7)
+      crack (>= 0.3.2)
     yard (0.8.7.4)
 
 PLATFORMS
@@ -180,3 +187,4 @@ DEPENDENCIES
   sinatra-contrib
   sinatra-router
   sucker_punch
+  webmock
