@@ -21,7 +21,7 @@ module Mediators::Messages
     end
 
     def create_notifications
-      users_with_role.map(&:user).each do |user|
+      users_with_role.map(&:user).uniq.each do |user|
         Mediators::Notifications::Creator.run(message: message, user: user)
       end
     end

@@ -4,9 +4,9 @@ include Mediators::Messages
 
 describe Plexer, '#call' do
   before do
-    @message = instance_double(Message, target_type: 'app', target_id: SecureRandom.uuid)
+    @message = instance_double(Message, target_type: 'app', target_id: SecureRandom.uuid, id: SecureRandom.uuid)
     @plexer = Plexer.new(message: @message)
-    @uwrs = Array.new(2) { UserWithRole.new(role: :whatever, user: instance_double(User)) }
+    @uwrs = Array.new(2) { UserWithRole.new(:whatever, instance_double(User, id: SecureRandom.uuid)) }
   end
 
   it 'uses the user finder to set @users_with_role' do

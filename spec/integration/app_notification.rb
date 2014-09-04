@@ -86,6 +86,11 @@ describe Endpoints::Producer::Messages do
     expect(response.status).to eq(201)
     expect(User.count).to eq(2)
     expect(existing_user.email).to eq(@user1.email)
+
+    notifications = Notification.all
+    users = User.all
+    expect(notifications.count).to eq(2)
+    expect(notifications.map(&:user_id)).to match(users.map(&:id))
   end
 
 end
