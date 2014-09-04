@@ -52,10 +52,10 @@ describe Endpoints::Producer::Messages do
     producer = Fabricate(:producer, api_key: 'foo')
     authorize producer.id, 'foo'
 
-    @user1 = create_heroku_user
-    Fabricate(:user, email: "outdated@email.com", heroku_id: @user1.heroku_id)
-    @user2 = create_heroku_user
-    heroku_app = create_heroku_app(owner: @user1, collaborators:[@user1, @user2])
+    @h_user1 = create_heroku_user
+    Fabricate(:user, email: "outdated@email.com", heroku_id: @h_user1.heroku_id)
+    @h_user2 = create_heroku_user
+    heroku_app = create_heroku_app(owner: @h_user1, collaborators:[@h_user1, @h_user2])
 
     @message_body = {
       title: Faker::Company.bs,
@@ -73,8 +73,8 @@ describe Endpoints::Producer::Messages do
     expect(User.count).to eq(1)
     existing_user = User.first
     expect(existing_user.email).to eq("outdated@email.com")
-    expect(@user1.email).to_not eq("outdated@email.com")
-    expect(existing_user.heroku_id).to eq(@user1.heroku_id)
+    expect(@h_user1.email).to_not eq("outdated@email.com")
+    expect(existing_user.heroku_id).to eq(@h_user1.heroku_id)
 
     # action
     Sidekiq::Testing.inline! do
@@ -85,7 +85,7 @@ describe Endpoints::Producer::Messages do
     # verification
     expect(last_response.status).to eq(201)
     expect(User.count).to eq(2)
-    expect(existing_user.email).to eq(@user1.email)
+    expect(existing_user.email).to eq(@h_user1.email)
 
     notifications = Notification.all
     users = User.all
