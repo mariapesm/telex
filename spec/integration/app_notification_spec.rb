@@ -47,7 +47,6 @@ describe Endpoints::Producer::Messages do
 
 
   before do
-
     header "Content-Type", "application/json"
 
     producer = Fabricate(:producer, api_key: 'foo')
