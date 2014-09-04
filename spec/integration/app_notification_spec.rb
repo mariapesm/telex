@@ -47,7 +47,6 @@ describe Endpoints::Producer::Messages do
 
 
   before do
-    Sidekiq::Testing.inline!
 
     header "Content-Type", "application/json"
 
@@ -79,11 +78,13 @@ describe Endpoints::Producer::Messages do
     expect(existing_user.heroku_id).to eq(@user1.heroku_id)
 
     # action
-    response = do_post
-    existing_user.reload
+    Sidekiq::Testing.inline! do
+      do_post
+      existing_user.reload
+    end
 
     # verification
-    expect(response.status).to eq(201)
+    expect(last_response.status).to eq(201)
     expect(User.count).to eq(2)
     expect(existing_user.email).to eq(@user1.email)
 
@@ -92,5 +93,4 @@ describe Endpoints::Producer::Messages do
     expect(notifications.count).to eq(2)
     expect(notifications.map(&:user_id)).to match(users.map(&:id))
   end
-
 end
