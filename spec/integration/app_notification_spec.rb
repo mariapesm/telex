@@ -91,5 +91,9 @@ describe Endpoints::Producer::Messages do
     users = User.all
     expect(notifications.count).to eq(2)
     expect(notifications.map(&:user_id)).to match(users.map(&:id))
+
+    deliveries = Mail::TestMailer.deliveries
+    expect(deliveries.size).to eq(2)
+    expect(deliveries.map(&:to).flatten).to match(users.map(&:email))
   end
 end

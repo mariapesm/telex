@@ -22,6 +22,7 @@ RSpec.configure do |config|
   end
 
   config.before :each do
+    Mail::TestMailer.deliveries.clear
     DatabaseCleaner.start
   end
 

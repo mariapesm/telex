@@ -58,7 +58,11 @@ GEM
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
     lumberjack (1.0.9)
+    mail (2.5.4)
+      mime-types (~> 1.16)
+      treetop (~> 1.4.8)
     method_source (0.8.2)
+    mime-types (1.25.1)
     minitest (5.4.1)
     multi_json (1.10.1)
     oj (2.10.2)
@@ -72,6 +76,7 @@ GEM
       sequel (~> 4.9, >= 4.9.0)
       sinatra (~> 1.4, >= 1.4.5)
       sinatra-router (~> 0.2, >= 0.2.3)
+    polyglot (0.3.5)
     prmd (0.6.2)
       erubis (~> 2.7)
       json_schema (~> 0.1)
@@ -148,6 +153,9 @@ GEM
     thread_safe (0.3.4)
     tilt (1.4.1)
     timers (1.1.0)
+    treetop (1.4.15)
+      polyglot
+      polyglot (>= 0.3.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     webmock (1.17.4)
@@ -166,6 +174,7 @@ DEPENDENCIES
   faker
   foreman
   guard-rspec
+  mail
   multi_json
   oj
   pg
