@@ -17,7 +17,11 @@ module Config
   mandatory \
     :api_key_hmac_secret,
     :database_url,
-    :heroku_api_key
+    :heroku_api_key,
+    :mailgun_smtp_login,
+    :mailgun_smtp_password,
+    :mailgun_smtp_port,
+    :mailgun_smtp_server
 
   # Optional -- value is returned or `nil` if it wasn't present.
   optional \
