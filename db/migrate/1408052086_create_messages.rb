@@ -6,7 +6,7 @@ Sequel.migration do
 
     create_table(:messages) do
       uuid           :id, default: Sequel.function(:uuid_generate_v4), primary_key: true
-      uuid           :producer_id, null: false
+      uuid           :producer_id,   null: false
       timestamptz    :created_at,    null: false,  default: Sequel.function(:now)
 
       message_target :target_type,   null: false
