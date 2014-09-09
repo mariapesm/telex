@@ -6,40 +6,33 @@ require "pliny/config_helpers"
 #
 # Each accessor corresponds directly to an ENV key, which has the same name
 # except upcased, i.e. `DATABASE_URL`.
-#
-# Note that *all* keys will come out as strings even if the override was a
-# different type. Make sure to typecast any values that need to be something
-# else (i.e. `.to_i`).
 module Config
-  extend Pliny::ConfigHelpers
+  extend Pliny::CastingConfigHelpers
 
   # Mandatory -- exception is raised for these variables when missing.
-  mandatory \
-    :api_key_hmac_secret,
-    :database_url,
-    :heroku_api_key,
-    :mailgun_smtp_login,
-    :mailgun_smtp_password,
-    :mailgun_smtp_port,
-    :mailgun_smtp_server
+  mandatory :api_key_hmac_secret
+  mandatory :database_url
+  mandatory :heroku_api_key
+  mandatory :mailgun_smtp_login
+  mandatory :mailgun_smtp_password
+  mandatory :mailgun_smtp_port,      int
+  mandatory :mailgun_smtp_server
 
   # Optional -- value is returned or `nil` if it wasn't present.
-  optional \
-    :console_banner,
-    :versioning_default,
-    :versioning_app_name
+  optional :console_banner
+  optional :versioning_default
+  optional :versioning_app_name
 
-  # Override -- value is returned or the set default. Remember to typecast.
-  override \
-    db_pool:          5,
-    port:             5000,
-    puma_max_threads: 16,
-    puma_min_threads: 1,
-    puma_workers:     3,
-    rack_env:         'development',
-    raise_errors:     'false',
-    root:             File.expand_path("../../", __FILE__),
-    timeout:          45,
-    force_ssl:        'true',
-    versioning:       'false'
+  # Override -- value is returned or the set default
+  override :db_pool,          5,     int
+  override :port,             5000,  int
+  override :puma_max_threads, 16,    int
+  override :puma_min_threads, 1,     int
+  override :puma_workers,     3,     int
+  override :raise_errors,     false, bool
+  override :timeout,          45,    int
+  override :force_ssl,        true,  bool
+  override :versioning,       false, bool
+  override :root,             File.expand_path("../../", __FILE__)
+  override :rack_env,         'development'
 end
