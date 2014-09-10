@@ -126,8 +126,8 @@ GEM
     sequel_pg (1.6.10)
       pg (>= 0.8.0)
       sequel (>= 3.39.0)
-    sidekiq (3.2.4)
-      celluloid (>= 0.15.2)
+    sidekiq (3.2.5)
+      celluloid (= 0.15.2)
       connection_pool (>= 2.0.0)
       json
       redis (>= 3.0.6)
