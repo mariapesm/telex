@@ -17,15 +17,15 @@ module Telex
     private
 
     def client
-      Excon.new(Config.heroku_api_url)
+      headers = { "Accept" => "application/vnd.heroku+json; version=3" }
+      if Config.obscurity_api_header
+        headers.merge!(Config.obscurity_api_header => true)
+      end
+      Excon.new(Config.heroku_api_url, headers: headers)
     end
 
     def get(path)
-      headers = {"Accept"=>"application/vnd.heroku+json; version=3"}
-      if Config.obscurity_api_header
-        headers.merge!( {Config.obscurity_api_header => true} )
-      end
-      result = client.get(expects: 200, path: path, headers: headers)
+      result = client.get(expects: 200, path: path)
       MultiJson.decode(result.body)
     end
   end
