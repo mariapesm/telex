@@ -12,7 +12,7 @@ module Config
   # Mandatory -- exception is raised for these variables when missing.
   mandatory :api_key_hmac_secret
   mandatory :database_url
-  mandatory :heroku_api_key
+  mandatory :heroku_api_url
   mandatory :mailgun_smtp_login
   mandatory :mailgun_smtp_password
   mandatory :mailgun_smtp_port,      int

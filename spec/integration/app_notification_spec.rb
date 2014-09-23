@@ -14,8 +14,6 @@ describe Endpoints::Producer::Messages do
 
   HerokuMockApp = Struct.new(:id)
   def create_heroku_app(owner:, collaborators:[])
-    url_root = "https://telex:#{Config.heroku_api_key}@api.heroku.com"
-
     app = HerokuMockApp.new(SecureRandom.uuid)
     app_response = {
       "name" => "example",
@@ -24,7 +22,7 @@ describe Endpoints::Producer::Messages do
           "id" => owner.heroku_id
          }
     }
-    stub_request(:get, "#{url_root}/apps/#{app.id}")
+    stub_request(:get, "#{Config.heroku_api_url}/apps/#{app.id}")
       .to_return(body: MultiJson.encode(app_response))
 
      collab_response = collaborators.map do |user|
@@ -39,7 +37,7 @@ describe Endpoints::Producer::Messages do
          }
        }
     end
-    stub_request(:get, "#{url_root}/apps/#{app.id}/collaborators")
+    stub_request(:get, "#{Config.heroku_api_url}/apps/#{app.id}/collaborators")
       .to_return( body: MultiJson.encode(collab_response) )
 
     app

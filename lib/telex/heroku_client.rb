@@ -17,7 +17,7 @@ module Telex
     private
 
     def client
-      Excon.new('https://api.heroku.com', user: 'telex', password: Config.heroku_api_key)
+      Excon.new(Config.heroku_api_url)
     end
 
     def get(path)
