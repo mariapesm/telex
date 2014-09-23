@@ -71,19 +71,12 @@ describe AppUserFinder, "#call" do
     @id = "01234567-89ab-cdef-0123-456789abcdef"
     @finder = AppUserFinder.new(target_id: @id)
 
-    @owner_id   = SecureRandom.uuid
+    @owner_id   = HerokuApiStub::OWNER_ID
     @collab1_id = SecureRandom.uuid
     @collab2_id = SecureRandom.uuid
 
-    allow(Telex::HerokuClient).to receive(:app_info)
-      .with(@id)
-      .and_return({
-        "name" => "example",
-        "owner" => {
-          "email" => "username@example.com",
-          "id" => @owner_id
-         }
-      })
+    stub_heroku_api
+
     allow(Telex::HerokuClient).to receive(:app_collaborators)
       .with(@id)
       .and_return(
