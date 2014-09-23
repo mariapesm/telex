@@ -39,6 +39,25 @@ class HerokuApiStub < Sinatra::Base
         email: "username@example.com",
       })
   end
+
+  get "/apps/:id/collaborators" do
+    MultiJson.encode([
+      {
+        id: SecureRandom.uuid,
+        user: {
+          id:    COLLAB1_ID,
+          email: "username2@example.com"
+        }
+      },
+      {
+        id: SecureRandom.uuid,
+        user: {
+          id:    COLLAB2_ID,
+          email: "username3@example.com"
+        }
+      },
+    ])
+  end
 end
 
 def stub_heroku_api

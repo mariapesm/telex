@@ -72,38 +72,10 @@ describe AppUserFinder, "#call" do
     @finder = AppUserFinder.new(target_id: @id)
 
     @owner_id   = HerokuApiStub::OWNER_ID
-    @collab1_id = SecureRandom.uuid
-    @collab2_id = SecureRandom.uuid
+    @collab1_id = HerokuApiStub::COLLAB1_ID
+    @collab2_id = HerokuApiStub::COLLAB2_ID
 
     stub_heroku_api
-
-    allow(Telex::HerokuClient).to receive(:app_collaborators)
-      .with(@id)
-      .and_return(
-        [
-          {
-            "created_at" => "2012-01-01T12:00:00Z",
-            "id" => SecureRandom.uuid,
-            "updated_at" => "2012-01-01T12:00:00Z",
-            "user" => {
-              "email" => "username2@example.com",
-              "id" => @collab1_id,
-              "two_factor_authentication" => false
-            }
-          },
-          {
-            "created_at" => "2012-01-01T12:00:00Z",
-            "id" => SecureRandom.uuid,
-            "updated_at" => "2012-01-01T12:00:00Z",
-            "user" => {
-              "email" => "username3@example.com",
-              "id" => @collab2_id,
-              "two_factor_authentication" => false
-            }
-          }
-        ]
-      )
-
   end
 
   it 'creates users locally if needed' do
