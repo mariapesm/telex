@@ -31,6 +31,15 @@ class HerokuApiStub < Sinatra::Base
     authenticate!
   end
 
+  get "/account" do
+    unless params[:id]
+      halt 422, "missing id"
+    end
+    MultiJson.encode(
+      id:    params[:id],
+      email: "username@example.com")
+  end
+
   get "/apps/:id" do |id|
     MultiJson.encode(
       name: "example",

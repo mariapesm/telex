@@ -22,21 +22,8 @@ end
 
 describe UserUserFinder, "#call" do
   before do
-    @id = "01234567-89ab-cdef-0123-456789abcdef"
-    allow(Telex::HerokuClient).to receive(:account_info)
-      .with(@id)
-      .and_return({
-        "allow_tracking" => true,
-        "beta" => false,
-        "created_at" => "2012-01-01T12:00:00Z",
-        "email" => "username@example.com",
-        "id" => @id,
-        "last_login" => "2012-01-01T12:00:00Z",
-        "name" => "Tina Edmonds",
-        "two_factor_authentication" => false,
-        "updated_at" => "2012-01-01T12:00:00Z",
-        "verified" => false
-      })
+    @id = SecureRandom.uuid
+    stub_heroku_api
     @finder = UserUserFinder.new(target_id: @id)
   end
 

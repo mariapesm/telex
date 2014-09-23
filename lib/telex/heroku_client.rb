@@ -3,7 +3,7 @@ module Telex
     extend self
 
     def account_info(user_uuid)
-
+      get("/account?id=#{user_uuid}")
     end
 
     def app_info(app_uuid)
