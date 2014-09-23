@@ -25,7 +25,7 @@ module Telex
       if Config.obscurity_api_header
         headers.merge!( {Config.obscurity_api_header => true} )
       end
-      result = client.get(path: path, headers: headers)
+      result = client.get(expects: 200, path: path, headers: headers)
       MultiJson.decode(result.body)
     end
   end
