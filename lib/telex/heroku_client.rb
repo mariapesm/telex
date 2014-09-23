@@ -25,8 +25,8 @@ module Telex
     end
 
     def get(path)
-      result = client.get(expects: 200, path: path)
-      MultiJson.decode(result.body)
+      response = client.get(expects: 200, path: path)
+      MultiJson.decode(response.body)
     end
   end
 end
