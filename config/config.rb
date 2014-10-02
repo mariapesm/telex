@@ -20,7 +20,7 @@ module Config
 
   # Optional -- value is returned or `nil` if it wasn't present.
   optional :console_banner
-  optional :obscurity_api_header
+  optional :additional_api_headers
   optional :versioning_app_name
   optional :versioning_default
 

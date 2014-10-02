@@ -3,7 +3,7 @@ module Telex
     extend self
 
     def account_info(user_uuid)
-      get("/account?id=#{user_uuid}")
+      get("/account", user: user_uuid)
     end
 
     def app_info(app_uuid)
@@ -17,15 +17,30 @@ module Telex
     private
 
     def client
-      headers = { "Accept" => "application/vnd.heroku+json; version=3" }
-      if Config.obscurity_api_header
-        headers.merge!(Config.obscurity_api_header => true)
-      end
-      Excon.new(Config.heroku_api_url, headers: headers)
+      Excon.new(Config.heroku_api_url)
     end
 
-    def get(path)
-      response = client.get(expects: 200, path: path)
+    def headers(options)
+      base = { "Accept" => "application/vnd.heroku+json; version=3" }
+      base.merge(additional_headers(options))
+    end
+
+    def additional_headers(options)
+      return {} unless Config.additional_api_headers
+      Config.additional_api_headers.split("\n").inject({}) do |headers, raw|
+        name, value = raw.split(": ")
+        if options[:user]
+          value.sub!("{{user}}", options[:user])
+        end
+        headers.merge!(name => value)
+      end
+    end
+
+    def get(path, options={})
+      response = client.get(
+        expects: 200,
+        headers: headers(options),
+        path:    path)
       MultiJson.decode(response.body)
     end
   end
