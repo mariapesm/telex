@@ -17,7 +17,7 @@ module Telex
     private
 
     def client
-      Excon.new(Config.heroku_api_url)
+      @client ||= Excon.new(Config.heroku_api_url)
     end
 
     def headers(options)
