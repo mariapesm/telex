@@ -1,5 +1,4 @@
 ENV["RACK_ENV"] = "test"
-ENV["ADDITIONAL_API_HEADERS"] = "User: {{user}}"
 
 require "bundler"
 Bundler.require(:default, :test)
