@@ -1,22 +1,26 @@
 ENV["RACK_ENV"] = "test"
 
 require "bundler"
-Bundler.require(:default, :test)
+Bundler.require(:default, :test, :development)
 
-root = File.expand_path("../../", __FILE__)
-ENV.update(Pliny::Utils.parse_env("#{root}/.env.test"))
+require 'dotenv'
+Dotenv.load('.env.test')
 
 require_relative "../lib/initializer"
 
 require 'sidekiq/testing'
 require 'webmock/rspec'
 
-DatabaseCleaner.strategy = :transaction
 
 # pull in test initializers
 Pliny::Utils.require_glob("#{Config.root}/spec/support/**/*.rb")
 
 RSpec.configure do |config|
+  config.before :suite do
+    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.strategy = :transaction
+  end
+
   config.before :all do
     load('db/seeds.rb') if File.exist?('db/seeds.rb')
   end
