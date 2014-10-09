@@ -25,14 +25,13 @@ module Telex
       base.merge(additional_headers(options))
     end
 
-    def additional_headers(options)
+    def additional_headers(user: nil)
       return {} unless Config.additional_api_headers
-      Config.additional_api_headers.split("\n").inject({}) do |headers, raw|
-        name, value = raw.split(": ")
-        if options[:user]
-          value.sub!("{{user}}", options[:user])
-        end
-        headers.merge!(name => value)
+      template = MultiJson.decode(Config.additional_api_headers)
+      if user
+        Hash[template.map {|(k,v)| [k,v.sub('{{user}}', user)] }]
+      else
+        template.reject {|k,v| v == '{{user}}'}
       end
     end
 
