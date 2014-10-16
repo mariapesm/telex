@@ -7,53 +7,16 @@ describe Endpoints::Producer::Messages do
     Routes
   end
 
-  HerokuMockUser = Struct.new(:heroku_id, :email)
-  def create_heroku_user
-    HerokuMockUser.new(SecureRandom.uuid, Faker::Internet.email)
-  end
-
-  HerokuMockApp = Struct.new(:id)
-  def create_heroku_app(owner:, collaborators:[])
-    app = HerokuMockApp.new(SecureRandom.uuid)
-    app_response = {
-      "name" => "example",
-        "owner" => {
-          "email" => owner.email,
-          "id" => owner.heroku_id
-         }
-    }
-    stub_request(:get, "#{Config.heroku_api_url}/apps/#{app.id}")
-      .to_return(body: MultiJson.encode(app_response))
-
-     collab_response = collaborators.map do |user|
-       {
-         "created_at" => "2012-01-01T12:00:00Z",
-         "id" => SecureRandom.uuid,
-         "updated_at" => "2012-01-01T12:00:00Z",
-         "user" => {
-           "email" => user.email,
-           "id" => user.heroku_id,
-           "two_factor_authentication" => false
-         }
-       }
-    end
-    stub_request(:get, "#{Config.heroku_api_url}/apps/#{app.id}/collaborators")
-      .to_return( body: MultiJson.encode(collab_response) )
-
-    app
-  end
-
-
   before do
     header "Content-Type", "application/json"
 
     producer = Fabricate(:producer, api_key: 'foo')
     authorize producer.id, 'foo'
 
-    @h_user1 = create_heroku_user
+    @h_user1 = HerokuAPIMock.create_heroku_user
     Fabricate(:user, email: "outdated@email.com", heroku_id: @h_user1.heroku_id)
-    @h_user2 = create_heroku_user
-    heroku_app = create_heroku_app(owner: @h_user1, collaborators:[@h_user1, @h_user2])
+    @h_user2 = HerokuAPIMock.create_heroku_user
+    heroku_app = HerokuAPIMock.create_heroku_app(owner: @h_user1, collaborators:[@h_user1, @h_user2])
 
     @message_body = {
       title: Faker::Company.bs,
