@@ -5,7 +5,17 @@ module HerokuAPIMock
 
   HerokuMockUser = Struct.new(:heroku_id, :email)
   def create_heroku_user
-    HerokuMockUser.new(SecureRandom.uuid, Faker::Internet.email)
+    user = HerokuMockUser.new(SecureRandom.uuid, Faker::Internet.email)
+
+    user_response = {
+      "email" => user.email,
+      "id" => user.heroku_id
+    }
+    stub_request(:get, "#{Config.heroku_api_url}/account")
+      .with(headers: {"User" => user.heroku_id})
+      .to_return(body: MultiJson.encode(user_response))
+
+    return user
   end
 
   HerokuMockApp = Struct.new(:id)
@@ -36,6 +46,6 @@ module HerokuAPIMock
     stub_request(:get, "#{Config.heroku_api_url}/apps/#{app.id}/collaborators")
       .to_return( body: MultiJson.encode(collab_response) )
 
-    app
+    return app
   end
 end
