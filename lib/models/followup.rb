@@ -1,4 +1,6 @@
 class Followup < Sequel::Model
+  many_to_one :message
+
   plugin :timestamps
   plugin :validation_helpers
 
