@@ -6,6 +6,8 @@ module Mediators::Followups
 
     def call
       @followup.save
+      Jobs::NotifyFollowup.perform_async(@followup.id)
+      @followup
     end
   end
 end
