@@ -15,6 +15,8 @@ describe Endpoints::Producer::Messages do
 
     @h_user = HerokuAPIMock.create_heroku_user
     Fabricate(:user, email: "outdated@email.com", heroku_id: @h_user.heroku_id)
+    @unused_user = HerokuAPIMock.create_heroku_user
+    Fabricate(:user, email: "outdated@email.com", heroku_id: @unused_user.heroku_id)
 
     @message_body = {
       title: Faker::Company.bs,
@@ -29,7 +31,7 @@ describe Endpoints::Producer::Messages do
 
   it 'works' do
     # sanity checks
-    expect(User.count).to eq(1)
+    expect(User.count).to eq(2)
     existing_user = User.first
     expect(existing_user.email).to eq("outdated@email.com")
     expect(@h_user.email).to_not eq("outdated@email.com")
@@ -43,16 +45,15 @@ describe Endpoints::Producer::Messages do
 
     # verification
     expect(last_response.status).to eq(201)
-    expect(User.count).to eq(1)
+    expect(User.count).to eq(2)
     expect(existing_user.email).to eq(@h_user.email)
 
     notifications = Notification.all
-    users = User.all
-    expect(notifications.map(&:user_id)).to match(users.map(&:id))
+    expect(notifications.first.user_id).to eq(existing_user.id)
     expect(notifications.count).to eq(1)
 
     deliveries = Mail::TestMailer.deliveries
-    expect(deliveries.map(&:to).flatten).to match(users.map(&:email))
+    expect(deliveries.first.to).to match([@h_user.email])
     expect(deliveries.size).to eq(1)
   end
 end
