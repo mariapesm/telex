@@ -1,6 +1,6 @@
 module Endpoints
   class Health < Base
-    get "/health" do
+    get "/" do
       check_database
       check_api_key
       ""

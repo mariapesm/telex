@@ -18,7 +18,10 @@ Routes = Rack::Builder.new do
     end
   end
 
-  use Endpoints::Health
+  map('/health') do
+    run Endpoints::Health
+  end
+
   # root app; but will also handle some defaults like 404
   run Endpoints::Root
 end
