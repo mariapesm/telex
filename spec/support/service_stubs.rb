@@ -66,7 +66,8 @@ class HerokuApiStub < Sinatra::Base
   end
 end
 
-def stub_heroku_api
+def stub_heroku_api(&block)
+  stub = block ? Sinatra.new(HerokuApiStub, &block) : HerokuApiStub
   WebMock.stub_request(:any, %r{#{Config.heroku_api_url}/.*}).
-    to_rack(HerokuApiStub)
+    to_rack(stub)
 end
