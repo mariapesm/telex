@@ -20,8 +20,9 @@ module Endpoints
       # our API key is bad! fail the health check so we get alerted:
       halt 503
     rescue Excon::Errors::Error
-      # generic error talking to the API, assume we're ok
-      # (the api team should be getting paged for this)
+      # generic error talking to the API, assume we're ok as the API
+      # team should be getting paged for this. in the meantime our
+      # jobs will continue to retry
     end
   end
 end
