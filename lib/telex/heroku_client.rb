@@ -2,7 +2,7 @@ module Telex
   module HerokuClient
     extend self
 
-    def account_info(user_uuid)
+    def account_info(user_uuid=nil)
       get("/account", user: user_uuid)
     end
 
