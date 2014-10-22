@@ -19,6 +19,12 @@ Routes = Rack::Builder.new do
     end
   end
 
+  map('/user') do
+    use Pliny::Router do
+      mount Endpoints::UserAPI::Notifications
+    end
+  end
+
   map('/health') do
     run Endpoints::Health
   end

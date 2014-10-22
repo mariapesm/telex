@@ -28,6 +28,7 @@ module Config
   override :db_pool,          5,     int
   override :force_ssl,        true,  bool
   override :port,             5000,  int
+  override :pretty_json,       false, bool
   override :puma_max_threads, 16,    int
   override :puma_min_threads, 1,     int
   override :puma_workers,     3,     int
