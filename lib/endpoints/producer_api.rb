@@ -1,5 +1,5 @@
 module Endpoints
-  class Producer < Base
+  class ProducerAPI < Base
 
   end
 end

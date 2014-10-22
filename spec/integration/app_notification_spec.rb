@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Endpoints::Producer::Messages do
+describe Endpoints::ProducerAPI::Messages do
   include Rack::Test::Methods
 
   def app

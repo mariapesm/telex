@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Endpoints::Producer::Messages do
+describe Endpoints::ProducerAPI::Messages do
   include Committee::Test::Methods
   include Rack::Test::Methods
 
