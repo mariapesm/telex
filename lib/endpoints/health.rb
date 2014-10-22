@@ -9,7 +9,7 @@ module Endpoints
     private
 
     def check_database
-      User.db.execute("SELECT 1")
+      Sequel::Model.db.execute("SELECT 1")
     rescue Sequel::DatabaseError
       halt 503
     end
