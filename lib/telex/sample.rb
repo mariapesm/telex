@@ -75,7 +75,7 @@ module Telex
     private
 
     def self.prefix
-      @@prefix ||= "telex.#{Config.rack_env}"
+      @@prefix ||= "telex"
     end
 
     def self.time(&block)
