@@ -23,6 +23,7 @@ module Mediators::Notifications
       mail.body       = message.body
 
       mail.deliver!
+      Telex::Sample.count "emails"
     end
   end
 end

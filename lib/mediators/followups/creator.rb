@@ -7,6 +7,7 @@ module Mediators::Followups
     def call
       @followup.save
       Jobs::NotifyFollowup.perform_async(@followup.id)
+      Telex::Sample.count "followups"
       @followup
     end
   end

@@ -12,6 +12,7 @@ module Mediators::Messages
     def call
       @message.save
       Jobs::MessagePlex.perform_async(@message.id)
+      Telex::Sample.count "messages"
       @message
     end
   end
