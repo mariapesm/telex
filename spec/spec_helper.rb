@@ -16,6 +16,8 @@ require 'webmock/rspec'
 Pliny::Utils.require_glob("#{Config.root}/spec/support/**/*.rb")
 
 RSpec.configure do |config|
+  config.include Rack::Test::Methods
+
   config.before :suite do
     DatabaseCleaner.clean_with(:truncation)
     DatabaseCleaner.strategy = :transaction
