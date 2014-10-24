@@ -11,8 +11,12 @@ module Telex
       end
     end
 
-    def account_info(user_uuid=nil)
-      get("/account", user: user_uuid)
+    def account_info(user_uuid: nil)
+      if user_uuid
+        get("/account", user: user_uuid)
+      else
+        get("/account", base_headers_only: true)
+      end
     end
 
     def app_info(app_uuid)
@@ -29,9 +33,17 @@ module Telex
       @client ||= Excon.new(uri.to_s)
     end
 
-    def headers(options)
-      base = { "Accept" => "application/vnd.heroku+json; version=3" }
-      base.merge(additional_headers(options))
+    def headers(base_headers_only: false, user: nil)
+      base = {
+        "Accept" => "application/vnd.heroku+json; version=3",
+        "User-Agent" => "telex"
+      }
+
+      if base_headers_only
+        base
+      else
+        base.merge(additional_headers(user: user))
+      end
     end
 
     def additional_headers(user: nil)

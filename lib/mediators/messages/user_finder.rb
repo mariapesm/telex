@@ -61,7 +61,7 @@ module Mediators::Messages
   class UserUserFinder < UserFinder
     private
     def get_users_from_heroku
-      user_response = heroku_client.account_info(target_id)
+      user_response = heroku_client.account_info(user_uuid: target_id)
 
       id = user_response.fetch('id')
       if id != target_id
