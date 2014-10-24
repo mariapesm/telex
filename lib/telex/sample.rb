@@ -75,7 +75,7 @@ module Telex
     private
 
     def self.prefix
-      @@prefix ||= "telex"
+      @@prefix ||= "telex.#{Config.console_banner || 'production'}"
     end
 
     def self.time(&block)
