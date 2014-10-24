@@ -30,6 +30,7 @@ module Mediators::Followups
         mail.body        = followup.body
 
         mail.deliver!
+        Telex::Sample.count "emails"
       end
     end
   end
