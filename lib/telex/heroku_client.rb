@@ -1,6 +1,9 @@
+require 'uri'
 module Telex
-  module HerokuClient
-    extend self
+  class HerokuClient
+    def initialize
+      @uri = URI.parse(Config.heroku_api_url)
+    end
 
     def account_info(user_uuid=nil)
       get("/account", user: user_uuid)
@@ -17,7 +20,7 @@ module Telex
     private
 
     def client
-      @client ||= Excon.new(Config.heroku_api_url)
+      @client ||= Excon.new(@uri.to_s)
     end
 
     def headers(options)

@@ -28,6 +28,10 @@ module Mediators::Messages
 
     def get_users_from_heroku  ; raise NotImplementedError end
 
+    def heroku_client
+      Telex::HerokuClient.new
+    end
+
     def update_or_create_all_users
       users_details.map do |details|
         user = update_or_create_user(hid: details[:hid], email: details[:email])
@@ -57,7 +61,7 @@ module Mediators::Messages
   class UserUserFinder < UserFinder
     private
     def get_users_from_heroku
-      user_response = Telex::HerokuClient.account_info(target_id)
+      user_response = heroku_client.account_info(target_id)
 
       id = user_response.fetch('id')
       if id != target_id
@@ -71,8 +75,8 @@ module Mediators::Messages
   class AppUserFinder < UserFinder
     private
     def get_users_from_heroku
-      owner_response  = Telex::HerokuClient.app_info(target_id)
-      collab_response = Telex::HerokuClient.app_collaborators(target_id)
+      owner_response  = heroku_client.app_info(target_id)
+      collab_response = heroku_client.app_collaborators(target_id)
 
       owner = extract_user(:owner, owner_response.fetch('owner') )
       collabs = collab_response.map do |row|
