@@ -28,7 +28,7 @@ describe Middleware::Instrumentation do
   end
 
   it "counts requests by the status code" do
-    expect(Telex::Sample).to receive(:count).with("requests.200")
+    expect(Telex::Sample).to receive(:count).with("requests.20x")
     get "/foo"
   end
 
