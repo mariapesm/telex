@@ -6,8 +6,6 @@ module Middleware
     let(:rack_env)  { double(:rack_env) }
     let(:rack_auth) { double(:auth) }
 
-    let(:valid_key)   { 'passw0rd' }
-
     let(:auther) { UserAuthenticator.new(app) }
 
     describe "#call" do
@@ -35,6 +33,7 @@ module Middleware
         end
 
         it "raises Unauthorized for auth other than basic auth" do
+          valid_key = HerokuAPIMock.create_heroku_user.api_token
           allow(rack_auth).to receive_messages(provided?: false, basic?: false, credentials: ['', valid_key])
           expect { auther.call(rack_env) }.to raise_error(Pliny::Errors::Unauthorized)
         end
@@ -43,18 +42,17 @@ module Middleware
       describe "with correct credentials" do
         before do
           expect(app).to receive(:call).with(rack_env)
-          @user_info = {id: SecureRandom.uuid, email: Faker::Internet.email}
-          allow(rack_auth).to receive_messages(provided?: true, basic?: true, credentials: ["", valid_key])
-          stub_request(:get, "https://telex:#{valid_key}@api.heroku.com/account").to_return(body: MultiJson.encode(@user_info))
+          @user_info = HerokuAPIMock.create_heroku_user
+          allow(rack_auth).to receive_messages(provided?: true, basic?: true, credentials: ["", @user_info.api_token])
         end
 
         it "finds the right user with matching heroku_id" do
-          existing_user = User.create(heroku_id: @user_info[:id], email: @user_info[:email])
+          existing_user = User.create(heroku_id: @user_info.heroku_id, email: @user_info.email)
           auther.call(rack_env)
           current_user = Pliny::RequestStore.store[:current_user]
 
           expect(current_user).to_not be_nil
-          expect(current_user.heroku_id).to eq(@user_info[:id])
+          expect(current_user.heroku_id).to eq(@user_info.heroku_id)
           expect(current_user.id).to eq(existing_user.id)
         end
 
@@ -63,7 +61,7 @@ module Middleware
             auther.call(rack_env)
           }.to change(User, :count).by(1)
           expect(Pliny::RequestStore.store[:current_user]).to_not be_nil
-          expect(Pliny::RequestStore.store[:current_user].heroku_id).to eq(@user_info[:id])
+          expect(Pliny::RequestStore.store[:current_user].heroku_id).to eq(@user_info.heroku_id)
         end
       end
     end

@@ -3,17 +3,23 @@ module HerokuAPIMock
   include WebMock::API
   extend self
 
-  HerokuMockUser = Struct.new(:heroku_id, :email)
+  HerokuMockUser = Struct.new(:heroku_id, :email, :api_token)
   def create_heroku_user
-    user = HerokuMockUser.new(SecureRandom.uuid, Faker::Internet.email)
+    user = HerokuMockUser.new(SecureRandom.uuid, Faker::Internet.email, SecureRandom.uuid)
 
-    user_response = {
+    user_response = MultiJson.encode({
       "email" => user.email,
       "id" => user.heroku_id
-    }
+    })
+
+    # intended for user finder, looking up current email address using telex's key
     stub_request(:get, "#{Config.heroku_api_url}/account")
       .with(headers: {"User" => user.heroku_id})
-      .to_return(body: MultiJson.encode(user_response))
+      .to_return(body: user_response)
+
+    # intended for user api auth using the user's token
+    stub_request(:get, "https://telex:#{user.api_token}@api.heroku.com/account")
+      .to_return(body: user_response)
 
     return user
   end
@@ -31,17 +37,17 @@ module HerokuAPIMock
     stub_request(:get, "#{Config.heroku_api_url}/apps/#{app.id}")
       .to_return(body: MultiJson.encode(app_response))
 
-     collab_response = collaborators.map do |user|
-       {
-         "created_at" => "2012-01-01T12:00:00Z",
-         "id" => SecureRandom.uuid,
-         "updated_at" => "2012-01-01T12:00:00Z",
-         "user" => {
-           "email" => user.email,
-           "id" => user.heroku_id,
-           "two_factor_authentication" => false
-         }
-       }
+    collab_response = collaborators.map do |user|
+      {
+        "created_at" => "2012-01-01T12:00:00Z",
+        "id" => SecureRandom.uuid,
+        "updated_at" => "2012-01-01T12:00:00Z",
+        "user" => {
+          "email" => user.email,
+          "id" => user.heroku_id,
+          "two_factor_authentication" => false
+        }
+      }
     end
     stub_request(:get, "#{Config.heroku_api_url}/apps/#{app.id}/collaborators")
       .to_return( body: MultiJson.encode(collab_response) )
