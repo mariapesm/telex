@@ -6,8 +6,8 @@ module Endpoints
       end
 
       get do
-        current_user
-        encode([])
+        notifications = Mediators::Notifications::Lister.run(user: current_user)
+        encode(notifications)
       end
 
     end
