@@ -3,7 +3,7 @@ module HerokuAPIMock
   include WebMock::API
   extend self
 
-  HerokuMockUser = Struct.new(:heroku_id, :email, :api_token)
+  HerokuMockUser = Struct.new(:heroku_id, :email, :api_key)
   def create_heroku_user
     user = HerokuMockUser.new(SecureRandom.uuid, Faker::Internet.email, SecureRandom.uuid)
 
@@ -18,7 +18,7 @@ module HerokuAPIMock
       .to_return(body: user_response)
 
     # intended for user api auth using the user's token
-    stub_request(:get, "https://telex:#{user.api_token}@api.heroku.com/account")
+    stub_request(:get, "https://telex:#{user.api_key}@api.heroku.com/account")
       .to_return(body: user_response)
 
     return user

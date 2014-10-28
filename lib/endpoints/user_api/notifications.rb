@@ -6,25 +6,17 @@ module Endpoints
       end
 
       get do
+        current_user
         encode([])
       end
 
-      post do
-        status 201
-        encode({})
-      end
-
-      get "/:id" do
-        encode({})
-      end
-
-      patch "/:id" do |id|
-        encode({})
-      end
-
-      delete "/:id" do |id|
-        encode({})
-      end
     end
+
+    private
+
+    def current_user
+      Pliny::RequestStore.store.fetch(:current_user)
+    end
+
   end
 end

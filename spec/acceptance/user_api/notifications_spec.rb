@@ -13,39 +13,33 @@ describe Endpoints::UserAPI::Notifications do
   end
 
   describe 'GET /user/notifications' do
-    it 'returns correct status code and conforms to schema' do
+    def do_get
       get '/user/notifications'
-      expect(last_response.status).to eq(200)
     end
-  end
 
-  describe 'POST /user/notifications' do
-    it 'returns correct status code and conforms to schema' do
-      header "Content-Type", "application/json"
-      post '/user/notifications', MultiJson.encode({})
-      expect(last_response.status).to eq(201)
+    context 'with bad creds' do
+      it 'returns a 401' do
+        do_get
+        expect(last_response.status).to eq(401)
+      end
     end
-  end
 
-  describe 'GET /user/notifications/:id' do
-    it 'returns correct status code and conforms to schema' do
-      get "/user/notifications/123"
-      expect(last_response.status).to eq(200)
-    end
-  end
+    context 'with good creds' do
+      before do
+        @heroku_user = HerokuAPIMock.create_heroku_user
+        authorize '', @heroku_user.api_key
+      end
 
-  describe 'PATCH /user/notifications/:id' do
-    it 'returns correct status code and conforms to schema' do
-      header "Content-Type", "application/json"
-      patch '/user/notifications/123', MultiJson.encode({})
-      expect(last_response.status).to eq(200)
-    end
-  end
+      it 'returns a 200' do
+        do_get
+        expect(last_response.status).to eq(200)
+      end
 
-  describe 'DELETE /user/notifications/:id' do
-    it 'returns correct status code and conforms to schema' do
-      delete '/user/notifications/123'
-      expect(last_response.status).to eq(200)
+      it 'with no notifications, returns an empty json array' do
+        do_get
+        expect(MultiJson.decode(last_response.body)).to eq([])
+      end
     end
+
   end
 end

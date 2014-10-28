@@ -33,7 +33,7 @@ module Middleware
         end
 
         it "raises Unauthorized for auth other than basic auth" do
-          valid_key = HerokuAPIMock.create_heroku_user.api_token
+          valid_key = HerokuAPIMock.create_heroku_user.api_key
           allow(rack_auth).to receive_messages(provided?: false, basic?: false, credentials: ['', valid_key])
           expect { auther.call(rack_env) }.to raise_error(Pliny::Errors::Unauthorized)
         end
@@ -43,7 +43,7 @@ module Middleware
         before do
           expect(app).to receive(:call).with(rack_env)
           @user_info = HerokuAPIMock.create_heroku_user
-          allow(rack_auth).to receive_messages(provided?: true, basic?: true, credentials: ["", @user_info.api_token])
+          allow(rack_auth).to receive_messages(provided?: true, basic?: true, credentials: ["", @user_info.api_key])
         end
 
         it "finds the right user with matching heroku_id" do

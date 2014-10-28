@@ -20,6 +20,7 @@ Routes = Rack::Builder.new do
   end
 
   map('/user') do
+    use Middleware::UserAuthenticator
     use Pliny::Router do
       mount Endpoints::UserAPI::Notifications
     end
