@@ -16,11 +16,11 @@ describe Mediators::Notifications::Lister, '#call' do
   context 'a user with notificatons' do
     before do
       @p1 = Fabricate(:producer)
-      @m1 = Fabricate(:message, producer_id: @p1.id)
-      @m2 = Fabricate(:message, producer_id: @p1.id)
-      @f1 = Fabricate(:followup, message_id: @m1.id)
-      @n1 = Fabricate(:notification, user_id: @user.id, message_id: @m1.id, created_at: DateTime.new(2012,2,2))
-      @n2 = Fabricate(:notification, user_id: @user.id, message_id: @m2.id, created_at: DateTime.new(2014,4,4))
+      @m1 = Fabricate(:message, producer: @p1)
+      @m2 = Fabricate(:message, producer: @p1)
+      @f1 = Fabricate(:followup, message: @m1)
+      @n1 = Fabricate(:notification, user: @user, message: @m1, created_at: DateTime.new(2012,2,2))
+      @n2 = Fabricate(:notification, user: @user, message: @m2, created_at: DateTime.new(2014,4,4))
     end
 
     it 'returns the notifications in a sorted array' do

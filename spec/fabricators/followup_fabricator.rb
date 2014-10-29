@@ -1,4 +1,4 @@
 Fabricator(:followup) do
-  message_id { SecureRandom.uuid }
+  message
   body       { Faker::Company.bs }
 end

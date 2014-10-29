@@ -28,9 +28,9 @@ describe Endpoints::ProducerAPI::Messages do
       end
 
       it 'creates a message' do
-        expect(Message.where(producer_id: @producer.id).count).to eq(0)
+        expect(Message.where(producer: @producer).count).to eq(0)
         do_post
-        expect(Message.where(producer_id: @producer.id).count).to eq(1)
+        expect(Message.where(producer: @producer).count).to eq(1)
       end
 
       it "returns the message's id" do
@@ -59,7 +59,7 @@ describe Endpoints::ProducerAPI::Messages do
     end
 
     before do
-      @message = Fabricate(:message, producer_id: @producer.id)
+      @message = Fabricate(:message, producer: @producer)
       @followup_body = {
         body: 'You actually are not a winner :(',
       }

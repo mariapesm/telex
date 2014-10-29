@@ -1,5 +1,5 @@
 Fabricator(:message) do
-  producer_id { SecureRandom.uuid }
+  producer
   target_type { 'user' }
   target_id   { SecureRandom.uuid }
   title       { Faker::Company.bs }
