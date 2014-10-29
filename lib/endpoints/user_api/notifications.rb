@@ -6,8 +6,9 @@ module Endpoints
       end
 
       get do
-        notifications = Mediators::Notifications::Lister.run(user: current_user)
-        encode(notifications)
+        notes = Mediators::Notifications::Lister.run(user: current_user)
+        sz = Serializers::UserAPI::NotificationSerializer.new(:default)
+        encode(sz.serialize(notes))
       end
 
     end

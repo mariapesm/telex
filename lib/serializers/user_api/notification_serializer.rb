@@ -1,5 +1,5 @@
 module Serializers::UserAPI
-  class Notification < Serializers::Base
+  class NotificationSerializer < Serializers::Base
     structure(:default) do |n|
       m = n.message
       {

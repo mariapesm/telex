@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Serializers::UserAPI::Notification do
+describe Serializers::UserAPI::NotificationSerializer do
   before do
     @note = Fabricate(:notification, created_at: DateTime.new(2012,2,2))
     @notes = Mediators::Notifications::Lister.run(user: @note.user)
