@@ -51,5 +51,12 @@ describe Mediators::Notifications::Lister, '#call' do
 
       expect(selects).to eq(1)
     end
+
+    it 'returns something that works with the Serializer' do
+      sz = Serializers::UserAPI::Notification.new(:default)
+      json = MultiJson.encode(sz.serialize(lister.call))
+      expect(json).to include(@m1.body)
+      expect(json).to include('2012-02-02T00:00:00Z')
+    end
   end
 end
