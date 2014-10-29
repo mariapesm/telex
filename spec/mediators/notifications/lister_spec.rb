@@ -32,7 +32,7 @@ describe Mediators::Notifications::Lister, '#call' do
       user2 = Fabricate(:user)
       note = Fabricate(:notification, user_id: user2.id, message_id: @m1.id, created_at: DateTime.new(2012,2,2))
 
-      expect(lister.call).to_not include(note)
+      expect(lister.call).to_not match(note)
     end
 
     it 'only makes one query even when the associated parts are touched' do
@@ -50,13 +50,6 @@ describe Mediators::Notifications::Lister, '#call' do
       end
 
       expect(selects).to eq(1)
-    end
-
-    it 'returns something that works with the Serializer' do
-      sz = Serializers::UserAPI::Notification.new(:default)
-      json = MultiJson.encode(sz.serialize(lister.call))
-      expect(json).to include(@m1.body)
-      expect(json).to include('2012-02-02T00:00:00Z')
     end
   end
 end

@@ -6,11 +6,6 @@ class Serializers
       @@structures["#{self.name}::#{type}"] = blk
     end
 
-    def self.time_format(time)
-      # times *must* be iso8601 but with the Z at the end for firefox
-      time.utc.iso8601
-    end
-
     def initialize(type)
       @type = type
     end
@@ -21,6 +16,10 @@ class Serializers
 
     private
 
+    def self.time_format(time)
+      # times *must* be iso8601 but with the Z at the end for firefox
+      time.getutc.iso8601
+    end
 
     def serializer
       @@structures["#{self.class.name}::#{@type}"]
