@@ -5,11 +5,11 @@ module Mediators::Notifications
     end
 
     def call
-     Notification
-      .eager_graph(:message=>:followup)
-      .where(user: @user)
-      .order(Sequel.desc(:created_at))
-      .all
+      Notification
+       .eager_graph(:message=>:followup)
+       .where(user: @user)
+       .order(Sequel.desc(:created_at))
+       .all
     end
   end
 end
