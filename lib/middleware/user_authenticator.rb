@@ -25,7 +25,7 @@ module Middleware
     private
 
     def lookup_user(key)
-      return nil unless key =~ /\A[a-z0-9-]+\z/
+      return nil unless key =~ Pliny::Middleware::RequestID::UUID_PATTERN
 
       client = Telex::HerokuClient.new(api_key: key)
       user_response = client.account_info

@@ -11,6 +11,11 @@ module Endpoints
         encode(sz.serialize(notes))
       end
 
+      patch '/:id' do |id|
+        raise Pliny::Errors::BadRequest unless id =~ Pliny::Middleware::RequestID::UUID_PATTERN
+        note = ::Notification[id: id, user_id: current_user.id]
+        raise Pliny::Errors::NotFound unless note
+      end
     end
 
     private
