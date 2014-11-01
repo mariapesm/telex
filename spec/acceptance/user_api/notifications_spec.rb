@@ -80,9 +80,9 @@ describe Endpoints::UserAPI::Notifications do
         expect(last_response.status).to eq(404)
       end
 
-      it "returns a 400 if the id is malformed" do
+      it "returns a 422 if the id is malformed" do
         do_patch(id: 'notauuid')
-        expect(last_response.status).to eq(400)
+        expect(last_response.status).to eq(422)
       end
 
       it 'returns a 200 when everything checks out' do

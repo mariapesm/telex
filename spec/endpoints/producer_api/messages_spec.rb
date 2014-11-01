@@ -47,7 +47,7 @@ describe Endpoints::ProducerAPI::Messages do
 
       it "fails" do
         do_post
-        expect(last_response.status).to eq(406)
+        expect(last_response.status).to eq(422)
       end
     end
 
@@ -88,26 +88,26 @@ describe Endpoints::ProducerAPI::Messages do
       it "fails with an empty body" do
         @followup_body[:body] = ''
         do_post
-        expect(last_response.status).to eq(406)
+        expect(last_response.status).to eq(422)
       end
 
       it "fails with a malformed message_id" do
         @message.id = 'whatever'
         do_post
-        expect(last_response.status).to eq(406)
+        expect(last_response.status).to eq(422)
       end
 
       it "fails with a missing message_id" do
         @message.id = SecureRandom.uuid
         do_post
-        expect(last_response.status).to eq(406)
+        expect(last_response.status).to eq(422)
       end
 
       it "fails when the message belongs to a different producer" do
         @message.producer_id = SecureRandom.uuid
         @message.save
         do_post
-        expect(last_response.status).to eq(406)
+        expect(last_response.status).to eq(422)
       end
     end
 

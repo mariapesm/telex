@@ -18,7 +18,7 @@ module Endpoints
           status 201
           MultiJson.encode({id: message.id})
         rescue
-          raise Pliny::Errors::NotAcceptable
+          raise Pliny::Errors::UnprocessableEntity
         end
       end
 
@@ -33,7 +33,7 @@ module Endpoints
          status 201
          MultiJson.encode({id: followup.id})
         rescue
-          raise Pliny::Errors::NotAcceptable
+          raise Pliny::Errors::UnprocessableEntity
         end
       end
 

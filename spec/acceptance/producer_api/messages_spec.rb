@@ -45,10 +45,10 @@ describe Endpoints::ProducerAPI::Messages do
   #      assert_schema_conform
       end
 
-      it 'with bad data, returns a 406' do
+      it 'with bad data, returns a 422' do
         @message_body = nil
         do_post
-        expect(last_response.status).to eq(406)
+        expect(last_response.status).to eq(422)
       end
     end
   end

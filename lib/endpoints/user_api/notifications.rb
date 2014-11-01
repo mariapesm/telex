@@ -12,9 +12,7 @@ module Endpoints
       end
 
       patch '/:id' do |id|
-        raise Pliny::Errors::BadRequest unless id =~ Pliny::Middleware::RequestID::UUID_PATTERN
-        note = ::Notification[id: id, user_id: current_user.id]
-        raise Pliny::Errors::NotFound unless note
+        note = get_note(id)
       end
     end
 
@@ -22,6 +20,13 @@ module Endpoints
 
     def current_user
       Pliny::RequestStore.store.fetch(:current_user)
+    end
+
+    def get_note(id)
+      raise Pliny::Errors::UnprocessableEntity unless id =~ Pliny::Middleware::RequestID::UUID_PATTERN
+      note = ::Notification[id: id, user_id: current_user.id]
+      raise Pliny::Errors::NotFound unless note
+      note
     end
 
   end
