@@ -6,6 +6,7 @@ module Serializers::UserAPI
         id:         n.id,
         created_at: time_format(n.created_at),
         title:      m.title,
+        read:       !!n.read_at,
         body:       m.body,
         target: {
           type: m.target_type,
