@@ -7,16 +7,21 @@ module Endpoints
 
       get do
         notes = Mediators::Notifications::Lister.run(user: current_user)
-        sz = Serializers::UserAPI::NotificationSerializer.new(:default)
-        encode(sz.serialize(notes))
+        respond_json(notes)
       end
 
       patch '/:id' do |id|
-        note = get_note(id)
+        note = Mediators::Notifications::ReadStatusUpdater.run(notification: get_note(id), read_status: false)
+        respond_json(note)
       end
     end
 
     private
+
+    def respond_json(note_or_notes)
+      sz = Serializers::UserAPI::NotificationSerializer.new(:default)
+      encode(sz.serialize(note_or_notes))
+    end
 
     def current_user
       Pliny::RequestStore.store.fetch(:current_user)
