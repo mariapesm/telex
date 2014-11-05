@@ -41,12 +41,6 @@ module Endpoints
 
     private
 
-    def data
-      MultiJson.decode(request.body.read).tap do
-        request.body.rewind
-      end
-    end
-
     def current_producer
       Pliny::RequestStore.store.fetch(:current_producer)
     end

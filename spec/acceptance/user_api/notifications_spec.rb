@@ -47,8 +47,8 @@ describe Endpoints::UserAPI::Notifications do
   end
 
   describe 'PATCH /user/notifications/:id' do
-    def do_patch(id: @notification.id, body: {})
-      patch "/user/notifications/#{id}", body
+    def do_patch(id: @notification.id, body: {read: true})
+      patch "/user/notifications/#{id}", MultiJson.encode(body)
     end
 
     before do

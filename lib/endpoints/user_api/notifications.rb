@@ -11,8 +11,8 @@ module Endpoints
       end
 
       patch '/:id' do |id|
-        note = Mediators::Notifications::ReadStatusUpdater.run(notification: get_note(id), read_status: false)
-        respond_json(note)
+        note = Mediators::Notifications::ReadStatusUpdater.run(notification: get_note(id), read_status: get_status)
+        encode(note)
       end
     end
 
@@ -32,6 +32,12 @@ module Endpoints
       note = ::Notification[id: id, user_id: current_user.id]
       raise Pliny::Errors::NotFound unless note
       note
+    end
+
+    def get_status
+      data.fetch('read')
+    rescue KeyError
+      raise Pliny::Errors::UnprocessableEntity
     end
 
   end
