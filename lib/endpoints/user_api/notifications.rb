@@ -12,7 +12,7 @@ module Endpoints
 
       patch '/:id' do |id|
         note = Mediators::Notifications::ReadStatusUpdater.run(notification: get_note(id), read_status: get_status)
-        encode(note)
+        respond_json(note)
       end
     end
 
