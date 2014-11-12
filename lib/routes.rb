@@ -9,7 +9,10 @@ Routes = Rack::Builder.new do
       default: Config.versioning_default,
       app_name: Config.versioning_app_name if Config.versioning?
   use Rack::Deflater
+
+  use Rack::ConditionalGet
   use Rack::ETag
+
   use Rack::MethodOverride
   use Rack::SSL if Config.force_ssl?
 
