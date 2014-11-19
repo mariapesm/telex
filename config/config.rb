@@ -25,6 +25,7 @@ module Config
   optional :versioning_default
 
   # Override -- value is returned or the set default
+  override :cache_user_auth,  true,  bool
   override :db_pool,          5,     int
   override :force_ssl,        true,  bool
   override :port,             5000,  int

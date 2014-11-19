@@ -11,7 +11,7 @@ module Middleware
     describe "#call" do
       before do
         expect(Rack::Auth::Basic::Request).to receive(:new)
-          .with(rack_env).and_return(rack_auth)
+          .at_least(:once).with(rack_env).and_return(rack_auth)
 
         stub_request(:get, /heroku/).to_return(status: 403)
       end
@@ -41,7 +41,7 @@ module Middleware
 
       describe "with correct credentials" do
         before do
-          expect(app).to receive(:call).with(rack_env)
+          expect(app).to receive(:call).at_least(:once).with(rack_env)
           @user_info = HerokuAPIMock.create_heroku_user
           allow(rack_auth).to receive_messages(provided?: true, basic?: true, credentials: ["", @user_info.api_key])
         end
@@ -62,6 +62,20 @@ module Middleware
           }.to change(User, :count).by(1)
           expect(Pliny::RequestStore.store[:current_user]).to_not be_nil
           expect(Pliny::RequestStore.store[:current_user].heroku_id).to eq(@user_info.heroku_id)
+        end
+
+        describe "caching" do
+          it "caches the user so only the first request makes a call to API" do
+            allow(Config).to receive(:cache_user_auth?).and_return(true)
+            2.times { auther.call(rack_env) }
+            expect(a_request(:any, %r(api.heroku.com))).to have_been_made.once
+          end
+
+          it "doesn't cache when the flag is off" do
+            allow(Config).to receive(:cache_user_auth?).and_return(false)
+            2.times { auther.call(rack_env) }
+            expect(a_request(:any, %r(api.heroku.com))).to have_been_made.twice
+          end
         end
       end
     end
