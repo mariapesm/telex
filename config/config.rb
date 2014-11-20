@@ -19,8 +19,9 @@ module Config
   mandatory :mailgun_smtp_server
 
   # Optional -- value is returned or `nil` if it wasn't present.
-  optional :console_banner
   optional :additional_api_headers
+  optional :deployment
+  optional :console_banner
   optional :versioning_app_name
   optional :versioning_default
 
