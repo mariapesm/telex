@@ -22,15 +22,13 @@ module Mediators::Followups
 
     def notify_users
       users.each do |user|
-        mail = Mail.new
-        mail.to          = user.email
-        mail.from        = 'Heroku <bot@heroku.com>'
-        mail.in_reply_to = "<#{message.id}@notifications.heroku.com>"
-        mail.subject     = message.title
-        mail.body        = followup.body
-
-        mail.deliver!
-        Telex::Sample.count "emails"
+        emailer = Telex::Emailer.new(
+          email: user.email,
+          in_reply_to: message.id,
+          subject: message.title,
+          body: followup.body
+        )
+        emailer.deliver!
       end
     end
   end

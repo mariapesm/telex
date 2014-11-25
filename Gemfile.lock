@@ -100,6 +100,7 @@ GEM
     rb-fsevent (0.9.4)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
+    redcarpet (3.2.1)
     redis (3.1.0)
     redis-namespace (1.5.1)
       redis (~> 3.0, >= 3.0.4)
@@ -164,6 +165,7 @@ DEPENDENCIES
   committee
   database_cleaner
   dotenv
+  erubis
   excon
   fabrication
   faker
@@ -181,6 +183,7 @@ DEPENDENCIES
   rack-ssl
   rack-test
   rake
+  redcarpet
   rollbar
   rspec
   sequel

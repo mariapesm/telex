@@ -15,16 +15,15 @@ module Mediators::Notifications
     attr_accessor :user, :message, :notification
 
     def send_email
-      mail = Mail.new
-      mail.to         = user.email
-      mail.from       = 'Heroku <bot@heroku.com>'
-      mail.message_id = "<#{message.id}@notifications.heroku.com>"
-      mail.subject    = message.title
-      mail.body       = message.body
-
-      mail.deliver!
-      Telex::Sample.count "emails"
+      emailer = Telex::Emailer.new(
+        email: user.email,
+        message_id: message.id,
+        subject: message.title,
+        body: message.body,
+      )
+      emailer.deliver!
     end
+
   end
 end
 
