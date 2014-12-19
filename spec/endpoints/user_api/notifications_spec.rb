@@ -32,4 +32,18 @@ describe Endpoints::UserAPI::Notifications do
       expect(note.read_at).to be_nil
     end
   end
+
+  describe "GET /user/notifications/:id/read.png" do
+    before do
+      Pliny::RequestStore.store.delete(:current_user)
+    end
+
+    it "can set read to now without a user" do
+      note = Fabricate(:notification, user: @user, read_at: nil)
+      get "/notifications/#{note.id}/read.png"
+      expect(last_response.status).to eq(200)
+      note.reload
+      expect(note.read_at).to_not be_nil
+    end
+  end
 end

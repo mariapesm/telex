@@ -3,7 +3,7 @@ require "spec_helper"
 module Middleware
   describe ProducerAuthenticator do
     let(:app)       { double(:app) }
-    let(:rack_env)  { double(:rack_env) }
+    let(:rack_env)  { Hash.new }
     let(:rack_auth) { double(:auth) }
 
     let(:auther) { UserAuthenticator.new(app) }

@@ -89,7 +89,22 @@ describe Endpoints::UserAPI::Notifications do
         do_patch
         expect(last_response.status).to eq(200)
       end
+    end
+  end
 
+  describe 'GET /user/notifications/:id/read.png' do
+    before do
+      @notification = Fabricate(:notification)
+    end
+
+    it 'returns a 200 for vaild notifications even without auth' do
+      get "/user/notifications/#{@notification.id}/read.png"
+      expect(last_response.status).to eq(200)
+    end
+
+    it 'returns a 404 for invalid notificaitons' do
+      get "/user/notifications/#{SecureRandom.uuid}/read.png"
+      expect(last_response.status).to eq(404)
     end
   end
 

@@ -5,6 +5,10 @@ module Middleware
     end
 
     def call(env)
+      if skip_auth?(env['PATH_INFO'])
+        return @app.call(env)
+      end
+
       auth = Rack::Auth::Basic::Request.new(env)
       unless auth.provided? && auth.basic? && auth.credentials
         raise Pliny::Errors::Unauthorized
@@ -23,6 +27,10 @@ module Middleware
     end
 
     private
+
+    def skip_auth?(path)
+      path && path.end_with?("/read.png")
+    end
 
     def lookup_user(key:)
       return nil unless key =~ Pliny::Middleware::RequestID::UUID_PATTERN

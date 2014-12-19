@@ -14,6 +14,14 @@ module Endpoints
         note = Mediators::Notifications::ReadStatusUpdater.run(notification: get_note(id), read_status: get_status)
         respond_json(note)
       end
+
+      get '/:id/read.png' do |id|
+        note = ::Notification[id: id]
+        raise Pliny::Errors::NotFound unless note
+        Mediators::Notifications::ReadStatusUpdater.run(notification: note, read_status: true)
+
+        send_file 'read.png'
+      end
     end
 
     private
