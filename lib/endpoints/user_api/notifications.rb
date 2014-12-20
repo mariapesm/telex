@@ -20,7 +20,7 @@ module Endpoints
         raise Pliny::Errors::NotFound unless note
         Mediators::Notifications::ReadStatusUpdater.run(notification: note, read_status: true)
 
-        send_file 'read.png'
+        send_file './lib/templates/read.png'
       end
     end
 

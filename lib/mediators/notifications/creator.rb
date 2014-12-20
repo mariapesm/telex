@@ -17,7 +17,7 @@ module Mediators::Notifications
     def send_email
       emailer = Telex::Emailer.new(
         email: user.email,
-        message_id: message.id,
+        notification_id: notification.id,
         subject: message.title,
         body: message.body,
       )

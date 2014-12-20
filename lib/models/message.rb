@@ -1,6 +1,7 @@
 class Message < Sequel::Model
   many_to_many :users, join_table: :notifications
   many_to_one :producer
+  one_to_many :notifications
   one_to_many :followup
 
   plugin :timestamps

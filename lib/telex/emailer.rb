@@ -5,9 +5,9 @@ require 'mail'
 class Telex::Emailer
   HTML_TEMPLATE = File.read(File.expand_path('../../templates/email.html.erb', __FILE__))
 
-  def initialize(email:, message_id: nil, in_reply_to: nil, subject:, body:)
+  def initialize(email:, notification_id: nil, in_reply_to: nil, subject:, body:)
     self.email = email
-    self.message_id = message_id
+    self.notification_id = notification_id
     self.in_reply_to = in_reply_to
     self.subject = subject
     self.body = body
@@ -15,14 +15,14 @@ class Telex::Emailer
 
   def deliver!
     mail = Mail.new
-    mail.to         = email
-    mail.from       = 'Heroku Notifications <bot@heroku.com>'
-    if message_id
-      mail.message_id = "<#{message_id}@notifications.heroku.com>"
+    mail.to      = email
+    mail.from    = 'Heroku Notifications <bot@heroku.com>'
+    mail.subject = subject
+    if notification_id
+      mail.message_id = "<#{notification_id}@notifications.heroku.com>"
     elsif in_reply_to
       mail.in_reply_to = "<#{in_reply_to}@notifications.heroku.com>"
     end
-    mail.subject    = subject
 
     text_part = Mail::Part.new
     text_part.body = body
@@ -38,7 +38,7 @@ class Telex::Emailer
   end
 
   private
-  attr_accessor :email, :message_id, :subject, :body, :in_reply_to
+  attr_accessor :email, :notification_id, :subject, :body, :in_reply_to
 
   def generate_html
     markdown = Redcarpet::Markdown.new(
@@ -47,6 +47,18 @@ class Telex::Emailer
       autolink: true
     )
     rendered_body = markdown.render(body)
-    Erubis::Eruby.new(HTML_TEMPLATE).result(body: rendered_body)
+
+    Erubis::Eruby.new(HTML_TEMPLATE).result(body: rendered_body, png_url: png_url)
+  end
+
+  def png_url
+    id = notification_id || in_reply_to
+    return nil unless id
+
+    if Config.deployment == 'production'
+      "https://telex.heroku.com/user/notifications/#{id}/read.png"
+    elsif Config.deployment == 'staging'
+      "https://telex-staging.herokuapp.com/user/notifications/#{id}/read.png"
+    end
   end
 end

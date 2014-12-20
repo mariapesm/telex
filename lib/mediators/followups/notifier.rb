@@ -1,10 +1,10 @@
 module Mediators::Followups
   class Notifier < Mediators::Base
-    attr_accessor :followup, :message, :users
+    attr_accessor :followup, :message, :notifications
     def initialize(followup: followup)
       self.followup = followup
       self.message = followup.message
-      self.users = message.users
+      self.notifications = message.notifications
     end
 
     def call
@@ -15,16 +15,18 @@ module Mediators::Followups
     private
 
     def update_users
-      users.each do |user|
+      notifications.each do |note|
+        user = note.user
         Mediators::Messages::UserUserFinder.run(target_id: user.heroku_id)
       end
     end
 
     def notify_users
-      users.each do |user|
+      notifications.each do |note|
+        user = note.user
         emailer = Telex::Emailer.new(
           email: user.email,
-          in_reply_to: message.id,
+          in_reply_to: note.id,
           subject: message.title,
           body: followup.body
         )
