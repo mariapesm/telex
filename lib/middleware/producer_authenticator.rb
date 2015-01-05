@@ -11,6 +11,11 @@ module Middleware
       end
 
       id, api_key = auth.credentials
+
+      unless id =~ Pliny::Middleware::RequestID::UUID_PATTERN
+        raise Pliny::Errors::Unauthorized
+      end
+
       producer = Producer.find_by_creds(id: id, api_key: api_key)
       unless producer
         raise Pliny::Errors::Unauthorized

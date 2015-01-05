@@ -27,7 +27,13 @@ describe Endpoints::ProducerAPI::Messages do
     end
 
     context 'with bad creds' do
-      it '401s' do
+      it '401s with no creds' do
+        do_post
+        expect(last_response.status).to eq(401)
+      end
+
+      it '401s also with malformed producer user id' do
+        authorize 'not_a_uuid', 'whatever'
         do_post
         expect(last_response.status).to eq(401)
       end
