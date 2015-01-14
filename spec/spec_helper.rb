@@ -10,8 +10,6 @@ require_relative "../lib/initializer"
 
 require 'sidekiq/testing'
 require 'webmock/rspec'
-
-
 # pull in test initializers
 Pliny::Utils.require_glob("#{Config.root}/spec/support/**/*.rb")
 
