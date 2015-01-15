@@ -6,5 +6,7 @@ unless Config.rack_env == 'test'
     config.use_sucker_punch
     config.disable_monkey_patch = true
   end
+
+  require 'rollbar/sidekiq'
 end
 
