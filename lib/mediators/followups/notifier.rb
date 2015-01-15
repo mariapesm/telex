@@ -1,7 +1,7 @@
 module Mediators::Followups
   class Notifier < Mediators::Base
     attr_accessor :followup, :message, :notifications
-    def initialize(followup: followup)
+    def initialize(followup: )
       self.followup = followup
       self.message = followup.message
       self.notifications = message.notifications
