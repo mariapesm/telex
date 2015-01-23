@@ -17,6 +17,7 @@ describe Endpoints::ProducerAPI::Messages do
       @message_body = {
         title: 'Congratulations',
         body: 'You are a winner',
+        action: {url: 'https://foo', label: 'Redeem prize!'},
         target: {type: 'user', id: SecureRandom.uuid}
       }
     end
@@ -31,6 +32,12 @@ describe Endpoints::ProducerAPI::Messages do
         expect(Message.where(producer: @producer).count).to eq(0)
         do_post
         expect(Message.where(producer: @producer).count).to eq(1)
+        msg = Message.last
+        expect(msg.title).to eq('Congratulations')
+        expect(msg.body).to eq('You are a winner')
+        expect(msg.action_label).to eq('Redeem prize!')
+        expect(msg.action_url).to eq('https://foo')
+        expect(msg.target_type).to eq('user')
       end
 
       it "returns the message's id" do

@@ -11,6 +11,8 @@ module Endpoints
             producer: current_producer,
             title:       data['title'],
             body:        data['body'],
+            action_label:  data['action'] && data['action']['label'],
+            action_url:  data['action'] && data['action']['url'],
             target_type: data['target'] && data['target']['type'],
             target_id:   data['target'] && data['target']['id']
           )

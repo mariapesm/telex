@@ -6,6 +6,8 @@ describe Mediators::Messages::Creator do
     @creator = described_class.new(producer: producer,
                                   title: Faker::Company.bs,
                                   body: Faker::Company.catch_phrase,
+                                  action_label: 'Visit!',
+                                  action_url: Faker::Internet.url,
                                   target_type: 'user',
                                   target_id: SecureRandom.uuid)
 
