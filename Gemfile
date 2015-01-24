@@ -39,6 +39,7 @@ group :test do
   gem "fabrication"
   gem "faker"
   gem "guard-rspec"
+  gem "nokogiri"
   gem "rack-test"
   gem "rspec"
   gem "webmock"

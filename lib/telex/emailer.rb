@@ -5,12 +5,13 @@ require 'mail'
 class Telex::Emailer
   HTML_TEMPLATE = File.read(File.expand_path('../../templates/email.html.erb', __FILE__))
 
-  def initialize(email:, notification_id: nil, in_reply_to: nil, subject:, body:)
+  def initialize(email:, notification_id: nil, in_reply_to: nil, subject:, body:, action: nil)
     self.email = email
     self.notification_id = notification_id
     self.in_reply_to = in_reply_to
     self.subject = subject
     self.body = body
+    self.action = action
   end
 
   def deliver!
@@ -35,10 +36,11 @@ class Telex::Emailer
 
     mail.deliver!
     Telex::Sample.count "emails"
+    mail
   end
 
   private
-  attr_accessor :email, :notification_id, :subject, :body, :in_reply_to
+  attr_accessor :email, :notification_id, :subject, :body, :in_reply_to, :action
 
   def generate_html
     markdown = Redcarpet::Markdown.new(
@@ -48,7 +50,10 @@ class Telex::Emailer
     )
     rendered_body = markdown.render(body)
 
-    Erubis::Eruby.new(HTML_TEMPLATE).result(body: rendered_body, png_url: png_url)
+    Erubis::Eruby.new(HTML_TEMPLATE).result(
+      body: rendered_body,
+      png_url: png_url,
+      email_action_ld: email_action_ld)
   end
 
   def png_url
@@ -60,5 +65,18 @@ class Telex::Emailer
     elsif Config.deployment == 'staging'
       "https://telex-staging.herokuapp.com/user/notifications/#{id}/read.png"
     end
+  end
+
+  def email_action_ld
+    return unless action
+    {
+      "@context" => "http://schema.org",
+      "@type" => "EmailMessage",
+      "action" => {
+        "@type" => "ViewAction",
+        "url" => action[:url],
+        "name" => action[:label]
+      }
+    }
   end
 end
