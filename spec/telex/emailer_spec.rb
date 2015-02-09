@@ -9,6 +9,11 @@ describe Telex::Emailer do
     expect(mail.from).to eq(%w( bot@heroku.com ))
   end
 
+  it 'sets a custom from' do
+    options.merge!(from: 'api@heroku.com')
+    expect(mail.from).to(eq(%w( api@heroku.com )))
+  end
+
   it 'sets the subject' do
     expect(mail.subject).to eq('hi')
   end

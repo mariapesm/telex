@@ -5,19 +5,20 @@ require 'mail'
 class Telex::Emailer
   HTML_TEMPLATE = File.read(File.expand_path('../../templates/email.html.erb', __FILE__))
 
-  def initialize(email:, notification_id: nil, in_reply_to: nil, subject:, body:, action: nil)
+  def initialize(email:, notification_id: nil, in_reply_to: nil, subject:, body:, action: nil, from: nil)
     self.email = email
     self.notification_id = notification_id
     self.in_reply_to = in_reply_to
     self.subject = subject
     self.body = body
     self.action = action
+    self.from = from
   end
 
   def deliver!
     mail = Mail.new
     mail.to      = email
-    mail.from    = 'Heroku Notifications <bot@heroku.com>'
+    mail.from    = from || 'Heroku Notifications <bot@heroku.com>'
     mail.subject = subject
     if notification_id
       mail.message_id = "<#{notification_id}@notifications.heroku.com>"
@@ -40,7 +41,7 @@ class Telex::Emailer
   end
 
   private
-  attr_accessor :email, :notification_id, :subject, :body, :in_reply_to, :action
+  attr_accessor :email, :notification_id, :subject, :body, :in_reply_to, :action, :from
 
   def generate_html
     markdown = Redcarpet::Markdown.new(
