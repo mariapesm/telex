@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'rexml/document'
 
 describe Telex::Emailer do
   let(:options) {{ email: 'foo@bar.com', subject: 'hi', body: 'ohhai' }}
@@ -25,9 +26,9 @@ describe Telex::Emailer do
     end
 
     it 'adds a script to the html body' do
-      body = Nokogiri::HTML(mail.html_part.body.decoded)
-      script = body.xpath("//script").first
-      expect(script[:type]).to eq('application/ld+json')
+      doc = REXML::Document.new(mail.html_part.body.decoded)
+      script = doc.get_elements("//script").first
+      expect(script.attributes["type"]).to eq('application/ld+json')
       ld_json = MultiJson.load(script.text)
       expect(ld_json['@context']).to eq('http://schema.org')
       expect(ld_json['action']['@type']).to eq('ViewAction') # only supported Gmail type for now
