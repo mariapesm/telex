@@ -30,9 +30,9 @@ describe Mediators::Notifications::Lister, '#call' do
 
     it 'does not include notificaitons for other users' do
       user2 = Fabricate(:user)
-      note = Fabricate(:notification, user_id: user2.id, message_id: @m1.id, created_at: DateTime.new(2012,2,2))
+      note = Fabricate(:notification, user: user2)
 
-      expect(lister.call).to_not match(note)
+      expect(lister.call).to_not include(note)
     end
 
     it 'only makes one query even when the associated parts are touched' do
