@@ -8,6 +8,7 @@ module Mediators::Notifications
       Notification
        .eager_graph(:message=>:followup)
        .where(user: @user)
+       .where("notifications.created_at > now() - '1 month'::interval")
        .order(Sequel.desc(:created_at))
        .all
     end

@@ -19,13 +19,19 @@ describe Mediators::Notifications::Lister, '#call' do
       @m1 = Fabricate(:message, producer: @p1)
       @m2 = Fabricate(:message, producer: @p1)
       @f1 = Fabricate(:followup, message: @m1)
-      @n1 = Fabricate(:notification, user: @user, message: @m1, created_at: DateTime.new(2012,2,2))
-      @n2 = Fabricate(:notification, user: @user, message: @m2, created_at: DateTime.new(2014,4,4))
+      @n1 = Fabricate(:notification, user: @user, message: @m1, created_at: DateTime.now - 1)
+      @n2 = Fabricate(:notification, user: @user, message: @m2, created_at: DateTime.now)
     end
 
     it 'returns the notifications in a sorted array' do
       expect(@n2.created_at).to be > @n1.created_at
       expect(lister.call).to eq([@n2, @n1])
+    end
+
+    it 'does not include notificaitons for older than one month' do
+      @m3 = Fabricate(:message, producer: @p1)
+      @n3 = Fabricate(:notification, user: @user, message: @m3, created_at: DateTime.now - 35)
+      expect(lister.call).to_not include(@n3)
     end
 
     it 'does not include notificaitons for other users' do
