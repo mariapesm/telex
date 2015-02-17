@@ -11,4 +11,9 @@ class Message < Sequel::Model
     super
     validates_presence %i(target_type target_id title body producer_id)
   end
+
+  def action
+    return unless action_label && action_url
+    { label: action_label, url: action_url }
+  end
 end

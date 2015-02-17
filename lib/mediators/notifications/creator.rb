@@ -20,6 +20,7 @@ module Mediators::Notifications
         notification_id: notification.id,
         subject: message.title,
         body: message.body,
+        action: message.action,
       )
       emailer.deliver!
     end
