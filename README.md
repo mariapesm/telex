@@ -12,7 +12,7 @@ A producer can send a `Message` to 𝕋𝔼𝕃𝔼𝕏 through the API directly
 
 A Message has a title, body and can target either an App or a single User. If it is an app, 𝕋𝔼𝕃𝔼𝕏 looks up the owner and all collaborators. If it's a user, it just looks up the user.
 
-The message is then plexed to potentially several `Notifications` for each user. This sends an email to the user, and the notification will show up in the user's `/user/notifications/` endpoint on 𝕋𝔼𝕃𝔼𝕏. Users can access this with a Heroku oauth token or through services such as <https://dashboard.heroku.com>.
+The message is then plexed to potentially several `Notifications` for each user. This sends an email to the user, and the notification will show up in the user's `/user/notifications/` endpoint on 𝕋𝔼𝕃𝔼𝕏. Users can access this with a Heroku oauth token or through services such as <https://dashboard.heroku.com>. Notifications are in this endoint for one month.
 
 
 ## Setup
