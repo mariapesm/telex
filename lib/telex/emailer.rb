@@ -5,7 +5,7 @@ require 'mail'
 class Telex::Emailer
   HTML_TEMPLATE = File.read(File.expand_path('../../templates/email.html.erb', __FILE__))
 
-  def initialize(email:, notification_id: nil, in_reply_to: nil, subject:, body:, action: nil, from: nil)
+  def initialize(email:, notification_id: nil, in_reply_to: nil, subject:, body:, action: nil, from: nil, context: {})
     self.email = email
     self.notification_id = notification_id
     self.in_reply_to = in_reply_to
@@ -13,6 +13,7 @@ class Telex::Emailer
     self.body = body
     self.action = action
     self.from = from
+    self.context = context
   end
 
   def deliver!
@@ -27,7 +28,7 @@ class Telex::Emailer
     end
 
     text_part = Mail::Part.new
-    text_part.body = body
+    text_part.body = Erubis::Eruby.new(body).result(context)
     mail.text_part = text_part
 
     html_part = Mail::Part.new
@@ -41,7 +42,7 @@ class Telex::Emailer
   end
 
   private
-  attr_accessor :email, :notification_id, :subject, :body, :in_reply_to, :action, :from
+  attr_accessor :email, :notification_id, :subject, :body, :in_reply_to, :action, :from, :context
 
   def generate_html
     markdown = Redcarpet::Markdown.new(

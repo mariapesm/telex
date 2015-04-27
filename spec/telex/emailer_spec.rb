@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'rexml/document'
 
 describe Telex::Emailer do
-  let(:options) {{ email: 'foo@bar.com', subject: 'hi', body: 'ohhai' }}
+  let(:options) {{email: 'foo@bar.com', subject: 'hi', body: '<%= app_name %>', context: { app_name: 'testing' } }}
   let(:emailer) { Telex::Emailer.new(options) }
   let(:mail)    { emailer.deliver! }
 
@@ -17,6 +17,10 @@ describe Telex::Emailer do
 
   it 'sets the subject' do
     expect(mail.subject).to eq('hi')
+  end
+
+  it 'applies templating to the text body' do
+    expect(mail.text_part.body.decoded).to eq('testing')
   end
 
   # see https://developers.google.com/gmail/markup/actions/actions-overview
