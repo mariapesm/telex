@@ -7,11 +7,11 @@ describe UserFinder, '.from_message' do
     UserFinder.from_message(message)
   end
 
-  it 'creates a finder for messages targiting a user' do
+  it 'creates a finder for messages targeting a user' do
     expect( finder_from_message_type('user') ).to be_instance_of(UserUserFinder)
   end
 
-  it 'creates a finder for messages targiting an app' do
+  it 'creates a finder for messages targeting an app' do
     expect( finder_from_message_type('app') ).to be_instance_of(AppUserFinder)
   end
 

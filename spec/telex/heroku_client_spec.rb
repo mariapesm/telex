@@ -7,7 +7,7 @@ describe Telex::HerokuClient, '#new' do
     expect(uri_string).to_not be_blank
   end
 
-  it 'allows subsutition of another api key' do
+  it 'allows substitution of another api key' do
     key = SecureRandom.uuid
     uri = Telex::HerokuClient.new(api_key: key).uri
     expect(uri.to_s).to_not eq(Config.heroku_api_url)
