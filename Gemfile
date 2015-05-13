@@ -8,8 +8,8 @@ gem "multi_json"
 gem "oj"
 gem "pg"
 gem "pliny"
-gem "pry"
-gem "pry-doc"
+gem "pry", require: false
+gem "pry-doc", require: false
 gem "puma"
 gem "rack-ssl"
 gem "rake"
