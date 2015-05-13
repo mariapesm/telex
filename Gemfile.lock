@@ -15,6 +15,7 @@ GEM
       slop (~> 3.6)
     celluloid (0.16.0)
       timers (~> 4.0.0)
+    clockwork (0.2.3)
     coderay (1.1.0)
     columnize (0.9.0)
     committee (1.6.2)
@@ -174,6 +175,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  clockwork
   committee
   database_cleaner
   dotenv
