@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require_relative '../lib/application'
+require 'pry'
 
 def basic_prompt(target_self, nest_level, pry)
   # override CONSOLE_BANNER to include something like a release identifier
