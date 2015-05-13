@@ -6,7 +6,7 @@ module Clockwork
   every(10.seconds, 'monitor_queue') do
     Thread.new do
       stats = Sidekiq::Stats.new
-      Telex::Sample.count "jobs.queue", value: stats.enqueued
+      Telex::Sample.sample "jobs.queue", value: stats.enqueued
     end
   end
 end

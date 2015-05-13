@@ -2,11 +2,11 @@ module Telex
   class SidekiqInstrumenter
     def call(worker, msg, queue, &block)
       begin
-        Telex::Sample.measure("jobs.locked")
+        Telex::Sample.count("jobs.locked")
         Telex::Sample.measure("jobs.duration", &block)
-        Telex::Sample.measure("jobs.success")
+        Telex::Sample.count("jobs.success")
       rescue Exception
-        Telex::Sample.measure("jobs.failure")
+        Telex::Sample.count("jobs.failure")
         raise
       end
     end
