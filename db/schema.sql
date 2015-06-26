@@ -74,7 +74,9 @@ CREATE TABLE messages (
     target_type message_target NOT NULL,
     target_id uuid NOT NULL,
     title text NOT NULL,
-    body text NOT NULL
+    body text NOT NULL,
+    action_label text,
+    action_url text
 );
 
 
@@ -284,3 +286,4 @@ INSERT INTO "schema_migrations" ("filename") VALUES ('1413499263_create_followup
 INSERT INTO "schema_migrations" ("filename") VALUES ('1413499264_add_indexes.rb');
 INSERT INTO "schema_migrations" ("filename") VALUES ('1415147638_notification-add-read-at.rb');
 INSERT INTO "schema_migrations" ("filename") VALUES ('1415930380_add-constraints.rb');
+INSERT INTO "schema_migrations" ("filename") VALUES ('1422056536_add_action_to_messages.rb');
