@@ -16,7 +16,7 @@ describe UserFinder, '.from_message' do
   end
 
   it 'blows up on messages with strange types' do
-    expect{ finder_from_message_type('nonsense') }.to raise_error
+    expect{ finder_from_message_type('nonsense') }.to raise_error(RuntimeError)
   end
 end
 
