@@ -1,5 +1,9 @@
 module Mediators::Messages
   class Cleanup < Mediators::Base
+    def initialize(options=nil)
+      # required by Mediator api
+    end
+
     def call
       db = Sequel::Model.db
       db.transaction do
