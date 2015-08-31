@@ -9,12 +9,15 @@ module Middleware
         return @app.call(env)
       end
 
-      auth = Rack::Auth::Basic::Request.new(env)
-      unless auth.provided? && auth.basic? && auth.credentials
-        raise Pliny::Errors::Unauthorized
+      if /Bearer/.match(env['HTTP_AUTHORIZATION'])
+        api_key = /\ABearer (.+)\z/.match(env['HTTP_AUTHORIZATION'])[1]
+      else
+        auth = Rack::Auth::Basic::Request.new(env)
+        unless auth.provided? && auth.basic? && auth.credentials
+          raise Pliny::Errors::Unauthorized
+        end
+        _, api_key = auth.credentials
       end
-
-      _, api_key = auth.credentials
 
       user = lookup_user(key: api_key)
 
