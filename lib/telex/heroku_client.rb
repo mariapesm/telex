@@ -27,6 +27,10 @@ module Telex
       get("/apps/#{app_uuid}/collaborators")
     end
 
+    def organization_members(organization_name)
+      get("/organizations/#{organization_name}/members")
+    end
+
     private
 
     def client
