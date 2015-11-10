@@ -55,7 +55,7 @@ end
 
 describe AppUserFinder, "#call" do
   before do
-    @id = "01234567-89ab-cdef-0123-456789abcdef"
+    @id = SecureRandom.uuid
     @finder = AppUserFinder.new(target_id: @id)
 
     @owner_id   = HerokuApiStub::OWNER_ID
@@ -93,5 +93,53 @@ describe AppUserFinder, "#call" do
 
     collab1 = result.detect {|uwr| uwr.user.heroku_id == @collab1_id }
     expect(collab1.role).to eq(:collaborator)
+  end
+
+  it 'fetches organization owners' do
+    stub_heroku_api do
+      get "/apps/:id" do |id|
+        MultiJson.encode(
+          name: "example",
+          owner: {
+            id:    SecureRandom.uuid,
+            email: "organization@herokumanager.com",
+          })
+      end
+
+      get "/organizations/:name/members" do
+        MultiJson.encode([
+          {
+            role: 'admin',
+            user: {
+              id: SecureRandom.uuid,
+              email: 'someone@example.com'
+            }
+          },
+          {
+            role: 'admin',
+            user: {
+              id: SecureRandom.uuid,
+              email: 'username2@example.com'
+            }
+          },
+          {
+            role: 'member',
+            user: {
+              id: SecureRandom.uuid,
+              email: 'member@example.com'
+            }
+          }
+        ])
+      end
+    end
+
+    result = @finder.call
+    emails = result.map {|role| role.user[:email] }
+
+    expect(emails.uniq).to eql(emails)
+    expect(emails).to include('someone@example.com')
+    expect(emails).to include('username2@example.com')
+    expect(emails).not_to include('member@example.com')
+    expect(emails).not_to include('organization@herokumanager.com')
   end
 end

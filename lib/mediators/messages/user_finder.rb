@@ -78,12 +78,22 @@ module Mediators::Messages
       owner_response  = heroku_client.app_info(target_id)
       collab_response = heroku_client.app_collaborators(target_id)
 
-      owner = extract_user(:owner, owner_response.fetch('owner') )
-      collabs = collab_response.map do |row|
-        extract_user(:collaborator, row.fetch('user'))
+      owner_email = owner_response.fetch('owner').fetch('email')
+      if owner_email.end_with?('@herokumanager.com')
+        org_members_response = heroku_client.organization_members(owner_email.split('@').first)
+        org_admins = org_members_response.select { |member| member.fetch('role') == 'admin' }
+        owners = org_admins.map do |admin|
+          extract_user(:owner, admin.fetch('user'))
+        end
+      else
+        owners = [ extract_user(:owner, owner_response.fetch('owner') ) ]
       end
 
-      self.users_details = [owner] + collabs
+      collabs = collab_response.map do |row|
+        extract_user(:collaborator, row.fetch('user'))
+      end.compact
+
+      self.users_details = (owners + collabs).uniq {|u| u[:email] }
     end
   end
 end
