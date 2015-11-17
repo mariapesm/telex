@@ -21,8 +21,20 @@ $ git push staging master
 
 ## Test in Staging:
 
-1. Create a new producer on staging or update the api key for an existing one https://github.com/heroku/engineering-docs/blob/master/components/telex/user-guide.md#create-a-new-producer
-2. Then use https://github.com/heroku/minitel or curl to send a test message to an app you control, and see if the notification goes through.
+First, create a new producer on staging or update the api key for an existing one https://github.com/heroku/engineering-docs/blob/master/components/telex/user-guide.md#create-a-new-producer
+
+Now send a test message to see if it goes through:
+
+```ruby
+require 'minitel'
+
+# create a client
+client = Minitel::Client.new("https://user:pass@telex-staging.herokuapp.com")
+
+# send a notification to the owner and collaborators of an app
+client.notify_app(app_uuid: '...', title: 'Your database is on fire!', body: 'Sorry.')
+# => {"id"=>"uuid of message"}
+```
 
 ## Deploy to Production:
 
