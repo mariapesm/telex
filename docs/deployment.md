@@ -15,6 +15,7 @@ $ git:remote -a telex -r production
 ## Deploy to Staging:
 
 ```
+$ heroku preauth -a telex-staging
 $ git push staging master
 ```
 
@@ -26,5 +27,6 @@ $ git push staging master
 ## Deploy to Production:
 
 ```
+$ heroku preauth -a telex
 $ git push production master
 ```
