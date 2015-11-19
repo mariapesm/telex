@@ -13,4 +13,31 @@ describe Telex::HerokuClient, '#new' do
     expect(uri.to_s).to_not eq(Config.heroku_api_url)
     expect(uri.password).to eq(key)
   end
+
+  it 'handles requests' do
+    client = Telex::HerokuClient.new
+    stub_request(:get, "#{client.uri}/organizations/foobar/members").
+      to_return(status: 200, body: [{'id' => 1}].to_json)
+
+    expect(client.organization_members('foobar')).to eql([{'id' => 1}])
+  end
+
+  it 'handles ranges' do
+    client = Telex::HerokuClient.new
+    stub_request(:get, "#{client.uri}/organizations/foobar/members").
+      with(headers: {'Range'=>''}).
+      to_return(
+        status: 206,
+        body: [{'id' => 1}].to_json,
+        headers: {
+          'Next-Range' => ']1..'
+        }
+      )
+
+      stub_request(:get, "#{client.uri}/organizations/foobar/members").
+        with(headers: {'Range'=>']1..'}).
+        to_return(status: 206, body: [{'id' => 2}].to_json)
+
+    expect(client.organization_members('foobar')).to eql([{'id' => 1}, {'id' => 2}])
+  end
 end

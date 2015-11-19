@@ -37,10 +37,11 @@ module Telex
       @client ||= Excon.new(uri.to_s)
     end
 
-    def headers(base_headers_only: false, user: nil)
+    def headers(base_headers_only: false, user: nil, range: nil)
       base = {
-        "Accept" => "application/vnd.heroku+json; version=3",
-        "User-Agent" => "telex"
+        "Accept"     => "application/vnd.heroku+json; version=3",
+        "User-Agent" => "telex",
+        "Range"      => range
       }
 
       if base_headers_only
@@ -62,10 +63,17 @@ module Telex
 
     def get(path, options={})
       response = client.get(
-        expects: 200,
+        expects: [200, 206],
         headers: headers(options),
         path:    path)
-      MultiJson.decode(response.body)
+      content = MultiJson.decode(response.body)
+
+      if response.status == 206 && response.headers.key?('Next-Range')
+        content.concat get(path, {
+          range: response.headers['Next-Range']
+        }.merge(options))
+      end
+      content
     end
   end
 end
