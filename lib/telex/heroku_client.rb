@@ -38,6 +38,8 @@ module Telex
     end
 
     def headers(base_headers_only: false, user: nil, range: nil)
+      range = "id ..; max=1000;" if range.nil?
+
       base = {
         "Accept"     => "application/vnd.heroku+json; version=3",
         "User-Agent" => "telex",

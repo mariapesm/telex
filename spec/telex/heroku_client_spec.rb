@@ -25,17 +25,17 @@ describe Telex::HerokuClient, '#new' do
   it 'handles ranges' do
     client = Telex::HerokuClient.new
     stub_request(:get, "#{client.uri}/organizations/foobar/members").
-      with(headers: {'Range'=>''}).
+      with(headers: {'Range'=>'id ..; max=1000;'}).
       to_return(
         status: 206,
         body: [{'id' => 1}].to_json,
         headers: {
-          'Next-Range' => ']1..'
+          'Next-Range' => ']1..; max=1000;'
         }
       )
 
       stub_request(:get, "#{client.uri}/organizations/foobar/members").
-        with(headers: {'Range'=>']1..'}).
+        with(headers: {'Range'=>']1..; max=1000;'}).
         to_return(status: 206, body: [{'id' => 2}].to_json)
 
     expect(client.organization_members('foobar')).to eql([{'id' => 1}, {'id' => 2}])
