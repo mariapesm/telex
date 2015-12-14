@@ -13,11 +13,12 @@ module Mediators::Messages
     end
 
     def call
-      Message.new(@args).save
-      Pliny.log(@args.merge(messages_creator: true, telex: true))
-      Jobs::MessagePlex.perform_async(@message.id)
-      Telex::Sample.count "messages"
-      @message
+      Message.new(@args).tap do |msg|
+        msg.save
+        Pliny.log(@args.merge(messages_creator: true, telex: true))
+        Jobs::MessagePlex.perform_async(msg.id)
+        Telex::Sample.count "messages"
+      end
     end
   end
 end
