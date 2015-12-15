@@ -9,7 +9,7 @@ $ git clone git@github.com:heroku/telex.git
 $ heroku apps:join -a telex-staging
 $ heroku git:remote -a telex-staging -r staging
 $ heroku apps:join -a telex
-$ git:remote -a telex -r production
+$ heroku git:remote -a telex -r production
 ```
 
 ## Deploy to Staging:
