@@ -31,9 +31,9 @@ describe Telex::Emailer do
       expect(script.attributes["type"]).to eq('application/ld+json')
       ld_json = MultiJson.load(script.text)
       expect(ld_json['@context']).to eq('http://schema.org')
-      expect(ld_json['action']['@type']).to eq('ViewAction') # only supported Gmail type for now
-      expect(ld_json['action']['name']).to eq('View app')
-      expect(ld_json['action']['url']).to eq('https://foo')
+      expect(ld_json.dig('potentialAction', '@type')).to eq('ViewAction') # only supported Gmail type for now
+      expect(ld_json.dig('potentialAction', 'name')).to eq('View app')
+      expect(ld_json.dig('potentialAction', 'target')).to eq('https://foo')
     end
   end
 end
