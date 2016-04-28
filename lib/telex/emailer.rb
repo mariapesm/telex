@@ -73,11 +73,12 @@ class Telex::Emailer
     {
       "@context" => "http://schema.org",
       "@type" => "EmailMessage",
-      "action" => {
+      "potentialAction" => {
         "@type" => "ViewAction",
-        "url" => action[:url],
+        "target" => action[:url],
         "name" => action[:label]
-      }
+      },
+      "description" => action[:label]
     }
   end
 end
