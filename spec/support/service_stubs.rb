@@ -33,8 +33,9 @@ class HerokuApiStub < Sinatra::Base
 
   get "/account" do
     MultiJson.encode(
-      id:    env["HTTP_USER"],
-      email: "username@example.com")
+      id:         env["HTTP_USER"],
+      email:      "username@example.com",
+      last_login: Time.now.utc.iso8601)
   end
 
   get "/apps/:id" do |id|

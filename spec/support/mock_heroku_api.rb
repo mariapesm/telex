@@ -8,8 +8,9 @@ module HerokuAPIMock
     user = HerokuMockUser.new(SecureRandom.uuid, Faker::Internet.email, SecureRandom.uuid)
 
     user_response = MultiJson.encode({
-      "email" => user.email,
-      "id" => user.heroku_id
+      "email"      => user.email,
+      "id"         => user.heroku_id,
+      "last_login" => Time.now.utc.iso8601
     })
 
     # intended for user finder, looking up current email address using telex's key
