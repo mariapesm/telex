@@ -51,6 +51,24 @@ describe UserUserFinder, "#call" do
     expect(uwr.role).to eq(:self)
     expect(uwr.user.heroku_id).to eq(@id)
   end
+
+  describe "a user who has never logged in" do
+    before do
+      stub_heroku_api do
+        get "/account" do
+          MultiJson.encode(
+            id:         env["HTTP_USER"],
+            email:      "username@example.com",
+            last_login: nil)
+        end
+      end
+    end
+
+    it "is excluded" do
+      response = @finder.call
+      expect(response).to be_empty
+    end
+  end
 end
 
 describe AppUserFinder, "#call" do
@@ -141,5 +159,24 @@ describe AppUserFinder, "#call" do
     expect(emails).to include('username2@example.com')
     expect(emails).not_to include('member@example.com')
     expect(emails).not_to include('organization@herokumanager.com')
+  end
+
+  describe "a user who has never logged in" do
+    before do
+      stub_heroku_api do
+        get "/account" do
+          MultiJson.encode(
+            id:         env["HTTP_USER"],
+            email:      "someone@example.com",
+            last_login: nil)
+        end
+      end
+    end
+
+    it "is excluded" do
+      response = @finder.call
+      inactive_user = response.detect { |r| r.user.email == "username@example.com" }
+      expect(inactive_user).to be_nil
+    end
   end
 end
