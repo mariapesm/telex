@@ -1,7 +1,7 @@
 module Mediators::Notifications
   class Creator < Mediators::Base
     def initialize(user:, message:)
-      self.user = user
+      self.user    = user
       self.message = message
     end
 
@@ -9,6 +9,15 @@ module Mediators::Notifications
       self.notification = Notification.create(user_id: user.id, message_id: message.id)
       send_email
       notification
+    rescue Sequel::ValidationFailed, Sequel::UniqueConstraintViolation
+      # Notification already queued, just ignore.
+      Pliny.log(duplicate_notificaiton: true, user_id: user.id, message_id: message.id)
+    rescue => e
+      # ^ Typically an email send failure.
+      # Remove the notification before we re-raise so the mediator can be run
+      # again.
+      Notification.where(user_id: user.id, message_id: message.id).delete
+      raise e
     end
 
     private
