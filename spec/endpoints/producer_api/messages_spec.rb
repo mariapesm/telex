@@ -3,6 +3,13 @@ require "spec_helper"
 describe Endpoints::ProducerAPI::Messages do
   include Rack::Test::Methods
 
+  def app
+    Rack::Builder.new do
+      use Pliny::Middleware::RescueErrors  # so we get status, not exceptions
+      run Endpoints::ProducerAPI::Messages
+    end
+  end
+
   before do
     @producer = Fabricate(:producer)
     Pliny::RequestStore.store[:current_producer] = @producer

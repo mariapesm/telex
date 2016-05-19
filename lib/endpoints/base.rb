@@ -24,8 +24,12 @@ module Endpoints
       also_reload '../**/*.rb'
     end
 
-    error Pliny::Errors::Error do
-      Pliny::Errors::Error.render(env["sinatra.error"])
+    error Pliny::Errors::HTTPStatusError do
+      # Set the error status here so Pliny::Extensions::Instruments reports it
+      # properly.
+      status env["sinatra.error"].status
+      # Re-raising so Pliny::Middleware::RescueErrors can handle it.
+      raise env["sinatra.error"]
     end
 
     not_found do
