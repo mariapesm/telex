@@ -25,11 +25,12 @@ module Endpoints
     end
 
     error Pliny::Errors::HTTPStatusError do
+      err = env["sinatra.error"]
       # Set the error status here so Pliny::Extensions::Instruments reports it
       # properly.
-      status env["sinatra.error"].status
+      status err.status
       # Re-raising so Pliny::Middleware::RescueErrors can handle it.
-      raise env["sinatra.error"]
+      raise err
     end
 
     not_found do
