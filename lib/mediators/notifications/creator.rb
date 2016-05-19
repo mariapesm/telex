@@ -13,7 +13,7 @@ module Mediators::Notifications
       # Notification already queued, just ignore.
       Pliny.log(duplicate_notificaiton: true, user_id: user.id, message_id: message.id)
     rescue => e
-      # ^ Typically a email send failure.
+      # ^ Typically an email send failure.
       # Remove the notification before we re-raise so the mediator can be run
       # again.
       Notification.where(user_id: user.id, message_id: message.id).delete
