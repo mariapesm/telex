@@ -104,6 +104,8 @@ module Mediators::Messages
         # This filters out users who have never logged in
         UserUserFinder.run(target_id: user[:hid]).present?
       end
+    rescue Telex::HerokuClient::NotFound
+      self.users_details = [ ]
     end
   end
 end

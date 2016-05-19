@@ -168,22 +168,40 @@ describe AppUserFinder, "#call" do
     expect(emails).not_to include('organization@herokumanager.com')
   end
 
-  describe "a user who has never logged in" do
-    before do
-      stub_heroku_api do
-        get "/account" do
-          MultiJson.encode(
-            id:         env["HTTP_USER"],
-            email:      "someone@example.com",
-            last_login: nil)
-        end
+  it "excludes users who have never logged in" do
+    stub_heroku_api do
+      get "/account" do
+        MultiJson.encode(
+          id:         env["HTTP_USER"],
+          email:      "someone@example.com",
+          last_login: nil)
       end
     end
 
-    it "is excluded" do
-      response = @finder.call
-      inactive_user = response.detect { |r| r.user.email == "username@example.com" }
-      expect(inactive_user).to be_nil
+    response = @finder.call
+    inactive_user = response.detect { |r| r.user.email == "username@example.com" }
+    expect(inactive_user).to be_nil
+  end
+
+  it "excludes missing apps" do
+    stub_heroku_api do
+      get "/apps/:id" do |id|
+        raise Excon::Errors::NotFound, "not found"
+      end
     end
+
+    response = @finder.call
+    expect(response).to be_empty
+  end
+
+  it "excludes missing apps" do
+    stub_heroku_api do
+      get "/apps/:id" do |id|
+        raise Excon::Errors::NotFound, "not found"
+      end
+    end
+
+    response = @finder.call
+    expect(response).to be_empty
   end
 end
