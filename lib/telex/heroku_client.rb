@@ -1,6 +1,9 @@
 require 'uri'
 module Telex
   class HerokuClient
+
+    class NotFound < StandardError ; end
+
     attr_accessor :uri
     private :uri=
 
@@ -76,6 +79,8 @@ module Telex
         }.merge(options))
       end
       content
+    rescue Excon::Errors::NotFound
+      raise Telex::HerokuClient::NotFound
     end
   end
 end

@@ -74,7 +74,7 @@ module Mediators::Messages
       else
         self.users_details = [ ]
       end
-    rescue Excon::Errors::NotFound
+    rescue Telex::HerokuClient::NotFound
       self.users_details = [ ]
     end
   end
