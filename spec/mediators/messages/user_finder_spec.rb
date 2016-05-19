@@ -52,22 +52,29 @@ describe UserUserFinder, "#call" do
     expect(uwr.user.heroku_id).to eq(@id)
   end
 
-  describe "a user who has never logged in" do
-    before do
-      stub_heroku_api do
-        get "/account" do
-          MultiJson.encode(
-            id:         env["HTTP_USER"],
-            email:      "username@example.com",
-            last_login: nil)
-        end
+  it 'excludes users that have never logged in' do
+    stub_heroku_api do
+      get "/account" do
+        MultiJson.encode(
+          id:         env["HTTP_USER"],
+          email:      "username@example.com",
+          last_login: nil)
       end
     end
 
-    it "is excluded" do
-      response = @finder.call
-      expect(response).to be_empty
+    response = @finder.call
+    expect(response).to be_empty
+  end
+
+  it 'excludes missing users' do
+    stub_heroku_api do
+      get "/account" do
+        raise Excon::Errors::NotFound, "not found"
+      end
     end
+
+    response = @finder.call
+    expect(response).to be_empty
   end
 end
 

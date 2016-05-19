@@ -69,12 +69,13 @@ module Mediators::Messages
         raise "Mismatching ids, asked for #{target_id}, got #{id}"
       end
 
-      if last_login = user_response.fetch('last_login')
+      if user_response.fetch('last_login')
         self.users_details = [ extract_user(:self, user_response) ]
       else
         self.users_details = [ ]
       end
-
+    rescue Excon::Errors::NotFound
+      self.users_details = [ ]
     end
   end
 
