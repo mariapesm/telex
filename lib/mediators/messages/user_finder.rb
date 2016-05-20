@@ -88,9 +88,6 @@ module Mediators::Messages
         return
       end
 
-      owners  = fetch_owners
-      collabs = fetch_collaborators
-
       self.users_details = (owners + collabs).uniq {|u| u[:email] }.select do |user|
         # This filters out users who have never logged in
         UserUserFinder.run(target_id: user[:hid]).present?
@@ -105,16 +102,20 @@ module Mediators::Messages
       nil
     end
 
-    def fetch_owners
-      owner_email = app_info.fetch('owner').fetch('email')
-      if owner_email.end_with?('@herokumanager.com')
-        org_members_response = heroku_client.organization_members(owner_email.split('@').first)
-        org_admins = org_members_response.select { |member| member.fetch('role') == 'admin' }
-        org_admins.map do |admin|
-          extract_user(:owner, admin.fetch('user'))
-        end
+    def owners
+      owner = extract_user(:owner, app_info.fetch('owner'))
+      if owner[:email].end_with?('@herokumanager.com')
+        org_users(owner[:email])
       else
-        [ extract_user(:owner, app_info.fetch('owner') ) ]
+        [ owner ]
+      end
+    end
+
+    def org_users(owner_email)
+      org_members_response = heroku_client.organization_members(owner_email.split('@').first)
+      org_admins = org_members_response.select { |member| member.fetch('role') == 'admin' }
+      org_admins.map do |admin|
+        extract_user(:owner, admin.fetch('user'))
       end
     rescue Telex::HerokuClient::NotFound
       # Organization is missing
@@ -123,7 +124,7 @@ module Mediators::Messages
       []
     end
 
-    def fetch_collaborators
+    def collabs
       collab_response = heroku_client.app_collaborators(target_id)
       collab_response.map do |row|
         extract_user(:collaborator, row.fetch('user'))
