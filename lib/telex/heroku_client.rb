@@ -73,14 +73,18 @@ module Telex
         path:    path)
       content = MultiJson.decode(response.body)
 
-      if response.status == 206 && response.headers.key?('Next-Range')
-        content.concat get(path, {
-          range: response.headers['Next-Range']
-        }.merge(options))
+      if more_data? response
+        opts = {range: response.headers['Next-Range'] }.merge(options)
+        content.concat get(path, opts)
       end
+
       content
     rescue Excon::Errors::NotFound
       raise Telex::HerokuClient::NotFound
+    end
+
+    def more_data?(response)
+      response.status == 206 && response.headers.key?('Next-Range')
     end
   end
 end
