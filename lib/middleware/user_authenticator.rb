@@ -53,7 +53,7 @@ module Middleware
       cache_store(user_id: user.id, key: key)
 
       user
-    rescue Excon::Errors::Error
+    rescue Excon::Errors::Error, Telex::HerokuClient::NotFound
       nil
     end
 
