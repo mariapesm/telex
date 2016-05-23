@@ -52,22 +52,29 @@ describe UserUserFinder, "#call" do
     expect(uwr.user.heroku_id).to eq(@id)
   end
 
-  describe "a user who has never logged in" do
-    before do
-      stub_heroku_api do
-        get "/account" do
-          MultiJson.encode(
-            id:         env["HTTP_USER"],
-            email:      "username@example.com",
-            last_login: nil)
-        end
+  it 'excludes users that have never logged in' do
+    stub_heroku_api do
+      get "/account" do
+        MultiJson.encode(
+          id:         env["HTTP_USER"],
+          email:      "username@example.com",
+          last_login: nil)
       end
     end
 
-    it "is excluded" do
-      response = @finder.call
-      expect(response).to be_empty
+    response = @finder.call
+    expect(response).to be_empty
+  end
+
+  it 'excludes missing users' do
+    stub_heroku_api do
+      get "/account" do
+        raise Excon::Errors::NotFound, "not found"
+      end
     end
+
+    response = @finder.call
+    expect(response).to be_empty
   end
 end
 
@@ -161,22 +168,74 @@ describe AppUserFinder, "#call" do
     expect(emails).not_to include('organization@herokumanager.com')
   end
 
-  describe "a user who has never logged in" do
-    before do
-      stub_heroku_api do
-        get "/account" do
-          MultiJson.encode(
-            id:         env["HTTP_USER"],
-            email:      "someone@example.com",
-            last_login: nil)
-        end
+  it "excludes users who have never logged in" do
+    stub_heroku_api do
+      get "/account" do
+        MultiJson.encode(
+          id:         env["HTTP_USER"],
+          email:      "someone@example.com",
+          last_login: nil)
       end
     end
 
-    it "is excluded" do
-      response = @finder.call
-      inactive_user = response.detect { |r| r.user.email == "username@example.com" }
-      expect(inactive_user).to be_nil
+    response = @finder.call
+    inactive_user = response.detect { |r| r.user.email == "username@example.com" }
+    expect(inactive_user).to be_nil
+  end
+
+  it "excludes missing apps" do
+    stub_heroku_api do
+      get "/apps/:id" do |id|
+        raise Excon::Errors::NotFound, "not found"
+      end
     end
+
+    response = @finder.call
+    expect(response).to be_empty
+  end
+
+  it "excludes missing apps" do
+    stub_heroku_api do
+      get "/apps/:id" do |id|
+        raise Excon::Errors::NotFound, "not found"
+      end
+    end
+
+    response = @finder.call
+    expect(response).to be_empty
+  end
+
+  it "handles missing org lookups" do
+    stub_heroku_api do
+      get "/apps/:id" do |id|
+        MultiJson.encode(
+          name: "example",
+          owner: {
+            id:    SecureRandom.uuid,
+            email: "organization@herokumanager.com",
+          })
+      end
+
+      get "/organizations/:name/members" do
+        raise Excon::Errors::NotFound, "not found"
+      end
+    end
+    result = @finder.call
+    emails = result.map {|role| role.user[:email] }
+    # only the collaborators
+    expect(emails.sort).to eq(%w[username2@example.com username3@example.com])
+  end
+
+  it "handles missing collaborator lookups" do
+    stub_heroku_api do
+      get "/apps/:id/collaborators" do
+        raise Excon::Errors::NotFound, "not found"
+      end
+    end
+
+    result = @finder.call
+    emails = result.map {|role| role.user[:email] }
+    # only the owner since we got that on the first call
+    expect(emails).to eq(%w[username@example.com])
   end
 end

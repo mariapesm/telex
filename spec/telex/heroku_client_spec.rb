@@ -40,4 +40,13 @@ describe Telex::HerokuClient, '#new' do
 
     expect(client.organization_members('foobar')).to eql([{'id' => 1}, {'id' => 2}])
   end
+
+  it 'raises a NotFound error on 404s' do
+    client = Telex::HerokuClient.new
+    stub_request(:get, "#{client.uri}/organizations/foobar/members").
+      to_return(status: 404)
+
+    expect { client.organization_members('foobar') }.
+      to raise_error(Telex::HerokuClient::NotFound)
+  end
 end
