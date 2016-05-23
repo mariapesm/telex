@@ -6,8 +6,10 @@ Routes = Rack::Builder.new do
   use Middleware::Instrumentation
   use Pliny::Middleware::CORS
   use Pliny::Middleware::RequestID
+  use Pliny::Middleware::Instruments
   use Pliny::Middleware::RequestStore, store: Pliny::RequestStore
-  use Rack::Timeout if Config.timeout > 0
+  use Rack::Timeout,
+      service_timeout: Config.timeout if Config.timeout > 0
   use Pliny::Middleware::Versioning,
       default: Config.versioning_default,
       app_name: Config.versioning_app_name if Config.versioning?

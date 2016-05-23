@@ -1,11 +1,11 @@
 module Endpoints
   # The base class for all Sinatra-based endpoints. Use sparingly.
   class Base < Sinatra::Base
-    register Pliny::Extensions::Instruments
     register Sinatra::Namespace
 
     helpers Pliny::Helpers::Encode
     helpers Pliny::Helpers::Params
+    helpers Pliny::Helpers::Serialize
 
     helpers do
       def data
@@ -21,7 +21,7 @@ module Endpoints
 
     configure :development do
       register Sinatra::Reloader
-      also_reload '../**/*.rb'
+      also_reload "#{Config.root}/lib/**/*.rb"
     end
 
     error Sinatra::NotFound do
