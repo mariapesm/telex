@@ -6,6 +6,7 @@ Bundler.require(:default, :test, :development)
 require 'dotenv'
 Dotenv.load('.env.test')
 
+require_relative "../config/config"
 require_relative "../lib/initializer"
 
 require 'sidekiq/testing'
