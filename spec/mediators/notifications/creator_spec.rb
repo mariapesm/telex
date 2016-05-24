@@ -22,8 +22,8 @@ describe Mediators::Notifications::Creator do
   end
 
   it 'removes the Notification object on message send failures' do
-    allow(Telex::Emailer).to receive(:new) { raise Net::ReadTimeout }
-    expect{ @creator.call }.to raise_error Net::ReadTimeout
+    allow(Telex::Emailer).to receive(:new) { raise Telex::Emailer::DeliveryError }
+    expect{ @creator.call }.to raise_error Telex::Emailer::DeliveryError
     expect(Mail::TestMailer.deliveries.count).to be(0)
     expect(Notification.count).to be(0)
   end

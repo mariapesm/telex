@@ -38,5 +38,9 @@ unless Config.rack_env == 'test'
       user_session_secret
       www-sso-session
     ]
+
+    config.exception_level_filters.merge!(
+      'Telex::Emailer::DeliveryError' => 'warning'
+    )
   end
 end
