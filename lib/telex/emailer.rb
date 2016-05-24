@@ -50,7 +50,7 @@ class Telex::Emailer
       from:            from,
       notification_id: notification_id
     )
-    raise DeliveryError
+    raise DeliveryError.new(e.message)
   end
 
   private
