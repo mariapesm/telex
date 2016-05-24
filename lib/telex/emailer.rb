@@ -5,6 +5,8 @@ require 'mail'
 class Telex::Emailer
   HTML_TEMPLATE = File.read(File.expand_path('../../templates/email.html.erb', __FILE__))
 
+  class DeliveryError < StandardError ; end
+
   def initialize(email:, notification_id: nil, in_reply_to: nil, subject:, body:, action: nil, from: nil)
     self.email = email
     self.notification_id = notification_id
@@ -38,6 +40,17 @@ class Telex::Emailer
     mail.deliver!
     Telex::Sample.count "emails"
     mail
+  rescue Timeout::Error, Errno::ECONNRESET, EOFError => e
+    # Mail just 'splodes and sends everything up
+    Telex::Sample.count "email_error"
+    Pliny.log(
+      email_error:     true,
+      error:           e.class,
+      to:              email,
+      from:            from,
+      notification_id: notification_id
+    )
+    raise DeliveryError
   end
 
   private
