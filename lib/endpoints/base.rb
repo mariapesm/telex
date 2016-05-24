@@ -23,5 +23,9 @@ module Endpoints
       register Sinatra::Reloader
       also_reload "#{Config.root}/lib/**/*.rb"
     end
+
+    error Sinatra::NotFound do
+      raise Pliny::Errors::NotFound
+    end
   end
 end
