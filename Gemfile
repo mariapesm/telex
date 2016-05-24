@@ -44,5 +44,5 @@ group :test do
   gem "guard-rspec"
   gem "rack-test"
   gem "rspec"
-  gem "webmock"
+  gem "webmock", "~> 1.21"
 end
