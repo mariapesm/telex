@@ -2,12 +2,12 @@ require "rollbar/middleware/sinatra"
 
 Routes = Rack::Builder.new do
   use Rollbar::Middleware::Sinatra
-  use Middleware::Instrumentation
-  use Pliny::Middleware::RescueErrors, raise: Config.raise_errors?
   use Pliny::Middleware::CORS
   use Pliny::Middleware::RequestID
   use Pliny::Middleware::Instruments
+  use Middleware::Instrumentation
   use Pliny::Middleware::RequestStore, store: Pliny::RequestStore
+  use Pliny::Middleware::RescueErrors, raise: Config.raise_errors?
   use Rack::Timeout,
       service_timeout: Config.timeout if Config.timeout > 0
   use Pliny::Middleware::Versioning,
