@@ -7,7 +7,6 @@ unless Config.rack_env == 'test'
     config.use_sucker_punch
     config.disable_monkey_patch = true
     config.root = Config.root
-    config.use_sidekiq
 
     config.scrub_headers |= %w[
       Authorization
