@@ -2,8 +2,8 @@ require "rollbar/middleware/sinatra"
 
 Routes = Rack::Builder.new do
   use Rollbar::Middleware::Sinatra
-  use Pliny::Middleware::RescueErrors, raise: Config.raise_errors?
   use Middleware::Instrumentation
+  use Pliny::Middleware::RescueErrors, raise: Config.raise_errors?
   use Pliny::Middleware::CORS
   use Pliny::Middleware::RequestID
   use Pliny::Middleware::Instruments
