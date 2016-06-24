@@ -5,10 +5,12 @@ module Mediators::Messages
     def self.from_message(message)
       type = message.target_type
       case type
-      when 'user'
+      when Message::USER
         UserUserFinder.new(target_id: message.target_id)
-      when 'app'
+      when Message::APP
         AppUserFinder.new(target_id: message.target_id)
+      when Message::EMAIL
+        EmailUserFinder.new(target_id: message.target_id)
       else
         raise "unknown message type: #{type}"
       end
@@ -55,6 +57,18 @@ module Mediators::Messages
         email: response.fetch('email'),
         hid: response.fetch('id')
       }
+    end
+  end
+
+  class EmailUserFinder < UserFinder
+    private
+    # this is more to comply with the existing interface, but we're not really getting
+    # any users from the API.
+    def get_users_from_heroku
+      # We'll need to fetch the list of active/verified recipients for the given app_uuid.
+      # What I'm thinking now is to have the Recipients table take the same _shape_ as a User
+      # (e.g. right now in notifications/creator it only really needs user.id, user.email)
+      # and we can essentially store recipient ids in the notifications table.
     end
   end
 
