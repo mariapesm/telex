@@ -5,38 +5,41 @@ module Middleware
     end
 
     def call(env)
-      if skip_auth?(env['PATH_INFO'])
-        return @app.call(env)
-      end
-
-      if /Bearer/.match(env['HTTP_AUTHORIZATION'])
-        api_key = /\ABearer (.+)\z/.match(env['HTTP_AUTHORIZATION'])[1]
-      else
-        auth = Rack::Auth::Basic::Request.new(env)
-        unless auth.provided? && auth.basic? && auth.credentials
-          raise Pliny::Errors::Unauthorized
-        end
-        _, api_key = auth.credentials
-      end
-
-      user = lookup_user(key: api_key)
-
-      unless user
-        raise Pliny::Errors::Unauthorized
-      end
-
-      Pliny::RequestStore.store[:current_user] = user
+      authenticate_user env unless skip_auth?(env)
       @app.call(env)
     end
 
     private
 
-    def skip_auth?(path)
-      path && path.end_with?("/read.png")
+    def authenticate_user(env)
+      api_key = parse_api_key(env)
+      raise Pliny::Errors::Unauthorized unless api_key
+
+      user = lookup_user(key: api_key)
+      raise Pliny::Errors::Unauthorized unless user
+
+      Pliny::RequestStore.store[:current_user] = user
+    end
+
+    def parse_api_key(env)
+      bearer_token(env) || basic_auth_password(env)
+    end
+
+    def bearer_token(env)
+      env["HTTP_AUTHORIZATION"].to_s[/\ABearer\s+(\S+)\z/, 1]
+    end
+
+    def basic_auth_password(env)
+      auth = Rack::Auth::Basic::Request.new(env)
+      auth.provided? && auth.basic? && auth.credentials&.last
+    end
+
+    def skip_auth?(env)
+      env["PATH_INFO"]&.end_with?("/read.png")
     end
 
     def lookup_user(key:)
-      return nil unless key =~ Pliny::Middleware::RequestID::UUID_PATTERN
+      return nil unless Pliny::Middleware::RequestID::UUID_PATTERN === key
 
       cache_find(key: key) || api_find(key: key)
     end
@@ -50,7 +53,7 @@ module Middleware
         email:     user_response.fetch('email')
       )
 
-      cache_store(user_id: user.id, key: key)
+      cache_store user_id: user.id, key: key
 
       user
     rescue Excon::Errors::Error, Telex::HerokuClient::NotFound
@@ -58,23 +61,18 @@ module Middleware
     end
 
     def find_or_create_user(heroku_id:, email:)
-      user = User[heroku_id: heroku_id]
-      unless user
-        user = User.create(heroku_id: heroku_id, email: email)
-      end
-      user
+      User[heroku_id: heroku_id] || User.create(heroku_id: heroku_id, email: email)
     end
 
     def cache_find(key:)
       return unless Config.cache_user_auth?
-      id = nil
-      Sidekiq.redis {|c| id = c.get("keycache.#{hmac(key)}") }
+      id = Sidekiq.redis { |r| r.get("keycache.#{hmac(key)}") }
       User[id: id]
     end
 
     def cache_store(user_id:, key:)
       return unless Config.cache_user_auth?
-      Sidekiq.redis {|c| c.setex("keycache.#{hmac(key)}", 3600, user_id) }
+      Sidekiq.redis { |r| r.setex("keycache.#{hmac(key)}", 3600, user_id) }
     end
 
     def hmac(raw_key)
