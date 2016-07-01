@@ -14,4 +14,8 @@ class Notification < Sequel::Model
       validates_unique %i[recipient message]
     end
   end
+
+  def notifiable
+    user || recipient
+  end
 end
