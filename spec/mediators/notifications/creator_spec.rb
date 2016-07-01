@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe Mediators::Notifications::Creator do
   before do
-    @creator = described_class.new(user: Fabricate(:user), message: Fabricate(:message))
+    @creator = described_class.new(notifiable: Fabricate(:user), message: Fabricate(:message))
   end
 
   it 'creates a message' do

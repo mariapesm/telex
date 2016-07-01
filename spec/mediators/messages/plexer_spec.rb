@@ -25,14 +25,20 @@ describe Plexer, '#call' do
     expect(plexer.user_finder).to be_instance_of(Mediators::Messages::AppUserFinder)
   end
 
+  it 'picks the email finder on email' do
+    allow(@message).to receive(:target_type).and_return('email')
+    plexer = Plexer.new(message: @message)
+    expect(plexer.user_finder).to be_instance_of(Mediators::Messages::EmailUserFinder)
+  end
+
   it 'creates a Notificaton for each user' do
     @plexer.user_finder = double('user finder', call: @uwrs)
 
     expect(Mediators::Notifications::Creator).to receive(:run).with(
-      message: @message, user: @uwrs[0].user
+      message: @message, notifiable: @uwrs[0].user
     )
     expect(Mediators::Notifications::Creator).to receive(:run).with(
-      message: @message, user: @uwrs[1].user
+      message: @message, notifiable: @uwrs[1].user
     )
     @plexer.call
   end

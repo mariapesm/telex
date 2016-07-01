@@ -22,7 +22,7 @@ module Mediators::Messages
 
     def create_notifications
       users_with_role.map(&:user).uniq { |u| u.id }.each do |user|
-        Mediators::Notifications::Creator.run(message: message, user: user)
+        Mediators::Notifications::Creator.run(message: message, notifiable: user)
       end
     end
   end

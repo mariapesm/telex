@@ -65,10 +65,14 @@ module Mediators::Messages
     # this is more to comply with the existing interface, but we're not really getting
     # any users from the API.
     def get_users_from_heroku
-      # We'll need to fetch the list of active/verified recipients for the given app_uuid.
-      # What I'm thinking now is to have the Recipients table take the same _shape_ as a User
-      # (e.g. right now in notifications/creator it only really needs user.id, user.email)
-      # and we can essentially store recipient ids in the notifications table.
+      self.users_details = Recipient.find_active_by_app_id(app_id: target_id).map do |r|
+        extract_user(:self, { "email" => r.email, "id" => r.id })
+      end
+    end
+
+    def update_or_create_user(hid:, email:)
+      # Fake the user via Recipient since they share the same interface
+      Recipient[hid]
     end
   end
 
