@@ -35,10 +35,10 @@ Routes = Rack::Builder.new do
     end
   end
 
-  map('/recipients') do
+  map('/apps') do
     use Middleware::UserAuthenticator
     use Pliny::Router do
-      mount Endpoints::RecipientAPI::Addresses
+      mount Endpoints::AppAPI::Recipients
     end
   end
 
