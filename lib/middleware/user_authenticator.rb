@@ -18,6 +18,7 @@ module Middleware
       user = lookup_user(key: api_key)
       raise Pliny::Errors::Unauthorized unless user
 
+      Pliny::RequestStore.store[:heroku_client] = Telex::HerokuClient.new(api_key: api_key)
       Pliny::RequestStore.store[:current_user] = user
     end
 
