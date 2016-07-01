@@ -28,6 +28,11 @@ describe Middleware::Instrumentation do
   end
 
   it "counts requests by the status code" do
+    expect(Telex::Sample).to receive(:count).with("requests.200")
+    get "/foo"
+  end
+
+  it "counts requests by the status group" do
     expect(Telex::Sample).to receive(:count).with("requests.20x")
     get "/foo"
   end
