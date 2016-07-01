@@ -1,6 +1,6 @@
 module Mediators::Recipients
   class Base < Mediators::Base
-    attr_reader :heroku_client, :app_id, :email, :callback_url, :recipient
+    attr_reader :heroku_client, :app_id, :email, :callback_url, :recipient, :app_info
 
     def initialize(heroku_client:, app_id:, email: nil, callback_url:, active: false, recipient: nil)
       @heroku_client = heroku_client
@@ -18,7 +18,7 @@ module Mediators::Recipients
     # TODO: figure out a better way to determine permissions. Does this require to add
     # a new role thing in API or is this good enough?
     def authorized?
-      heroku_client.app_info(app_id)
+      @app_info = heroku_client.app_info(app_id)
     rescue Excon::Errors::Forbidden, Telex::HerokuClient::NotFound
     rescue => err
       $stderr.puts "Mediators::Recipients::Creator::authorized? : Unknown exception: %s" % err.inspect
