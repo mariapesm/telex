@@ -40,4 +40,8 @@ class Recipient < Sequel::Model
   def verification_token_expired?
     (Time.now.utc - verification_sent_at) > VERIFICATION_TOKEN_TTL
   end
+
+  def verification_url
+    callback_url % { id: id, token: verification_token }
+  end
 end
