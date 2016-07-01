@@ -1,5 +1,6 @@
 class Notification < Sequel::Model
   many_to_one :user
+  many_to_one :recipient
   many_to_one :message
 
   plugin :timestamps
@@ -7,6 +8,10 @@ class Notification < Sequel::Model
 
   def validate
     super
-    validates_unique %i[user message]
+    if user
+      validates_unique %i[user message]
+    elsif recipient
+      validates_unique %i[recipient message]
+    end
   end
 end
