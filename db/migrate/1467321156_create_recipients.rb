@@ -20,7 +20,6 @@ Sequel.migration do
   end
 
   down do
-    execute 'drop extension "uuid-ossp"'
     execute 'drop table recipients'
   end
 end
