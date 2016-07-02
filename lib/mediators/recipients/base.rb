@@ -1,6 +1,6 @@
 module Mediators::Recipients
   class Base < Mediators::Base
-    attr_reader :heroku_client, :app_id, :email, :callback_url, :recipient, :app_info
+    attr_reader :heroku_client, :app_id, :email, :callback_url, :recipient, :app_info, :active
 
     def initialize(heroku_client:, app_id:, email: nil, callback_url:, active: false, recipient: nil)
       @heroku_client = heroku_client
