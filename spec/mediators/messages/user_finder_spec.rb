@@ -248,7 +248,7 @@ describe EmailUserFinder, '#call' do
   before do
     @id = SecureRandom.uuid
     Recipient.create(active: true, verified: true, email: 'foo@bar.com', app_id: @id,
-                     callback_url: 'http://x.com/%{id}/%{token}')
+                     callback_url: 'http://x.com/%{token}')
     @finder = EmailUserFinder.new(target_id: @id)
   end
 

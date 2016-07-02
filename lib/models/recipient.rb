@@ -3,7 +3,6 @@ class Recipient < Sequel::Model
 
   EMAIL = /@/
   TOKEN = %r(%{token})
-  ID = %r(%{id})
 
   plugin :timestamps
   plugin :validation_helpers
@@ -12,9 +11,8 @@ class Recipient < Sequel::Model
     self.where(app_id: app_id, active: true, verified: true)
   end
 
-  def self.find_by_id_and_verification_token(id:, verification_token:)
-    return unless recipient = self[id]
-    return unless recipient.verification_token == verification_token
+  def self.find_by_app_id_and_verification_token(app_id:, verification_token:)
+    return unless recipient = self[app_id: app_id, verification_token: verification_token]
     return if recipient.verification_token_expired?
 
     return recipient
@@ -26,7 +24,6 @@ class Recipient < Sequel::Model
     validates_format EMAIL, :email
     validates_format URI.regexp, :callback_url
     validates_format TOKEN, :callback_url
-    validates_format ID, :callback_url
   end
 
   def verification_token_expired?
@@ -34,6 +31,6 @@ class Recipient < Sequel::Model
   end
 
   def verification_url
-    callback_url % { id: id, token: verification_token }
+    callback_url % { token: verification_token }
   end
 end

@@ -15,7 +15,7 @@ describe Notification do
 
   let :recipient do
     Recipient.create(email: 'bar@baz.com', app_id: SecureRandom.uuid,
-                     callback_url: "http://x.com/%{id}/%{token}")
+                     callback_url: "http://x.com/%{token}")
   end
 
   it 'has a notifiable from user if non-nil' do

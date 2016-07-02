@@ -9,7 +9,7 @@ describe Mediators::Recipients::Creator do
     }
     @creator = described_class.new(app_info: @app_info,
                                    email: "foo@bar.com",
-                                   callback_url: "http://x.com/%{id}/%{token}")
+                                   callback_url: "http://x.com/%{token}")
   end
 
   it "creates a recipient" do
@@ -18,7 +18,7 @@ describe Mediators::Recipients::Creator do
       email: "foo@bar.com",
       notification_id: Pliny::Middleware::RequestID::UUID_PATTERN,
       subject: described_class::TITLE,
-      body: %r(http://x.com/[a-z0-9\-]+/[a-z0-9\-]+),
+      body: %r(http://x.com/[a-z0-9\-]+),
     }
     allow(Telex::Emailer).to receive(:new).with(hash_including(args)) { emailer }
     allow(emailer).to receive(:deliver!)

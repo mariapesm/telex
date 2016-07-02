@@ -7,7 +7,7 @@ module Mediators::Recipients
     end
 
     def call
-      Recipient.where(app_info: app_info.fetch("id"))
+      Recipient.where(app_id: app_info.fetch("id"))
     end
   end
 end
