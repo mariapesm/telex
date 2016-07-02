@@ -3,23 +3,16 @@ require "spec_helper"
 describe Mediators::Recipients::Creator do
   before do
     producer = Fabricate(:producer)
-    @app_id = SecureRandom.uuid
-    @creator = described_class.new(app_id: @app_id,
+    @app_info = {
+      "id" => SecureRandom.uuid,
+      "name" => "brat",
+    }
+    @creator = described_class.new(app_info: @app_info,
                                    email: "foo@bar.com",
-                                   callback_url: "http://x.com/%{id}/%{token}",
-                                   heroku_client: Telex::HerokuClient.new)
+                                   callback_url: "http://x.com/%{id}/%{token}")
   end
 
   it "creates a recipient" do
-    stub_request(:get, "https://telex:a_very_secret_api_key@api.heroku.com/apps/#{@app_id}").
-                 with(:headers => {
-                   "Accept"=>"application/vnd.heroku+json; version=3",
-                   "Authorization"=>"Basic dGVsZXg6YV92ZXJ5X3NlY3JldF9hcGlfa2V5",
-                   "Host"=>"api.heroku.com:443",
-                   "Range"=>"id ..; max=1000;", "User-Agent"=>"telex"
-                 }).
-                 to_return(:status => 200, :body => '{"name": "brat"}', :headers => {})
-
     emailer = double()
     args = {
       email: "foo@bar.com",

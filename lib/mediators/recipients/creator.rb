@@ -1,11 +1,19 @@
 module Mediators::Recipients
-  class Creator < Base
+  class Creator < Mediators::Base
     TITLE = "Heroku Email Verification"
     ACTION_LABEL = "Confirm Email"
 
+    attr_reader :app_info, :email, :callback_url, :active
+
+    def initialize(app_info:, email: nil, callback_url:, active: false)
+      @app_info = app_info
+      @email = email
+      @active = active
+      @callback_url = callback_url
+    end
+
     def call
-      authorize!
-      recipient = Recipient.create(email: email, app_id: app_id, callback_url: callback_url)
+      recipient = Recipient.create(email: email, app_id: app_info.fetch("id"), callback_url: callback_url)
       send_email(recipient: recipient, notification_id: recipient.id)
       recipient
     end

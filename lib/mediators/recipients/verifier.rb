@@ -1,7 +1,13 @@
 module Mediators::Recipients
-  class Verifier < Base
+  class Verifier < Mediators::Base
+    attr_reader :recipient, :token
+
+    def initiaize(recipient:, token:)
+      @recipient = recipient
+      @token = token      
+    end
+
     def call
-      authorize!
       raise NotFound unless recipient = find_by_token
       recipient.update(verified: true)
     end

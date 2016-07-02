@@ -1,7 +1,12 @@
 module Mediators::Recipients
-  class Deleter < Base
+  class Deleter < Mediators::Base
+    attr_reader :recipient
+
+    def initialize(recipient:)
+      @recipient = recipient 
+    end
+
     def call
-      authorize!
       recipient.delete
     end
   end
