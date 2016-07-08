@@ -93,7 +93,7 @@ module Endpoints
     # TODO: figure out a better way to determine permissions. Does this require to add
     # a new role thing in API or is this good enough?
     def fetch_app_info(app_id:)
-      heroku_client.app_info(app_id)
+      heroku_client.app_info(app_id, base_headers_only: true)
     rescue Excon::Errors::Forbidden, Telex::HerokuClient::NotFound
     rescue => err
       $stderr.puts "Mediators::Recipients::Creator::authorized? : Unknown exception: %s" % err.inspect

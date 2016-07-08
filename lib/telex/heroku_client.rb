@@ -22,8 +22,8 @@ module Telex
       end
     end
 
-    def app_info(app_uuid)
-      get("/apps/#{app_uuid}")
+    def app_info(app_uuid, base_headers_only: false)
+      get("/apps/#{app_uuid}", base_headers_only: base_headers_only)
     end
 
     def app_collaborators(app_uuid)
