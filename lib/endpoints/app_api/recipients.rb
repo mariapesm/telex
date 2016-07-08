@@ -14,6 +14,11 @@ module Endpoints
       status 400
     end
 
+    options "/:app_id/recipients" do |app_id|
+      authorize!(app_id: app_id)
+      status 200
+    end
+
     get "/:app_id/recipients" do |app_id|
       authorize!(app_id: app_id)
 
@@ -66,6 +71,7 @@ module Endpoints
   private
     def authorize!(app_id:)
       halt 403 unless @app_info = fetch_app_info(app_id: app_id)
+      halt 403 unless capable?(app_id)
     end
 
     def heroku_client

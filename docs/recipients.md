@@ -18,6 +18,8 @@ curl -XPOST $URL/apps/$APP/recipients \
 
 #### Response
 
+Status: 201
+
 ```json
 {"id":"6635a744-a7cb-4220-b456-5b24cc061020","email":"some-email@example.com","verification_url":"http://x.com/7c894f9e-3826-4b95-bb75-25a1d2349af0","active":false,"verified":false,"created_at":"2016-07-08T17:33:15Z"}
 ```
@@ -35,7 +37,7 @@ curl -XPUT $URL/apps/$APP/recipients/$CHALLENGE/verify \
 ```
 #### Response
 
-204
+Status: 204
 
 ### List recipients
 
@@ -68,6 +70,8 @@ curl -XPATCH $URL/apps/$APP/recipients/$ID \
 
 #### Response
 
+Status: 200
+
 ```json
 {"id":"6635a744-a7cb-4220-b456-5b24cc061020","email":"some-email@example.com","verification_url":"http://y.com/67c51bbd-c55d-4d3e-9402-675f59a6242a","active":false,"verified":true,"created_at":"2016-07-08T17:33:15Z"}
 ```
@@ -83,7 +87,7 @@ curl -XDELETE $URL/apps/$APP/recipients/$ID \
 
 #### Response
 
-204
+Status: 204
 
 ## Original Plans left here for posterity
 
