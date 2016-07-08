@@ -1,3 +1,92 @@
+## API Docs
+
+```bash
+export URL=https://telex-opex.herokuapp.com
+export APP=dcca932b-0156-4d11-b5fd-fcec4c924be2
+export TOKEN=$(heroku auth:token)
+```
+
+### Create Recipient
+
+#### Request
+
+```bash
+curl -XPOST $URL/apps/$APP/recipients \
+	-u :$TOKEN \
+	-d '{"email":"some-email@example.com","callback_url": "http://x.com/%{token}"}'
+```
+
+#### Response
+
+```json
+{"id":"6635a744-a7cb-4220-b456-5b24cc061020","email":"some-email@example.com","verification_url":"http://x.com/7c894f9e-3826-4b95-bb75-25a1d2349af0","active":false,"verified":false,"created_at":"2016-07-08T17:33:15Z"}
+```
+
+### Verify recipient
+
+#### Request
+
+```bash
+# This will be the token applied to the callback_url, visible in the verification_url
+export CHALLENGE=7c894f9e-3826-4b95-bb75-25a1d2349af0
+
+curl -XPUT $URL/apps/$APP/recipients/$CHALLENGE/verify \
+	-u :$TOKEN
+```
+#### Response
+
+204
+
+### List recipients
+
+```bash
+curl $URL/apps/$APP/recipients \
+	-u :$TOKEN
+```
+
+### Activate/deactivate a recipient; and/or refresh the verification URL
+
+- To refresh the verification URL, just pass in the callback_url during PUT requests
+- To set the active / inactive flag, set that also.
+
+#### Request
+
+```bash
+export ID=6635a744-a7cb-4220-b456-5b24cc061020
+
+curl -XPATCH $URL/apps/$APP/recipients/$ID \
+	-u :$TOKEN \
+	-d '{"active": false}'
+
+### Refresh callback URL only
+curl -XPATCH $URL/apps/$APP/recipients/$ID \
+	-u :$TOKEN \
+	-H "Content-Type: application/json" \
+	-d '{"callback_url": "http://y.com/%{token}"}'
+
+```
+
+#### Response
+
+```json
+{"id":"6635a744-a7cb-4220-b456-5b24cc061020","email":"some-email@example.com","verification_url":"http://y.com/67c51bbd-c55d-4d3e-9402-675f59a6242a","active":false,"verified":true,"created_at":"2016-07-08T17:33:15Z"}
+```
+
+### Delete a recipient
+
+#### Request
+
+```bash
+curl -XDELETE $URL/apps/$APP/recipients/$ID \
+	-u :$TOKEN
+```
+
+#### Response
+
+204
+
+## Original Plans left here for posterity
+
 # recipients concrete plans
 
 After looking at the code and weighing in on a good enough design
