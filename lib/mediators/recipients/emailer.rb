@@ -19,10 +19,10 @@ module Mediators::Recipients
       Message.new(
         title: TITLE,
         body: CONFIRMATION_TEMPLATE % {
-          url: recipient.verification_url,
+          token: recipient.verification_token,
           app: app_info.fetch("name")
         },
-        action_url: recipient.verification_url,
+        action_url: recipient.callback_url,
         action_label: ACTION_LABEL
       )
     end
@@ -44,9 +44,9 @@ module Mediators::Recipients
 
       We've received your request to add an email to %{app} for Threshold Alerting.
 
-      To confirm the setup click on the following link:
+      To complete please input the following code in the alerting page:
 
-          %{url}
+          %{token}
 
       - Heroku Alerting Engine
     EOT

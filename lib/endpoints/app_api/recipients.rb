@@ -66,7 +66,7 @@ module Endpoints
   private
     def authorize!(app_id:)
       halt 403 unless @app_info = fetch_app_info(app_id: app_id)
-      halt 403 unless capable?(app_id)
+      # halt 403 unless capable?(app_id)
     end
 
     def heroku_client
