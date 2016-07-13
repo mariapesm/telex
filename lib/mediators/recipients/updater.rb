@@ -1,16 +1,16 @@
 module Mediators::Recipients
   class Updater < Mediators::Base
-    attr_reader :app_info, :recipient, :active, :callback_url
+    attr_reader :app_info, :recipient, :active, :refresh
 
-    def initialize(app_info:, recipient:, callback_url: nil, active: false)
+    def initialize(app_info:, recipient:, refresh: nil, active: false)
       @app_info = app_info
       @recipient = recipient
-      @callback_url = callback_url
+      @refresh = refresh
       @active = active      
     end
 
     def call
-      attributes = maybe_regenerate_token(active: active, callback_url: callback_url)
+      attributes = maybe_regenerate_token(active: active, refresh: refresh)
       recipient.update(attributes)
 
       if attributes[:verification_token]
@@ -21,10 +21,8 @@ module Mediators::Recipients
     end
 
     def maybe_regenerate_token(attributes)
-      if attributes[:callback_url].to_s.empty?
-        attributes.delete(:callback_url)
-      else
-        attributes[:verification_token] = SecureRandom.uuid
+      if attributes.delete(:refresh)
+        attributes[:verification_token] = Recipient.generate_token
         attributes[:verification_sent_at] = Time.now.utc
       end
       attributes

@@ -22,6 +22,9 @@ module Telex
       end
     end
 
+    def capable?(app_uuid)
+    end
+
     def app_info(app_uuid, base_headers_only: false)
       get("/apps/#{app_uuid}", base_headers_only: base_headers_only)
     end

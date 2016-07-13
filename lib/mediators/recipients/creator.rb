@@ -10,7 +10,12 @@ module Mediators::Recipients
     end
 
     def call
-      recipient = Recipient.create(email: email, app_id: app_info.fetch("id"), callback_url: callback_url)
+      recipient = Recipient.create(
+        email: email,
+        app_id: app_info.fetch("id"),
+        callback_url: callback_url,
+        verification_token: Recipient.generate_token
+      )
       Emailer.run(app_info: app_info, recipient: recipient)
       recipient
     end

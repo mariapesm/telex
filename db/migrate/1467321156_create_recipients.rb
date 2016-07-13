@@ -5,7 +5,7 @@ Sequel.migration do
       uuid         :id, default: Sequel.function(:uuid_generate_v4), primary_key: true
       uuid         :app_id, null: false
       text         :email, null: false
-      uuid         :verification_token, default: Sequel.function(:uuid_generate_v4), null: false
+      char         :verification_token, null: false, size: 5
       timestamptz  :verification_sent_at, default: Sequel.function(:now), null: false
       bool         :verified, default: false, null: false
       bool         :active, default: false, null: false

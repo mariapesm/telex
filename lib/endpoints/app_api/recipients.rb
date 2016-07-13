@@ -14,11 +14,6 @@ module Endpoints
       status 400
     end
 
-    options "/:app_id/recipients" do |app_id|
-      authorize!(app_id: app_id)
-      status 200
-    end
-
     get "/:app_id/recipients" do |app_id|
       authorize!(app_id: app_id)
 
@@ -38,11 +33,11 @@ module Endpoints
       respond_json(recipient)
     end
 
-    put "/:app_id/recipients/:token/verify" do |app_id, token|
+    put "/:app_id/recipients/:id/verify" do |app_id, id|
       authorize!(app_id: app_id)
 
       Mediators::Recipients::Verifier.run(
-        recipient: get_recipient(app_id: app_id, token: token),
+        recipient: get_recipient(app_id: app_id, id: id, token: params[:token]),
       )
       status 204
     end
@@ -54,7 +49,7 @@ module Endpoints
         app_info: @app_info,
         recipient: get_recipient(app_id: app_id, id: id),
         active: data.fetch("active", false),
-        callback_url: data.fetch("callback_url", "")
+        refresh: data.fetch("refresh", false)
       )
       respond_json(recipient)
     end
@@ -83,14 +78,14 @@ module Endpoints
       encode(sz.serialize(recipient_or_recipients))
     end
 
-    def get_recipient(app_id:, id: nil, token: nil)
+    def get_recipient(app_id:, id:, token: nil)
       raise Pliny::Errors::UnprocessableEntity unless app_id =~ Pliny::Middleware::RequestID::UUID_PATTERN
       raise Pliny::Errors::UnprocessableEntity unless (id || token) =~ Pliny::Middleware::RequestID::UUID_PATTERN
 
-      recipient = if id
-        Recipient[app_id: app_id, id: id]
+      recipient = if token
+        Recipient.verify(app_id: app_id, id: id, verification_token: token)
       elsif token
-        Recipient.find_by_app_id_and_verification_token(app_id: app_id, verification_token: token)
+        Recipient[app_id: app_id, id: id]
       end
 
       recipient || raise(Pliny::Errors::NotFound)

@@ -1,14 +1,12 @@
 require "spec_helper"
 
 describe Recipient do
-  it 'validates callback_url format, id, token presence' do
+  it 'validates callback_url format and presence' do
     cases = [
-      ["http://localhost/%{token}", true],
-      ["http://localhost/%{id}/", false],
-      ["http://localhost/%{token1}", false],
+      ["http://localhost/", true],
       ["yolo", false],
       ["www.yolo", false],
-      ["www.yolo.com/%{token}", false],
+      ["www.yolo.com/", false],
     ]
 
     cases.each do |url, ok|
@@ -24,19 +22,19 @@ describe Recipient do
   it 'prevents dups of app_id, email combinations' do
     app_id = SecureRandom.uuid
     email = "%s@example.com" % app_id
-    Recipient.create(email: email, app_id: app_id, callback_url: "http://x.com/%{token}")
+    Fabricate(:recipient, app_id: app_id, email: email)
 
     expect {
-      Recipient.create(email: email, app_id: app_id, callback_url: "http://x.com/%{token}")
+      Fabricate(:recipient, app_id: app_id, email: email)
     }.to raise_error(Sequel::UniqueConstraintViolation)
   end
 
   it 'is able to find via verification token' do
     app_id = SecureRandom.uuid
     email = "%s@example.com" % app_id
-    r = Recipient.create(email: email, app_id: app_id, callback_url: "http://x.com/%{token}")
+    r = Fabricate(:recipient, email: email, app_id: app_id)
     
-    actual = Recipient.find_by_app_id_and_verification_token(app_id: app_id, verification_token: r.verification_token)
+    actual = Recipient.verify(app_id: app_id, id: r.id, verification_token: r.verification_token)
     expect(actual).to eq(r)
   end
 end
