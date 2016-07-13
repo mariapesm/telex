@@ -4,7 +4,6 @@ module Serializers::AppAPI
       {
         id:                 r.id,
         email:              r.email,
-        verification_token: r.verification_token,
         active:             r.active,
         verified:           r.verified,
         created_at:         time_format(r.created_at),

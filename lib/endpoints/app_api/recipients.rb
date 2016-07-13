@@ -27,7 +27,6 @@ module Endpoints
       recipient = Mediators::Recipients::Creator.run(
         app_info: @app_info,
         email: data.fetch("email"),
-        callback_url: data.fetch("callback_url")
       )
       status 201
       respond_json(recipient)

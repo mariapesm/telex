@@ -1,7 +1,6 @@
 module Mediators::Recipients
   class Emailer < Mediators::Base
     TITLE = "Heroku Email Verification"
-    ACTION_LABEL = "Confirm Email"
 
     attr_reader :app_info, :recipient
 
@@ -22,8 +21,6 @@ module Mediators::Recipients
           token: recipient.verification_token,
           app: app_info.fetch("name")
         },
-        action_url: recipient.callback_url,
-        action_label: ACTION_LABEL
       )
     end
 

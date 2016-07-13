@@ -24,9 +24,8 @@ class Recipient < Sequel::Model
 
   def validate
     super
-    validates_presence %i(app_id callback_url email)
+    validates_presence %i(app_id email)
     validates_format EMAIL, :email
-    validates_format URI.regexp, :callback_url
   end
 
   def verification_token_expired?

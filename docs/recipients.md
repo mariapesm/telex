@@ -13,7 +13,7 @@ export TOKEN=$(heroku auth:token)
 ```bash
 curl -XPOST $URL/apps/$APP/recipients \
 	-u :$TOKEN \
-	-d '{"email":"some-email@example.com","callback_url": "http://x.com/%{token}"}'
+	-d '{"email":"some-email@example.com"}'
 ```
 
 #### Response
@@ -21,7 +21,7 @@ curl -XPOST $URL/apps/$APP/recipients \
 Status: 201
 
 ```json
-{"id":"6635a744-a7cb-4220-b456-5b24cc061020","email":"some-email@example.com","verification_url":"http://x.com/7c894f9e-3826-4b95-bb75-25a1d2349af0","active":false,"verified":false,"created_at":"2016-07-08T17:33:15Z"}
+{"id":"6635a744-a7cb-4220-b456-5b24cc061020","email":"some-email@example.com","verification_token":"8337C","active":false,"verified":false,"created_at":"2016-07-08T17:33:15Z"}
 ```
 
 ### Verify recipient
@@ -29,10 +29,12 @@ Status: 201
 #### Request
 
 ```bash
-# This will be the token applied to the callback_url, visible in the verification_url
-export CHALLENGE=7c894f9e-3826-4b95-bb75-25a1d2349af0
+export CHALLENGE=8337C
+export ID=6635a744-a7cb-4220-b456-5b24cc061020
 
-curl -XPUT $URL/apps/$APP/recipients/$CHALLENGE/verify \
+curl -XPUT $URL/apps/$APP/recipients/$ID/verify \
+	-d "{\"token\":\"$CHALLENGE\"}" \
+	-H "Content-Type: application/json" \
 	-u :$TOKEN
 ```
 #### Response
@@ -48,7 +50,7 @@ curl $URL/apps/$APP/recipients \
 
 ### Activate/deactivate a recipient; and/or refresh the verification URL
 
-- To refresh the verification URL, just pass in the callback_url during PUT requests
+- To refresh the verification URL, just pass in `refresh: true` during PUT requests
 - To set the active / inactive flag, set that also.
 
 #### Request
@@ -58,13 +60,14 @@ export ID=6635a744-a7cb-4220-b456-5b24cc061020
 
 curl -XPATCH $URL/apps/$APP/recipients/$ID \
 	-u :$TOKEN \
+	-H "Content-Type: application/json" \
 	-d '{"active": false}'
 
-### Refresh callback URL only
+### Refresh token only
 curl -XPATCH $URL/apps/$APP/recipients/$ID \
 	-u :$TOKEN \
 	-H "Content-Type: application/json" \
-	-d '{"callback_url": "http://y.com/%{token}"}'
+	-d '{"refresh": true}'
 
 ```
 

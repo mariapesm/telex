@@ -9,7 +9,6 @@ Sequel.migration do
       timestamptz  :verification_sent_at, default: Sequel.function(:now), null: false
       bool         :verified, default: false, null: false
       bool         :active, default: false, null: false
-      text         :callback_url, null: false
       timestamptz  :created_at, default: Sequel.function(:now), null: false
       timestamptz  :updated_at
     end

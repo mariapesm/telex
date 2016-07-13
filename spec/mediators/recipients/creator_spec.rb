@@ -8,8 +8,7 @@ describe Mediators::Recipients::Creator do
       "name" => "brat",
     }
     @creator = described_class.new(app_info: @app_info,
-                                   email: "foo@bar.com",
-                                   callback_url: "http://x.com/%{token}")
+                                   email: "foo@bar.com")
   end
 
   it "creates a recipient" do

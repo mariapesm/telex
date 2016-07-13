@@ -1,24 +1,6 @@
 require "spec_helper"
 
 describe Recipient do
-  it 'validates callback_url format and presence' do
-    cases = [
-      ["http://localhost/", true],
-      ["yolo", false],
-      ["www.yolo", false],
-      ["www.yolo.com/", false],
-    ]
-
-    cases.each do |url, ok|
-      r = Recipient.new(
-        callback_url: url,
-        app_id: SecureRandom.uuid,
-        email: "foo@bar.com",
-      )
-      expect(r.valid?).to eq(ok)
-    end
-  end  
-
   it 'prevents dups of app_id, email combinations' do
     app_id = SecureRandom.uuid
     email = "%s@example.com" % app_id
