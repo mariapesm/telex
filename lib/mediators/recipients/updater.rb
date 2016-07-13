@@ -2,7 +2,7 @@ module Mediators::Recipients
   class Updater < Mediators::Base
     attr_reader :app_info, :recipient, :active, :refresh
 
-    def initialize(app_info:, recipient:, refresh: nil, active: false)
+    def initialize(app_info:, recipient:, refresh: false, active: false)
       @app_info = app_info
       @recipient = recipient
       @refresh = refresh

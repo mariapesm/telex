@@ -37,7 +37,7 @@ module Endpoints
       authorize!(app_id: app_id)
 
       Mediators::Recipients::Verifier.run(
-        recipient: get_recipient(app_id: app_id, id: id, token: params[:token]),
+        recipient: get_recipient(app_id: app_id, id: id, token: data.fetch("token", "")),
       )
       status 204
     end
@@ -84,7 +84,7 @@ module Endpoints
 
       recipient = if token
         Recipient.verify(app_id: app_id, id: id, verification_token: token)
-      elsif token
+      else
         Recipient[app_id: app_id, id: id]
       end
 
