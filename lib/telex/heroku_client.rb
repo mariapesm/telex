@@ -2,6 +2,7 @@ require 'uri'
 module Telex
   class HerokuClient
 
+    class BadResponse < StandardError; end
     class NotFound < StandardError ; end
 
     attr_accessor :uri
@@ -22,7 +23,26 @@ module Telex
       end
     end
 
-    def capable?(app_uuid)
+    # capable? supports only one type/id parameter in the payload,
+    # and returns the corresponding capable: attribute in the payload.
+    def capable?(type:, id:, capability:, base_headers_only: true)
+      body = {
+        "capabilities" => [
+          "capability" => capability,
+          "resource_id" => id,
+          "resource_type" => type,
+        ]
+      }
+      response = put(
+        "/users/~/capabilities",
+        variant: ".capabilities",
+        base_headers_only: base_headers_only,
+        body: body.to_json)
+      
+      raise BadResponse unless response["capabilities"].kind_of?(Array)
+      raise BadResponse unless response["capabilities"][0].kind_of?(Hash)
+
+      return response["capabilities"][0]["capable"]
     end
 
     def app_info(app_uuid, base_headers_only: false)
@@ -43,11 +63,12 @@ module Telex
       @client ||= Excon.new(uri.to_s)
     end
 
-    def headers(base_headers_only: false, user: nil, range: nil)
+    def headers(base_headers_only: false, user: nil, range: nil, variant: nil)
       range = "id ..; max=1000;" if range.nil?
 
+      # TODO: Remove the .capabilities version variant when that's mainlined.
       base = {
-        "Accept"     => "application/vnd.heroku+json; version=3",
+        "Accept"     => "application/vnd.heroku+json; version=3#{variant}",
         "User-Agent" => "telex",
         "Range"      => range
       }
@@ -72,6 +93,24 @@ module Telex
     def get(path, options={})
       response = client.get(
         expects: [200, 206],
+        headers: headers(options),
+        path:    path)
+      content = MultiJson.decode(response.body)
+
+      if more_data? response
+        opts = {range: response.headers['Next-Range'] }.merge(options)
+        content.concat get(path, opts)
+      end
+
+      content
+    rescue Excon::Errors::NotFound
+      raise Telex::HerokuClient::NotFound
+    end
+
+    def put(path, options={})
+      response = client.put(
+        expects: [200, 206],
+        body: options.delete(:body),
         headers: headers(options),
         path:    path)
       content = MultiJson.decode(response.body)

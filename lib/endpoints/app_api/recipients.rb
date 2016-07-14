@@ -65,7 +65,7 @@ module Endpoints
   private
     def authorize!(app_id:)
       halt 403 unless @app_info = fetch_app_info(app_id: app_id)
-      # halt 403 unless capable?(app_id)
+      halt 403 unless heroku_client.capable?(id: app_id, type: "app", capability: "manage_alerts")
     end
 
     def heroku_client
@@ -90,8 +90,6 @@ module Endpoints
       recipient || raise(Pliny::Errors::NotFound)
     end
 
-    # TODO: figure out a better way to determine permissions. Does this require to add
-    # a new role thing in API or is this good enough?
     def fetch_app_info(app_id:)
       heroku_client.app_info(app_id, base_headers_only: true)
     rescue Excon::Errors::Forbidden, Telex::HerokuClient::NotFound

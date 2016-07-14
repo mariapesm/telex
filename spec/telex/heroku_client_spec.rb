@@ -49,4 +49,58 @@ describe Telex::HerokuClient, '#new' do
     expect { client.organization_members('foobar') }.
       to raise_error(Telex::HerokuClient::NotFound)
   end
+
+  describe 'capabilities endpoint' do
+    it 'returns true/false from matching response' do
+      id = SecureRandom.uuid
+      client = Telex::HerokuClient.new
+
+      responses = [
+        ['{ "capabilities": [{"capable": true}] }', true],
+        ['{ "capabilities": [{"capable": false}] }', false],
+      ]
+
+      responses.each do |payload, capable|
+        stub_request(:put, "#{client.uri}/users/~/capabilities").
+          with(
+            :body => {
+              capabilities: [{
+                capability: "view_metrics",
+                resource_id: id,
+                resource_type: "app"
+              }]
+            }.to_json
+          ).to_return(:status => 200, :body => payload, :headers => {})
+
+        expect(client.capable?(type: "app", id: id, capability: "view_metrics")).to eql(capable)
+      end
+    end
+
+    it 'throws bad response on incomplete JSON payload response' do
+      id = SecureRandom.uuid
+      client = Telex::HerokuClient.new
+
+      bad_responses = [
+        '{}',
+        '{ "capabilities": null }',
+        '{ "capabilities": [] }',
+      ]
+
+      bad_responses.each do |bad_response|
+        stub_request(:put, "#{client.uri}/users/~/capabilities").
+          with(
+            :body => {
+              capabilities: [{
+                capability: "view_metrics",
+                resource_id: id,
+                resource_type: "app"
+              }]
+            }.to_json
+          ).to_return(:status => 200, :body => bad_response, :headers => {})
+
+        expect { client.capable?(type: "app", id: id, capability: "view_metrics") }.
+          to raise_error(Telex::HerokuClient::BadResponse)
+      end
+    end
+  end
 end
