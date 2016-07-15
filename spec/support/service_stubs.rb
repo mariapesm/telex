@@ -1,11 +1,12 @@
 class HerokuApiStub < Sinatra::Base
+  APP_ID     = SecureRandom.uuid
   OWNER_ID   = SecureRandom.uuid
   COLLAB1_ID = SecureRandom.uuid
   COLLAB2_ID = SecureRandom.uuid
 
   helpers do
     def check_version!
-      if env["HTTP_ACCEPT"] != "application/vnd.heroku+json; version=3"
+      unless env["HTTP_ACCEPT"].start_with?("application/vnd.heroku+json; version=3")
         halt 406
       end
     end
@@ -41,6 +42,7 @@ class HerokuApiStub < Sinatra::Base
   get "/apps/:id" do |id|
     MultiJson.encode(
       name: "example",
+      id: APP_ID,
       owner: {
         id:    OWNER_ID,
         email: "username@example.com",
@@ -64,6 +66,12 @@ class HerokuApiStub < Sinatra::Base
         }
       },
     ])
+  end
+
+  put "/users/~/capabilities" do
+    MultiJson.encode({
+      "capabilities" => [{"capable" => true}]
+    })
   end
 end
 

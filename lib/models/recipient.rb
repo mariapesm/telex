@@ -10,14 +10,8 @@ class Recipient < Sequel::Model
     self.where(app_id: app_id, active: true, verified: true)
   end
 
-  def self.verify(app_id:, id:, verification_token:)
-    recipient = self[app_id: app_id, id: id]
-
-    return unless recipient
-    return unless recipient.verification_token == verification_token
-    return if recipient.verification_token_expired?
-
-    return recipient
+  def valid_token?(token)
+    verification_token == token && !verification_token_expired?
   end
 
   def self.generate_token

@@ -11,12 +11,22 @@ describe Recipient do
     }.to raise_error(Sequel::UniqueConstraintViolation)
   end
 
-  it 'is able to find via verification token' do
-    app_id = SecureRandom.uuid
-    email = "%s@example.com" % app_id
-    r = Fabricate(:recipient, email: email, app_id: app_id)
-    
-    actual = Recipient.verify(app_id: app_id, id: r.id, verification_token: r.verification_token)
-    expect(actual).to eq(r)
+  describe 'token validation' do
+    let :recipient do
+      Fabricate(:recipient)
+    end
+
+    it 'it validates correctly' do
+      expect(recipient.valid_token?(recipient.verification_token)).to eq(true)
+    end
+
+    it 'it validates the TTL' do
+      recipient.update(verification_sent_at: Time.now.utc - Recipient::VERIFICATION_TOKEN_TTL * 2)
+      expect(recipient.valid_token?(recipient.verification_token)).to eq(false)
+    end
+
+    it 'it rejects bad tokens' do
+      expect(recipient.valid_token?("whatever")).to eq(false)
+    end
   end
 end
