@@ -113,14 +113,8 @@ module Telex
         body: options.delete(:body),
         headers: headers(options),
         path:    path)
-      content = MultiJson.decode(response.body)
 
-      if more_data? response
-        opts = {range: response.headers['Next-Range'] }.merge(options)
-        content.concat get(path, opts)
-      end
-
-      content
+      MultiJson.decode(response.body)
     rescue Excon::Errors::NotFound
       raise Telex::HerokuClient::NotFound
     end

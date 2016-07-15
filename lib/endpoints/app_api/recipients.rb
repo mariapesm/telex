@@ -5,10 +5,14 @@ module Endpoints
     before do
       content_type :json, charset: 'utf-8'
     end
-    
-    error Mediators::Recipients::NotFound do
-      status 404
-    end
+
+    # error Excon::Errors::Forbidden do
+    #   status 403
+    # end
+
+    # error Mediators::Recipients::NotFound, Excon::Errors::NotFound do
+    #   status 404
+    # end
 
     error MultiJson::ParseError, KeyError, Sequel::ValidationFailed, Sequel::UniqueConstraintViolation do
       status 400
@@ -64,8 +68,8 @@ module Endpoints
 
   private
     def authorize!(app_id:)
-      halt 403 unless @app_info = fetch_app_info(app_id: app_id)
       halt 403 unless heroku_client.capable?(id: app_id, type: "app", capability: "manage_alerts")
+      @app_info = fetch_app_info(app_id: app_id)
     end
 
     def heroku_client
@@ -92,9 +96,6 @@ module Endpoints
 
     def fetch_app_info(app_id:)
       heroku_client.app_info(app_id, base_headers_only: true)
-    rescue Excon::Errors::Forbidden, Telex::HerokuClient::NotFound
-    rescue => err
-      $stderr.puts "Mediators::Recipients::Creator::authorized? : Unknown exception: %s" % err.inspect
     end
   end
 end

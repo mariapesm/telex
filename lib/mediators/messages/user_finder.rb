@@ -68,7 +68,7 @@ module Mediators::Messages
       end
     end
 
-    def update_or_create_user(hid:, email:)
+    def update_or_create_user(hid:, email: nil)
       # Fake the user via Recipient since they share the same interface
       Recipient[hid]
     end

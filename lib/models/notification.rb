@@ -7,14 +7,15 @@ class Notification < Sequel::Model
   plugin :validation_helpers
 
   def self.find_by_notifiable_and_message(notifiable:, message:)
-    key = case notifiable
-    when User
-      :user_id
-    when Recipient
-      :recipient_id
-    else
-      raise "Unrecognized notifiable %s" % notifiable.inspect
-    end
+    key = 
+      case notifiable
+      when User
+        :user_id
+      when Recipient
+        :recipient_id
+      else
+        raise "Unrecognized notifiable %s" % notifiable.inspect
+      end
 
     where(message_id: message.id, key => notifiable.id)
   end

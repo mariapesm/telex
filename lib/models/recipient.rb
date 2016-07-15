@@ -11,7 +11,9 @@ class Recipient < Sequel::Model
   end
 
   def self.verify(app_id:, id:, verification_token:)
-    return unless recipient = self[app_id: app_id, id: id]
+    recipient = self[app_id: app_id, id: id]
+
+    return unless recipient
     return unless recipient.verification_token == verification_token
     return if recipient.verification_token_expired?
 
