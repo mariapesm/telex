@@ -66,7 +66,6 @@ module Telex
     def headers(base_headers_only: false, user: nil, range: nil, variant: nil)
       range = "id ..; max=1000;" if range.nil?
 
-      # TODO: Remove the .capabilities version variant when that's mainlined.
       base = {
         "Accept"     => "application/vnd.heroku+json; version=3#{variant}",
         "User-Agent" => "telex",
