@@ -85,11 +85,12 @@ module Endpoints
       raise Pliny::Errors::UnprocessableEntity unless app_id =~ Pliny::Middleware::RequestID::UUID_PATTERN
       raise Pliny::Errors::UnprocessableEntity unless (id || token) =~ Pliny::Middleware::RequestID::UUID_PATTERN
 
-      recipient = if token
-        Recipient.verify(app_id: app_id, id: id, verification_token: token)
-      else
-        Recipient[app_id: app_id, id: id]
-      end
+      recipient =
+        if token
+          Recipient.verify(app_id: app_id, id: id, verification_token: token)
+        else
+          Recipient[app_id: app_id, id: id]
+        end
 
       recipient || raise(Pliny::Errors::NotFound)
     end
