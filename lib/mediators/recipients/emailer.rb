@@ -1,6 +1,6 @@
 module Mediators::Recipients
   class Emailer < Mediators::Base
-    TITLE = "Heroku Email Verification"
+    TITLE = "Your Heroku Confirmation Code: Email Notifications"
 
     attr_reader :app_info, :recipient
 
@@ -37,15 +37,11 @@ module Mediators::Recipients
     end
 
     CONFIRMATION_TEMPLATE = (<<-EOT).gsub(/^ {6}/, "")
-      Hello,
+      We've received your request to add an email address to your app — %{app} — for Threshold Alerting.
 
-      We've received your request to add an email to %{app} for Threshold Alerting.
+      Go to your Application Metrics, select Configure Alerts > Add Email for Alert Notifications, and enter this code: %{token}
 
-      To complete please input the following code in the alerting page:
-
-          %{token}
-
-      - Heroku Alerting Engine
+      If you require further assistance, please [open a ticket](https://help.heroku.com/) with Heroku Support.
     EOT
   end
 end
