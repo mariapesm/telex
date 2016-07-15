@@ -39,7 +39,7 @@ module Mediators::Recipients
     CONFIRMATION_TEMPLATE = (<<-EOT).gsub(/^ {6}/, "")
       We've received your request to add an email address to your app — %{app} — for Threshold Alerting.
 
-      Go to your Application Metrics, select Configure Alerts > Add Email for Alert Notifications, and enter this code: %{token}
+      Go to your Application Metrics, select Configure Alerts > Add Email for Alert Notifications, and enter this code: __%{token}__
 
       If you require further assistance, please [open a ticket](https://help.heroku.com/) with Heroku Support.
     EOT
