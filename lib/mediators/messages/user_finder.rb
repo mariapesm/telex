@@ -36,13 +36,13 @@ module Mediators::Messages
 
     def update_or_create_all_users
       users_details.map do |details|
-        user = update_or_create_user(details[:hid], details[:email])
+        user = update_or_create_user(hid: details[:hid], email: details[:email])
         role = details[:role]
         UserWithRole.new(role, user)
       end
     end
 
-    def update_or_create_user(hid, email)
+    def update_or_create_user(hid:, email:)
       user = User[heroku_id: hid]
       if user.nil?
         user = User.create(heroku_id: hid, email: email)
@@ -68,7 +68,7 @@ module Mediators::Messages
       end
     end
 
-    def update_or_create_user(hid, *_)
+    def update_or_create_user(hid:, email:)
       Recipient[hid]
     end
   end
