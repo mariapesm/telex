@@ -10,22 +10,21 @@ module Mediators::Recipients
     end
 
     def call
-      attributes = maybe_regenerate_token(active: active, refresh_token: refresh_token)
-      recipient.update(attributes)
+      recipient.active = active
+      recipient.set(maybe_regenerate_token(refresh_token: refresh_token))
+      recipient.save
 
-      if attributes[:verification_token]
+      if refresh_token
         Emailer.run(app_info: app_info, recipient: recipient)
       end
 
       recipient
     end
 
-    def maybe_regenerate_token(attributes)
-      if attributes.delete(:refresh_token)
-        attributes[:verification_token] = Recipient.generate_token
-        attributes[:verification_sent_at] = Time.now.utc
-      end
-      attributes
+    def maybe_regenerate_token(refresh_token:)
+      return {} unless refresh_token
+
+      { verification_token: Recipient.generate_token, verification_sent_at: Time.now.utc }
     end
   end
 end
