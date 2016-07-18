@@ -4,6 +4,15 @@
 export URL=https://telex-opex.herokuapp.com
 export APP=dcca932b-0156-4d11-b5fd-fcec4c924be2
 export TOKEN=$(heroku auth:token)
+export TITLE=Your Heroku Confirmation Code: Email Notifications
+export RAWBODY="
+We've received your request to add an email address to your app — {{app}} — for Threshold Alerting.
+
+Go to your Application Metrics, select Configure Alerts > Add Email for Alert Notifications, and enter this code: __{{token}}__
+
+If you require further assistance, please [open a ticket](https://help.heroku.com/) with Heroku Support.
+"
+export BODY=$(echo "$RAWBODY" |  ruby -rjson -e "puts JSON.dump(STDIN.read)")
 ```
 
 ### Create Recipient
@@ -13,7 +22,7 @@ export TOKEN=$(heroku auth:token)
 ```bash
 curl -XPOST $URL/apps/$APP/recipients \
 	-u :$TOKEN \
-	-d '{"email":"some-email@example.com"}'
+	-d "{\"email\":\"some-email@example.com\", \"title\":$TITLE, \"body\":$BODY}"
 ```
 
 #### Response
@@ -21,7 +30,7 @@ curl -XPOST $URL/apps/$APP/recipients \
 Status: 201
 
 ```json
-{"id":"6635a744-a7cb-4220-b456-5b24cc061020","email":"some-email@example.com","verification_token":"8337C","active":false,"verified":false,"created_at":"2016-07-08T17:33:15Z"}
+{"id":"6635a744-a7cb-4220-b456-5b24cc061020","email":"some-email@example.com",active":false,"verified":false,"created_at":"2016-07-08T17:33:15Z"}
 ```
 
 ### Verify recipient
@@ -50,7 +59,7 @@ curl $URL/apps/$APP/recipients \
 
 ### Activate/deactivate a recipient; and/or refresh the verification URL
 
-- To refresh the verification URL, just pass in `refresh: true` during PUT requests
+- To refresh the verification URL, just pass in `title` and `body` again during PUT requests
 - To set the active / inactive flag, set that also.
 
 #### Request
@@ -67,8 +76,7 @@ curl -XPATCH $URL/apps/$APP/recipients/$ID \
 curl -XPATCH $URL/apps/$APP/recipients/$ID \
 	-u :$TOKEN \
 	-H "Content-Type: application/json" \
-	-d '{"refresh": true}'
-
+	-d "{\"title\":$TITLE, \"body\":$BODY}"
 ```
 
 #### Response
