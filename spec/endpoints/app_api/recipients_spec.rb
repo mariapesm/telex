@@ -124,7 +124,7 @@ describe Endpoints::AppAPI::Recipients do
       delete "/#{app_id}/recipients/#{recipient.id}"
       expect(last_response.status).to eq(204)
 
-      expect(Recipient[recipient.id]).to eq(nil)
+      expect(Recipient[recipient.id].deleted_at).to_not eq(nil)
     end
   end
 end

@@ -11,6 +11,7 @@ Sequel.migration do
       bool         :active, default: false, null: false
       timestamptz  :created_at, default: Sequel.function(:now), null: false
       timestamptz  :updated_at
+      timestamptz  :deleted_at
     end
 
     # Need to be able to find all recipients for a given app

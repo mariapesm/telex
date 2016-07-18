@@ -7,7 +7,7 @@ module Mediators::Recipients
     end
 
     def call
-      recipient.delete
+      recipient.update(deleted_at: Time.now.utc)
     end
   end
 end
