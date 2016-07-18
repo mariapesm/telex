@@ -130,3 +130,20 @@ Dashboard+Email: type=[dashboard, email]
 Dashboard+Team: type=[app]
 Dashboard+Team+Email: type=[app,email]
 ```
+
+
+### Footnotes
+
+#### TITLE
+
+`Your Heroku Confirmation Code: Email Notifications`
+
+#### BODY
+
+```
+We've received your request to add an email address to your app — {{app}} — for Threshold Alerting.
+
+Go to your Application Metrics, select Configure Alerts > Add Email for Alert Notifications, and enter this code: __{{token}}__
+
+If you require further assistance, please [open a ticket](https://help.heroku.com/) with Heroku Support.
+```
