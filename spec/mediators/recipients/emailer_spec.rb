@@ -9,12 +9,41 @@ describe Mediators::Recipients::Emailer do
     args = {
       email: recipient.email,
       notification_id: Pliny::Middleware::RequestID::UUID_PATTERN,
-      subject: described_class::TITLE,
-      body: /#{recipient.verification_token}/,
+      subject: "hello",
+      body: "myapp #{recipient.verification_token}"
     }
     allow(Telex::Emailer).to receive(:new).with(hash_including(args)) { emailer }
     allow(emailer).to receive(:deliver!)
 
-    described_class.run(app_info: app_info, recipient: recipient)
+    described_class.run(app_info: app_info, recipient: recipient, title: "hello", body: "{{app}} {{token}}")
+  end
+
+  it "leaves other var-looking things in the body alone" do
+    emailer = double()
+    args = {
+      email: recipient.email,
+      notification_id: Pliny::Middleware::RequestID::UUID_PATTERN,
+      subject: "hello",
+      body: "myapp #{recipient.verification_token} {{yoyo}}"
+    }
+    allow(Telex::Emailer).to receive(:new).with(hash_including(args)) { emailer }
+    allow(emailer).to receive(:deliver!)
+
+    described_class.run(app_info: app_info, recipient: recipient, title: "hello", body: "{{app}} {{token}} {{yoyo}}")
+  end
+
+  it "raises BadRequest if app/token are missing" do
+    bad_bodies = [
+      "{{yoyo}}",
+      "",
+      "{{app}}",
+      "{{token}}",
+    ]
+
+    bad_bodies.each do |body|
+      expect {
+        described_class.run(app_info: app_info, recipient: recipient, title: "hello", body: body)
+      }.to raise_error(Mediators::Recipients::BadRequest)
+    end
   end
 end

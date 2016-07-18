@@ -1,11 +1,12 @@
 module Mediators::Recipients
   class Creator < Mediators::Base
-    attr_reader :app_info, :email, :active
+    attr_reader :app_info, :email, :title, :body
 
-    def initialize(app_info:, email: nil, active: false)
+    def initialize(app_info:, email:, title:, body:)
       @app_info = app_info
       @email = email
-      @active = active
+      @title = title
+      @body = body
     end
 
     def call
@@ -14,7 +15,7 @@ module Mediators::Recipients
         app_id: app_info.fetch("id"),
         verification_token: Recipient.generate_token
       )
-      Emailer.run(app_info: app_info, recipient: recipient)
+      Emailer.run(app_info: app_info, recipient: recipient, title: title, body: body)
       recipient
     end
   end

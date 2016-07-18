@@ -1,47 +1,50 @@
 module Mediators::Recipients
   class Emailer < Mediators::Base
-    TITLE = "Your Heroku Confirmation Code: Email Notifications"
+    attr_reader :app_info, :recipient, :title, :body
 
-    attr_reader :app_info, :recipient
+    APP = "{{app}}"
+    TOKEN = "{{token}}"
 
-    def initialize(app_info:, recipient:)
+    def initialize(app_info:, recipient:, title:, body:)
       @app_info = app_info
-      @recipient = recipient 
+      @recipient = recipient
+      @title = title.to_s
+      @body = body.to_s
     end
 
     def call
-      send_email(recipient: recipient, notification_id: recipient.id)
+      validate
+      send_email
+    end
+
+    def validate
+      if title.empty?
+        raise BadRequest, "`title` is required"
+      end
+
+      if !body.include?(APP) || !body.include?(TOKEN)
+        raise BadRequest, "`body` should have %s and %s" % [APP, TOKEN]
+      end
     end
 
   private
-    def generate_confirmation_for(recipient)
+    def generate_confirmation_email
       Message.new(
-        title: TITLE,
-        body: CONFIRMATION_TEMPLATE % {
-          token: recipient.verification_token,
-          app: app_info.fetch("name")
-        },
+        title: title,
+        body: body.gsub(APP, app_info.fetch("name")).gsub(TOKEN, recipient.verification_token)
       )
     end
 
-    def send_email(recipient:, notification_id:)
-      message = generate_confirmation_for(recipient)
+    def send_email
+      message = generate_confirmation_email
       emailer = Telex::Emailer.new(
         email: recipient.email,
-        notification_id: notification_id,
+        notification_id: recipient.id,
         subject: message.title,
         body: message.body,
         action: message.action,
       )
       emailer.deliver!
     end
-
-    CONFIRMATION_TEMPLATE = (<<-EOT).gsub(/^ {6}/, "")
-      We've received your request to add an email address to your app — %{app} — for Threshold Alerting.
-
-      Go to your Application Metrics, select Configure Alerts > Add Email for Alert Notifications, and enter this code: __%{token}__
-
-      If you require further assistance, please [open a ticket](https://help.heroku.com/) with Heroku Support.
-    EOT
   end
 end

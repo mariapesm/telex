@@ -18,6 +18,12 @@ module Endpoints
         status 404
       end
 
+      error Mediators::Recipients::BadRequest do
+        status 400
+
+        { "id": "bad_request", "message": env['sinatra.error'].message }.to_json
+      end
+
       error MultiJson::ParseError, Sequel::ValidationFailed, Sequel::UniqueConstraintViolation do
         status 400
       end
@@ -31,6 +37,8 @@ module Endpoints
         recipient = Mediators::Recipients::Creator.run(
           app_info: @app_info,
           email: data.fetch("email", ""),
+          title: data.fetch("title", ""),
+          body: data.fetch("body", ""),
         )
         status 201
         respond_json(recipient)
@@ -49,7 +57,8 @@ module Endpoints
           app_info: @app_info,
           recipient: get_recipient,
           active: data.fetch("active", false),
-          refresh_token: data.fetch("refresh_token", false)
+          title: data.fetch("title", ""),
+          body: data.fetch("body", ""),
         )
         respond_json(recipient)
       end

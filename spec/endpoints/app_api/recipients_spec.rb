@@ -42,8 +42,20 @@ describe Endpoints::AppAPI::Recipients do
       end
     end
 
+    it "explains why a body is bad" do
+      post "#{app_id}/recipients", { email: "yolo@yolo.com", title: "hello", body: "{{app}}" }.to_json
+      expect(last_response.status).to eq(400)
+      expect(last_response.body).to include("`body` should have {{app}} and {{token}}")
+    end
+
+    it "explains why a title is bad" do
+      post "#{app_id}/recipients", { email: "yolo@yolo.com", title: "", body: "{{app}}" }.to_json
+      expect(last_response.status).to eq(400)
+      expect(last_response.body).to include("`title` is required")
+    end
+
     it "can create a new recipient" do
-      post "/#{app_id}/recipients", { email: "yolo@yolo.com" }.to_json
+      post "/#{app_id}/recipients", { email: "yolo@yolo.com", title: "hello", body: "{{app}} {{token}}" }.to_json
       expect(last_response.status).to eq(201)
 
       expect(Recipient[email: "yolo@yolo.com", app_id: app_id]).to_not be_nil
@@ -87,9 +99,9 @@ describe Endpoints::AppAPI::Recipients do
       Fabricate(:recipient, app_id: app_id)
     end
 
-    it "allows a token refresh_token" do
+    it "allows a token to be refreshed via title/body" do
       old_token = recipient.verification_token
-      patch "/#{app_id}/recipients/#{recipient.id}", { refresh_token: true }.to_json
+      patch "/#{app_id}/recipients/#{recipient.id}", { title: "hello", body: "{{app}} {{token}}" }.to_json
       expect(last_response.status).to eq(200)
 
       recipient.reload
