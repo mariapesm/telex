@@ -29,6 +29,7 @@ class Telex::Emailer
     end
 
     text_part = Mail::Part.new
+    text_part.content_type = 'text/plain; charset=UTF-8'
     text_part.body = body
     mail.text_part = text_part
 
