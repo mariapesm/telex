@@ -11,6 +11,10 @@ module Mediators::Recipients
     end
 
     def call
+      if regenerate_token?
+        Limiter.run(app_info: app_info, recipient: recipient)
+      end
+
       recipient.active = active
       recipient.set(maybe_regenerate_token(title: title, body: body))
       recipient.save

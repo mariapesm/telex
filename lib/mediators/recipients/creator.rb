@@ -10,6 +10,8 @@ module Mediators::Recipients
     end
 
     def call
+      Limiter.run(app_info: app_info)
+
       recipient = Recipient.create(
         email: email,
         app_id: app_info.fetch("id"),

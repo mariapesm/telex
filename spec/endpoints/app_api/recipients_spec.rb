@@ -96,7 +96,7 @@ describe Endpoints::AppAPI::Recipients do
 
   describe "PATCH /apps/:app_id/recipients/:id" do
     let :recipient do
-      Fabricate(:recipient, app_id: app_id)
+      Fabricate(:recipient, app_id: app_id, verification_sent_at: Time.now.utc - 120)
     end
 
     it "allows a token to be refreshed via title/body" do

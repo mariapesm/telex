@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe Mediators::Recipients::Updater do
-  let(:app_info) {{ "name" => "myapp" }}
+  let(:app_info) {{ "id" => SecureRandom.uuid, "name" => "myapp" }}
 
   it "can change from active to inactive" do
     recipient = Fabricate(:recipient)
@@ -14,7 +14,7 @@ describe Mediators::Recipients::Updater do
   end
 
   it "can regenerate a new token when `title` `body` is supplied" do
-    recipient = Fabricate(:recipient)
+    recipient = Fabricate(:recipient, verification_sent_at: Time.now.utc - 120)
     old_token = recipient.verification_token
 
     allow(Mediators::Recipients::Emailer).to receive(:run).with(

@@ -2,7 +2,6 @@ require "spec_helper"
 
 describe Mediators::Recipients::Creator do
   before do
-    producer = Fabricate(:producer)
     @app_info = {
       "id" => SecureRandom.uuid,
       "name" => "brat",
