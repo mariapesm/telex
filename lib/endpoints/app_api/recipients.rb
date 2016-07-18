@@ -49,7 +49,7 @@ module Endpoints
           app_info: @app_info,
           recipient: get_recipient,
           active: data.fetch("active", false),
-          refresh: data.fetch("refresh", false)
+          refresh_token: data.fetch("refresh_token", false)
         )
         respond_json(recipient)
       end

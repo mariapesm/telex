@@ -1,3 +1,4 @@
+# encoding: utf-8
 require "spec_helper"
 
 describe Endpoints::AppAPI::Recipients do
@@ -86,9 +87,9 @@ describe Endpoints::AppAPI::Recipients do
       Fabricate(:recipient, app_id: app_id)
     end
 
-    it "allows a token refresh" do
+    it "allows a token refresh_token" do
       old_token = recipient.verification_token
-      patch "/#{app_id}/recipients/#{recipient.id}", { refresh: true }.to_json
+      patch "/#{app_id}/recipients/#{recipient.id}", { refresh_token: true }.to_json
       expect(last_response.status).to eq(200)
 
       recipient.reload
