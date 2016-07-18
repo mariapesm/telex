@@ -16,11 +16,11 @@ module Mediators::Recipients
 
     def call
       if Recipient.where(app_id: app_info.fetch("id"), deleted_at: nil).count >= max_per_app
-        raise LimitError, "You can only have a maximum of %d emails per app" % max_per_app
+        raise LimitError, "You can only have a maximum of %d recipients per app" % max_per_app
       end
 
       if created_today.count >= max_per_day
-        raise LimitError, "You can only create a maximum of %d emails per day" % max_per_day
+        raise LimitError, "You can only create a maximum of %d recipients per day" % max_per_day
       end
 
       if recipient && (Time.now.utc - recipient.verification_sent_at) < max_refresh_interval
