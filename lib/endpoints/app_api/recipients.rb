@@ -18,19 +18,14 @@ module Endpoints
         status 404
       end
 
-      error MultiJson::ParseError, Sequel::ValidationFailed, Sequel::UniqueConstraintViolation, Mediators::Recipients::BadRequest do
-        message =
-          case env['sinatra.error']
-          when MultiJson::ParseError
-            "Unable to parse the JSON request"
-          when Sequel::UniqueConstraintViolation
-            "A recipient with that email already exists"
-          when Sequel::ValidationFailed, Mediators::Recipients::BadRequest
-            env['sinatra.error'].message
-          end
+      error Mediators::Recipients::LimitError do
+        status 429
+        { "id": "bad_request", "message": sinatra_error.message }.to_json
+      end
 
+      error MultiJson::ParseError, Sequel::ValidationFailed, Sequel::UniqueConstraintViolation, Mediators::Recipients::BadRequest do
         status 400
-        { "id": "bad_request", "message": message }.to_json
+        { "id": "bad_request", "message": bad_request_message }.to_json
       end
 
       get "/recipients" do
@@ -102,6 +97,21 @@ module Endpoints
 
       def get_app_info
         heroku_client.app_info(params[:app_id], base_headers_only: true)
+      end
+
+      def sinatra_error
+        env['sinatra.error']
+      end
+
+      def bad_request_message
+        case sinatra_error
+        when MultiJson::ParseError
+          "Unable to parse the JSON request"
+        when Sequel::UniqueConstraintViolation
+          "A recipient with that email already exists"
+        when Sequel::ValidationFailed, Mediators::Recipients::BadRequest
+          sinatra_error.message
+        end
       end
     end
   end
