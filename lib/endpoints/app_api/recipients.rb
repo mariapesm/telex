@@ -18,14 +18,10 @@ module Endpoints
         status 404
       end
 
-      error Mediators::Recipients::BadRequest do
+      error MultiJson::ParseError, Sequel::ValidationFailed, Sequel::UniqueConstraintViolation, Mediators::Recipients::BadRequest do
         status 400
 
         { "id": "bad_request", "message": env['sinatra.error'].message }.to_json
-      end
-
-      error MultiJson::ParseError, Sequel::ValidationFailed, Sequel::UniqueConstraintViolation do
-        status 400
       end
 
       get "/recipients" do
