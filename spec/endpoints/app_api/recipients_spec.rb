@@ -126,5 +126,25 @@ describe Endpoints::AppAPI::Recipients do
 
       expect(Recipient[recipient.id].deleted_at).to_not eq(nil)
     end
+
+    it "404s on double deletes" do
+      recipient = Fabricate(:recipient, app_id: app_id)
+
+      delete "/#{app_id}/recipients/#{recipient.id}"
+      expect(last_response.status).to eq(204)
+
+      delete "/#{app_id}/recipients/#{recipient.id}"
+      expect(last_response.status).to eq(404)
+    end
+    
+    it "allows creation of the same email once deleted" do
+      recipient = Fabricate(:recipient, app_id: app_id)
+
+      delete "/#{app_id}/recipients/#{recipient.id}"
+      expect(last_response.status).to eq(204)
+
+      post "/#{app_id}/recipients", { email: recipient.email, title: "hello", body: "{{app}} {{token}}" }.to_json
+      expect(last_response.status).to eq(201)
+    end
   end
 end
