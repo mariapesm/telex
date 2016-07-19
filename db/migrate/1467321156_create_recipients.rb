@@ -16,7 +16,7 @@ Sequel.migration do
 
     # Need to be able to find all recipients for a given app
     add_index :recipients, :app_id
-    add_index :recipients, [:app_id, :email], unique: true
+    add_index :recipients, [:app_id, :email], unique: true, where: { deleted_at: nil }
   end
 
   down do
