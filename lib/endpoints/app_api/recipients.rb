@@ -97,7 +97,7 @@ module Endpoints
         raise Pliny::Errors::UnprocessableEntity unless params[:app_id] =~ Pliny::Middleware::RequestID::UUID_PATTERN
         raise Pliny::Errors::UnprocessableEntity unless (params[:id]) =~ Pliny::Middleware::RequestID::UUID_PATTERN
 
-        Recipient[app_id: params[:app_id], id: params[:id]] || raise(Pliny::Errors::NotFound)
+        Recipient[app_id: params[:app_id], id: params[:id], deleted_at: nil] || raise(Pliny::Errors::NotFound)
       end
 
       def get_app_info
