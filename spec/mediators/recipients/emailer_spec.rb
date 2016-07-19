@@ -10,7 +10,8 @@ describe Mediators::Recipients::Emailer do
       email: recipient.email,
       notification_id: Pliny::Middleware::RequestID::UUID_PATTERN,
       subject: "hello",
-      body: "myapp #{recipient.verification_token}"
+      body: "myapp #{recipient.verification_token}",
+      strip_text: true,
     }
     allow(Telex::Emailer).to receive(:new).with(hash_including(args)) { emailer }
     allow(emailer).to receive(:deliver!)
@@ -24,7 +25,8 @@ describe Mediators::Recipients::Emailer do
       email: recipient.email,
       notification_id: Pliny::Middleware::RequestID::UUID_PATTERN,
       subject: "hello",
-      body: "myapp #{recipient.verification_token} {{yoyo}}"
+      body: "myapp #{recipient.verification_token} {{yoyo}}",
+      strip_text: true,
     }
     allow(Telex::Emailer).to receive(:new).with(hash_including(args)) { emailer }
     allow(emailer).to receive(:deliver!)

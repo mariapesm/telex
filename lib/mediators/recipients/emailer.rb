@@ -43,6 +43,7 @@ module Mediators::Recipients
         subject: message.title,
         body: message.body,
         action: message.action,
+        strip_text: true,
       )
       emailer.deliver!
     end
