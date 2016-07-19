@@ -26,6 +26,22 @@ describe Telex::Emailer do
     expect { emailer.deliver! }.to raise_error(Telex::Emailer::DeliveryError)
   end
 
+  it 'strips down plain text accordingly given :strip_text' do
+    cases = [
+      [false, "hello __world__ [here](https://heroku.com/)"],
+      [true, "hello world here (https://heroku.com/)"],
+    ]
+
+    cases.each do |strip_text, expected_body|
+      emailer = Telex::Emailer.new(
+        options.merge(body: "hello __world__ [here](https://heroku.com/)",
+                      strip_text: strip_text))
+
+      mail = emailer.deliver!
+      expect(mail.text_part.body).to include(expected_body)
+    end
+  end
+
   # see https://developers.google.com/gmail/markup/actions/actions-overview
   describe 'ld+json support for action shortcuts in GMail' do
     before do
