@@ -19,9 +19,18 @@ module Endpoints
       end
 
       error MultiJson::ParseError, Sequel::ValidationFailed, Sequel::UniqueConstraintViolation, Mediators::Recipients::BadRequest do
-        status 400
+        message =
+          case env['sinatra.error']
+          when MultiJson::ParseError
+            "Unable to parse the JSON request"
+          when Sequel::UniqueConstraintViolation
+            "A recipient with that email already exists"
+          when Sequel::ValidationFailed, Mediators::Recipients::BadRequest
+            env['sinatra.error'].message
+          end
 
-        { "id": "bad_request", "message": env['sinatra.error'].message }.to_json
+        status 400
+        { "id": "bad_request", "message": message }.to_json
       end
 
       get "/recipients" do
