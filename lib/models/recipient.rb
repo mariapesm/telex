@@ -7,7 +7,7 @@ class Recipient < Sequel::Model
   plugin :validation_helpers
 
   def self.find_active_by_app_id(app_id:)
-    self.where(app_id: app_id, active: true, verified: true)
+    self.where(app_id: app_id, active: true, verified: true, deleted_at: nil)
   end
 
   def valid_token?(token)
