@@ -1,4 +1,9 @@
 class Message < Sequel::Model
+  DASHBOARD = "dashboard"
+  EMAIL     = "email"
+  USER      = "user"
+  APP       = "app"
+
   many_to_many :users, join_table: :notifications
   many_to_one :producer
   one_to_many :notifications

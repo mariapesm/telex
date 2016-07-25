@@ -1,31 +1,33 @@
 module Mediators::Notifications
   class Creator < Mediators::Base
-    def initialize(user:, message:)
-      self.user    = user
+    def initialize(notifiable:, message:)
+      self.notifiable = notifiable
       self.message = message
     end
 
     def call
-      self.notification = Notification.create(user_id: user.id, message_id: message.id)
+      self.notification = Notification.create(notifiable: notifiable, message_id: message.id)
+      # One possibility. Just jotting down notes
+      # send_email unless message.target_type == Message::DASHBOARD
       send_email
       notification
     rescue Sequel::ValidationFailed, Sequel::UniqueConstraintViolation
       # Notification already queued, just ignore.
-      Pliny.log(duplicate_notificaiton: true, user_id: user.id, message_id: message.id)
+      Pliny.log(duplicate_notificaiton: true, notifiable_id: notifiable.id, notifiable_type: notifiable.class, message_id: message.id)
     rescue => e
       # ^ Typically an email send failure.
       # Remove the notification before we re-raise so the mediator can be run
       # again.
-      Notification.where(user_id: user.id, message_id: message.id).delete
+      Notification.find_by_notifiable_and_message(notifiable: notifiable, message: message).delete
       raise e
     end
 
     private
-    attr_accessor :user, :message, :notification
+    attr_accessor :notifiable, :message, :notification
 
     def send_email
       emailer = Telex::Emailer.new(
-        email: user.email,
+        email: notifiable.email,
         notification_id: notification.id,
         subject: message.title,
         body: message.body,

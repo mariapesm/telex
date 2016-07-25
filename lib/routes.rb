@@ -35,6 +35,13 @@ Routes = Rack::Builder.new do
     end
   end
 
+  map('/apps') do
+    use Middleware::UserAuthenticator
+    use Pliny::Router do
+      mount Endpoints::AppAPI::Recipients
+    end
+  end
+
   map('/health') do
     run Endpoints::Health
   end

@@ -1,5 +1,6 @@
 require 'erubis'
 require 'redcarpet'
+require 'redcarpet/render_strip'
 require 'mail'
 
 class Telex::Emailer
@@ -7,7 +8,7 @@ class Telex::Emailer
 
   class DeliveryError < StandardError ; end
 
-  def initialize(email:, notification_id: nil, in_reply_to: nil, subject:, body:, action: nil, from: nil)
+  def initialize(email:, notification_id: nil, in_reply_to: nil, subject:, body:, action: nil, from: nil, strip_text: false)
     self.email = email
     self.notification_id = notification_id
     self.in_reply_to = in_reply_to
@@ -15,6 +16,7 @@ class Telex::Emailer
     self.body = body
     self.action = action
     self.from = from
+    self.strip_text = strip_text
   end
 
   def deliver!
@@ -29,8 +31,9 @@ class Telex::Emailer
     end
 
     text_part = Mail::Part.new
+    text_part.content_type = 'text/plain; charset=UTF-8'
     text_part.body = body
-    mail.text_part = text_part
+    mail.text_part = strip_text ? generate_text : text_part
 
     html_part = Mail::Part.new
     html_part.content_type = 'text/html; charset=UTF-8'
@@ -54,7 +57,14 @@ class Telex::Emailer
   end
 
   private
-  attr_accessor :email, :notification_id, :subject, :body, :in_reply_to, :action, :from
+  attr_accessor :email, :notification_id, :subject, :body, :in_reply_to, :action, :from, :strip_text
+
+  def generate_text
+    markdown = Redcarpet::Markdown.new(
+      Redcarpet::Render::StripDown.new
+    )
+    markdown.render(body)
+  end
 
   def generate_html
     markdown = Redcarpet::Markdown.new(
@@ -95,3 +105,64 @@ class Telex::Emailer
     }
   end
 end
+
+# module Redcarpet
+#   module Render
+#     # Markdown-stripping renderer. Turns Markdown into plaintext
+#     # Thanks to @toupeira (Markus Koller)
+#     class StripDown < HTML
+#       # Methods where the first argument is the text content
+#       [
+#         # block-level calls
+#         :block_code, :block_quote,
+#         :block_html, :list, :list_item,
+# 
+#         # span-level calls
+#         :autolink, :codespan, :double_emphasis,
+#         :emphasis, :underline, :raw_html,
+#         :triple_emphasis, :strikethrough,
+#         :superscript, :highlight,
+# 
+#         # footnotes
+#         :footnotes, :footnote_def, :footnote_ref,
+# 
+#         # low level rendering
+#         :entity, :normal_text
+#       ].each do |method|
+#         define_method method do |*args|
+#           args.first
+#         end
+#       end
+# 
+#       # Other methods where we don't return only a specific argument
+#       def link(link, title, content)
+#         "#{content} (#{link})"
+#       end
+# 
+#       def image(link, title, content)
+#         content &&= content + " "
+#         "#{content}#{link}"
+#       end
+# 
+#       def paragraph(text)
+#         text + "\\n"
+#       end
+# 
+#       def header(text, header_level)
+#         text + "\\n"
+#       end
+# 
+#       def table(header, body)
+#         "#{header}#{body}"
+#       end
+# 
+#       def table_row(content)
+#         content + "\\n"
+#       end
+# 
+#       def table_cell(content, alignment)
+#         content + "\\t"
+#       end
+#     end
+#   end
+# end

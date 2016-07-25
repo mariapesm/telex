@@ -5,10 +5,12 @@ module Mediators::Messages
     def self.from_message(message)
       type = message.target_type
       case type
-      when 'user'
+      when Message::USER
         UserUserFinder.new(target_id: message.target_id)
-      when 'app'
+      when Message::APP
         AppUserFinder.new(target_id: message.target_id)
+      when Message::EMAIL
+        EmailUserFinder.new(target_id: message.target_id)
       else
         raise "unknown message type: #{type}"
       end
@@ -19,14 +21,14 @@ module Mediators::Messages
     end
 
     def call
-      get_users_from_heroku
+      get_notifiables
       update_or_create_all_users
     end
 
     private
     attr_accessor :users_details
 
-    def get_users_from_heroku  ; raise NotImplementedError end
+    def get_notifiables  ; raise NotImplementedError end
 
     def heroku_client
       Telex::HerokuClient.new
@@ -58,9 +60,22 @@ module Mediators::Messages
     end
   end
 
+  class EmailUserFinder < UserFinder
+    private
+    def get_notifiables
+      self.users_details = Recipient.find_active_by_app_id(app_id: target_id).map do |r|
+        extract_user(:self, { "email" => r.email, "id" => r.id })
+      end
+    end
+
+    def update_or_create_user(hid:, email:)
+      Recipient[hid]
+    end
+  end
+
   class UserUserFinder < UserFinder
     private
-    def get_users_from_heroku
+    def get_notifiables
       user_response = heroku_client.account_info(user_uuid: target_id)
 
       id = user_response.fetch('id')
@@ -82,7 +97,7 @@ module Mediators::Messages
 
   class AppUserFinder < UserFinder
     private
-    def get_users_from_heroku
+    def get_notifiables
       if app_info.nil?
         self.users_details = [ ]
         return

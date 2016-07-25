@@ -15,6 +15,10 @@ describe UserFinder, '.from_message' do
     expect( finder_from_message_type('app') ).to be_instance_of(AppUserFinder)
   end
 
+  it 'creates a finder for messages targiting an email' do
+    expect( finder_from_message_type('email') ).to be_instance_of(EmailUserFinder)
+  end
+
   it 'blows up on messages with strange types' do
     expect{ finder_from_message_type('nonsense') }.to raise_error(RuntimeError)
   end
@@ -239,3 +243,28 @@ describe AppUserFinder, "#call" do
     expect(emails).to eq(%w[username@example.com])
   end
 end
+
+describe EmailUserFinder, '#call' do
+  before do
+    @id = SecureRandom.uuid
+    Fabricate(:recipient, email: "foo@bar.com", active: true, verified: true, app_id: @id)
+    @finder = EmailUserFinder.new(target_id: @id)
+  end
+
+  it 'does not create users' do
+    @finder.call
+    expect(User.count).to eq(0)
+  end
+
+  it 'returns an array of one user with role' do
+    response = @finder.call
+    expect(response).to be_kind_of(Array)
+    expect(response.size).to eq(1)
+
+    uwr = response.first
+    expect(uwr.role).to eq(:self)
+    expect(uwr.user.email).to eq('foo@bar.com')
+  end
+end
+
+
