@@ -2,12 +2,17 @@ module Mediators::Recipients
   class Updater < Mediators::Base
     attr_reader :app_info, :recipient, :active, :title, :body
 
-    def initialize(app_info:, recipient:, active: false, title: "", body: "")
+    def initialize(app_info:, recipient:, active: false, title: "", body: "", template: "")
       @app_info = app_info
       @recipient = recipient
-      @title = title.to_s
-      @body = body.to_s
       @active = active      
+
+      if template.to_s.empty?
+        @title = title
+        @body = body
+      else
+        @title, @body = TemplateFinder.run(template: template)
+      end
     end
 
     def call
