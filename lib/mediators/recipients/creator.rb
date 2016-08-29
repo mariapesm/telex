@@ -2,16 +2,10 @@ module Mediators::Recipients
   class Creator < Mediators::Base
     attr_reader :app_info, :email, :title, :body
 
-    def initialize(app_info:, email:, template: nil, title: nil, body: nil)
+    def initialize(app_info:, email:, template:)
       @app_info = app_info
       @email = email
-
-      if template.to_s.empty?
-        @title = title
-        @body = body
-      else
-        @title, @body = TemplateFinder.run(template: template)
-      end
+      @title, @body = TemplateFinder.run(template: template)
     end
 
     def call

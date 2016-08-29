@@ -33,32 +33,34 @@ describe Endpoints::AppAPI::Recipients do
       '{"email":"foo@example.com"}',
     ]
 
-    bodies.each do |body|
-      it "400s with request body = `#{body}`" do
-        Fabricate(:recipient, email: "foo@example.com", app_id: app_id)
+    Mediators::Recipients::TemplateFinder.setup(template: "alerting", title: "hello", body: "%{app} %{token}") do
+      bodies.each do |body|
+        it "400s with request body = `#{body}`" do
+          Fabricate(:recipient, email: "foo@example.com", app_id: app_id)
 
-        post "#{app_id}/recipients", body
-        expect(last_response.status).to eq(400)
+          post "#{app_id}/recipients", body
+          expect(last_response.status).to eq(400)
+        end
       end
-    end
 
-    it "explains why a body is bad" do
-      post "#{app_id}/recipients", { email: "yolo@yolo.com", title: "hello", body: "{{app}}" }.to_json
-      expect(last_response.status).to eq(400)
-      expect(last_response.body).to include("`body` should have {{app}} and {{token}}")
-    end
+      it "explains why a body is bad" do
+        post "#{app_id}/recipients", { email: "yolo@yolo.com", template: "alerting" }.to_json
+        expect(last_response.status).to eq(400)
+        expect(last_response.body).to include("`body` should have {{app}} and {{token}}")
+      end
 
-    it "explains why a title is bad" do
-      post "#{app_id}/recipients", { email: "yolo@yolo.com", title: "", body: "{{app}}" }.to_json
-      expect(last_response.status).to eq(400)
-      expect(last_response.body).to include("`title` is required")
-    end
+      it "explains why a title is bad" do
+        post "#{app_id}/recipients", { email: "yolo@yolo.com", template: "alerting" }.to_json
+        expect(last_response.status).to eq(400)
+        expect(last_response.body).to include("`title` is required")
+      end
 
-    it "can create a new recipient" do
-      post "/#{app_id}/recipients", { email: "yolo@yolo.com", title: "hello", body: "{{app}} {{token}}" }.to_json
-      expect(last_response.status).to eq(201)
+      it "can create a new recipient" do
+        post "/#{app_id}/recipients", { email: "yolo@yolo.com", template: "alerting" }.to_json
+        expect(last_response.status).to eq(201)
 
-      expect(Recipient[email: "yolo@yolo.com", app_id: app_id]).to_not be_nil
+        expect(Recipient[email: "yolo@yolo.com", app_id: app_id]).to_not be_nil
+      end
     end
   end
 
@@ -95,25 +97,27 @@ describe Endpoints::AppAPI::Recipients do
   end
 
   describe "PATCH /apps/:app_id/recipients/:id" do
-    let :recipient do
-      Fabricate(:recipient, app_id: app_id, verification_sent_at: Time.now.utc - 120)
-    end
+    Mediators::Recipients::TemplateFinder.setup(template: "alerting", title: "hello", body: "%{app} %{token}") do
+      let :recipient do
+        Fabricate(:recipient, app_id: app_id, verification_sent_at: Time.now.utc - 120)
+      end
 
-    it "allows a token to be refreshed via title/body" do
-      old_token = recipient.verification_token
-      patch "/#{app_id}/recipients/#{recipient.id}", { title: "hello", body: "{{app}} {{token}}" }.to_json
-      expect(last_response.status).to eq(200)
+      it "allows a token to be refreshed via title/body" do
+        old_token = recipient.verification_token
+        patch "/#{app_id}/recipients/#{recipient.id}", { template: "alerting" }.to_json
+        expect(last_response.status).to eq(200)
 
-      recipient.reload
-      expect(recipient.verification_token).to_not eq(old_token)
-    end
+        recipient.reload
+        expect(recipient.verification_token).to_not eq(old_token)
+      end
 
-    it "allows to de-activate" do
-      patch "/#{app_id}/recipients/#{recipient.id}", { active: false }.to_json
-      expect(last_response.status).to eq(200)
+      it "allows to de-activate" do
+        patch "/#{app_id}/recipients/#{recipient.id}", { active: false }.to_json
+        expect(last_response.status).to eq(200)
 
-      recipient.reload
-      expect(recipient.active).to eq(false)
+        recipient.reload
+        expect(recipient.active).to eq(false)
+      end
     end
   end
 
@@ -143,8 +147,10 @@ describe Endpoints::AppAPI::Recipients do
       delete "/#{app_id}/recipients/#{recipient.id}"
       expect(last_response.status).to eq(204)
 
-      post "/#{app_id}/recipients", { email: recipient.email, title: "hello", body: "{{app}} {{token}}" }.to_json
-      expect(last_response.status).to eq(201)
+      Mediators::Recipients::TemplateFinder.setup(template: "alerting", title: "hello", body: "%{app} %{token}") do
+        post "/#{app_id}/recipients", { email: recipient.email, template: "alerting" }.to_json
+        expect(last_response.status).to eq(201)
+      end
     end
   end
 end

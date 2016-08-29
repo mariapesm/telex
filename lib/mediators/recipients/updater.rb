@@ -2,15 +2,12 @@ module Mediators::Recipients
   class Updater < Mediators::Base
     attr_reader :app_info, :recipient, :active, :title, :body
 
-    def initialize(app_info:, recipient:, active: false, title: "", body: "", template: "")
+    def initialize(app_info:, recipient:, template: nil, active: false)
       @app_info = app_info
       @recipient = recipient
       @active = active      
 
-      if template.to_s.empty?
-        @title = title
-        @body = body
-      else
+      if template
         @title, @body = TemplateFinder.run(template: template)
       end
     end
@@ -38,7 +35,7 @@ module Mediators::Recipients
     end
 
     def regenerate_token?
-      !title.empty? && !body.empty?
+      !title.to_s.empty? && !body.to_s.empty?
     end
   end
 end
