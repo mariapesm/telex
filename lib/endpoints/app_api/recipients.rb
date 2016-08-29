@@ -37,8 +37,6 @@ module Endpoints
         recipient = Mediators::Recipients::Creator.run(
           app_info: @app_info,
           email: data.fetch("email", ""),
-          title: data.fetch("title", ""),
-          body: data.fetch("body", ""),
           template: data.fetch("template", ""),
         )
         status 201
@@ -58,8 +56,6 @@ module Endpoints
           app_info: @app_info,
           recipient: get_recipient,
           active: data.fetch("active", false),
-          title: data.fetch("title", ""),
-          body: data.fetch("body", ""),
           template: data.fetch("template", ""),
         )
         respond_json(recipient)

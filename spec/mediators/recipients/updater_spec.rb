@@ -13,7 +13,7 @@ describe Mediators::Recipients::Updater do
     expect(recipient.active).to eq(false)
   end
 
-  it "can regenerate a new token when `title` `body` is supplied" do
+  it "can regenerate a new token when `template` is supplied" do
     recipient = Fabricate(:recipient, verification_sent_at: Time.now.utc - 120)
     old_token = recipient.verification_token
 
@@ -21,8 +21,10 @@ describe Mediators::Recipients::Updater do
       app_info: app_info, recipient: recipient, title: "hello", body: "{{app}} {{token}}"
     )
 
-    described_class.run(app_info: app_info, recipient: recipient, title: "hello", body: "{{app}} {{token}}")
-    expect(recipient.verification_token).to_not eq(old_token)
+    Mediators::Recipients::TemplateFinder.setup(template: "alerting", title: "hello", body: "%{app} %{token}") do
+      described_class.run(app_info: app_info, recipient: recipient, template: "alerting")
+      expect(recipient.verification_token).to_not eq(old_token)
+    end
   end
 
   it "can does not regenerate a new token when `refresh_token: false` is supplied" do
