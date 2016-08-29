@@ -39,6 +39,7 @@ module Endpoints
           email: data.fetch("email", ""),
           title: data.fetch("title", ""),
           body: data.fetch("body", ""),
+          template: data.fetch("template", ""),
         )
         status 201
         respond_json(recipient)
@@ -59,6 +60,7 @@ module Endpoints
           active: data.fetch("active", false),
           title: data.fetch("title", ""),
           body: data.fetch("body", ""),
+          template: data.fetch("template", ""),
         )
         respond_json(recipient)
       end
