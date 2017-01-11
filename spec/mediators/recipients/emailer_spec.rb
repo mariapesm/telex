@@ -9,14 +9,14 @@ describe Mediators::Recipients::Emailer do
     args = {
       email: recipient.email,
       notification_id: Pliny::Middleware::RequestID::UUID_PATTERN,
-      subject: "hello",
+      subject: "hello myapp",
       body: "myapp #{recipient.verification_token}",
       strip_text: true,
     }
     allow(Telex::Emailer).to receive(:new).with(hash_including(args)) { emailer }
     allow(emailer).to receive(:deliver!)
 
-    described_class.run(app_info: app_info, recipient: recipient, title: "hello", body: "{{app}} {{token}}")
+    described_class.run(app_info: app_info, recipient: recipient, title: "hello {{app}}", body: "{{app}} {{token}}")
   end
 
   it "leaves other var-looking things in the body alone" do

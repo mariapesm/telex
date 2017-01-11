@@ -30,7 +30,7 @@ module Mediators::Recipients
   private
     def generate_confirmation_email
       Message.new(
-        title: title,
+        title: title.gsub(APP, app_info.fetch("name")),
         body: body.gsub(APP, app_info.fetch("name")).gsub(TOKEN, recipient.verification_token)
       )
     end
