@@ -17,7 +17,7 @@ module Mediators::Messages
 
     def call
       Message.new(@args).tap do |msg|
-        if msg.target_type == Message::APP
+        if msg.target_type == Message::APP && (msg.title.include?(APP) || msg.body.include?(APP))
           app_info = heroku_client.app_info(msg.target_id, base_headers_only: true)
           msg[:title] = msg[:title].gsub(APP, app_info.fetch("name"))
           msg[:body] = msg[:body].gsub(APP, app_info.fetch("name"))
