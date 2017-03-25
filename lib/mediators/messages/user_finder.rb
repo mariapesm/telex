@@ -120,22 +120,22 @@ module Mediators::Messages
     def owners
       owner = extract_user(:owner, app_info.fetch('owner'))
       if owner[:email].end_with?('@herokumanager.com')
-        org_users(owner[:email])
+        team_users(owner[:email])
       else
         [ owner ]
       end
     end
 
-    def org_users(owner_email)
-      org_members_response = heroku_client.organization_members(owner_email.split('@').first)
-      org_admins = org_members_response.select { |member| member.fetch('role') == 'admin' }
-      org_admins.map do |admin|
+    def team_users(owner_email)
+      team_members_response = heroku_client.team_members(owner_email.split('@').first)
+      team_admins = team_members_response.select { |member| member.fetch('role') == 'admin' }
+      team_admins.map do |admin|
         extract_user(:owner, admin.fetch('user'))
       end
     rescue Telex::HerokuClient::NotFound
       # Organization is missing
-      Pliny.log(missing_org: true, org: owner_email)
-      Telex::Sample.count "org_not_found"
+      Pliny.log(missing_team: true, team: owner_email)
+      Telex::Sample.count "team_not_found"
       []
     end
 

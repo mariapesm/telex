@@ -124,18 +124,18 @@ describe AppUserFinder, "#call" do
     expect(collab1.role).to eq(:collaborator)
   end
 
-  it 'fetches organization owners' do
+  it 'fetches team owners' do
     stub_heroku_api do
       get "/apps/:id" do |id|
         MultiJson.encode(
           name: "example",
           owner: {
             id:    SecureRandom.uuid,
-            email: "organization@herokumanager.com",
+            email: "team@herokumanager.com",
           })
       end
 
-      get "/organizations/:name/members" do
+      get "/teams/:name/members" do
         MultiJson.encode([
           {
             role: 'admin',
@@ -169,7 +169,7 @@ describe AppUserFinder, "#call" do
     expect(emails).to include('someone@example.com')
     expect(emails).to include('username2@example.com')
     expect(emails).not_to include('member@example.com')
-    expect(emails).not_to include('organization@herokumanager.com')
+    expect(emails).not_to include('team@herokumanager.com')
   end
 
   it "excludes users who have never logged in" do
@@ -209,18 +209,18 @@ describe AppUserFinder, "#call" do
     expect(response).to be_empty
   end
 
-  it "handles missing org lookups" do
+  it "handles missing team lookups" do
     stub_heroku_api do
       get "/apps/:id" do |id|
         MultiJson.encode(
           name: "example",
           owner: {
             id:    SecureRandom.uuid,
-            email: "organization@herokumanager.com",
+            email: "team@herokumanager.com",
           })
       end
 
-      get "/organizations/:name/members" do
+      get "/teams/:name/members" do
         raise Excon::Errors::NotFound, "not found"
       end
     end
