@@ -16,15 +16,15 @@ describe Telex::HerokuClient, '#new' do
 
   it 'handles requests' do
     client = Telex::HerokuClient.new
-    stub_request(:get, "#{client.uri}/organizations/foobar/members").
+    stub_request(:get, "#{client.uri}/teams/foobar/members").
       to_return(status: 200, body: [{'id' => 1}].to_json)
 
-    expect(client.organization_members('foobar')).to eql([{'id' => 1}])
+    expect(client.team_members('foobar')).to eql([{'id' => 1}])
   end
 
   it 'handles ranges' do
     client = Telex::HerokuClient.new
-    stub_request(:get, "#{client.uri}/organizations/foobar/members").
+    stub_request(:get, "#{client.uri}/teams/foobar/members").
       with(headers: {'Range'=>'id ..; max=1000;'}).
       to_return(
         status: 206,
@@ -34,19 +34,19 @@ describe Telex::HerokuClient, '#new' do
         }
       )
 
-      stub_request(:get, "#{client.uri}/organizations/foobar/members").
+      stub_request(:get, "#{client.uri}/teams/foobar/members").
         with(headers: {'Range'=>']1..; max=1000;'}).
         to_return(status: 206, body: [{'id' => 2}].to_json)
 
-    expect(client.organization_members('foobar')).to eql([{'id' => 1}, {'id' => 2}])
+    expect(client.team_members('foobar')).to eql([{'id' => 1}, {'id' => 2}])
   end
 
   it 'raises a NotFound error on 404s' do
     client = Telex::HerokuClient.new
-    stub_request(:get, "#{client.uri}/organizations/foobar/members").
+    stub_request(:get, "#{client.uri}/teams/foobar/members").
       to_return(status: 404)
 
-    expect { client.organization_members('foobar') }.
+    expect { client.team_members('foobar') }.
       to raise_error(Telex::HerokuClient::NotFound)
   end
 
