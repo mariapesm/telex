@@ -1,4 +1,5 @@
 source "https://rubygems.org"
+
 ruby "2.3.1"
 #ruby-gemset=telex
 
@@ -26,6 +27,10 @@ gem "sinatra", "~> 1.4", require: "sinatra/base"
 gem "sinatra-contrib", require: ["sinatra/namespace", "sinatra/reloader"]
 gem "sinatra-router"
 gem "sucker_punch"
+
+source 'https://packagecloud.io/heroku/gemgate/' do
+  gem "rollbar-blanket", "~> 0.1.9"
+end
 
 group :development, :test do
   gem "pry-byebug"
