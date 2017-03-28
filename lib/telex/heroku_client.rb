@@ -38,7 +38,7 @@ module Telex
         variant: ".capabilities",
         base_headers_only: base_headers_only,
         body: body.to_json)
-      
+
       raise BadResponse unless response["capabilities"].kind_of?(Array)
       raise BadResponse unless response["capabilities"][0].kind_of?(Hash)
 
@@ -53,8 +53,8 @@ module Telex
       get("/apps/#{app_uuid}/collaborators")
     end
 
-    def organization_members(organization_name)
-      get("/organizations/#{organization_name}/members")
+    def team_members(team_name)
+      get("/teams/#{team_name}/members")
     end
 
     private
