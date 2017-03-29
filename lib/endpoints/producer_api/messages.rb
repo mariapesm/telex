@@ -27,6 +27,8 @@ module Endpoints
       post '/:message_id/followups' do
         begin
           message = Message[id: params['message_id'], producer_id: current_producer.id]
+          raise Pliny::Errors::NotFound unless message
+
           followup = Mediators::Followups::Creator.run(
             message: message,
             body:    data['body']
@@ -34,6 +36,8 @@ module Endpoints
 
          status 201
          MultiJson.encode({id: followup.id})
+        rescue Pliny::Errors::NotFound => e
+          raise e
         rescue
           raise Pliny::Errors::UnprocessableEntity
         end

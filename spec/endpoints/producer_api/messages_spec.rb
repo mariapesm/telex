@@ -99,6 +99,12 @@ describe Endpoints::ProducerAPI::Messages do
     end
 
     context 'with bad params' do
+      it "fails with non existance message" do
+        allow(Message).to receive(:[]).and_return(nil)
+        do_post
+        expect(last_response.status).to eq(404)
+      end
+
       it "fails with an empty body" do
         @followup_body[:body] = ''
         do_post
@@ -114,14 +120,14 @@ describe Endpoints::ProducerAPI::Messages do
       it "fails with a missing message_id" do
         @message.id = SecureRandom.uuid
         do_post
-        expect(last_response.status).to eq(422)
+        expect(last_response.status).to eq(404)
       end
 
       it "fails when the message belongs to a different producer" do
         @message.producer = Fabricate(:producer)
         @message.save
         do_post
-        expect(last_response.status).to eq(422)
+        expect(last_response.status).to eq(404)
       end
     end
 
