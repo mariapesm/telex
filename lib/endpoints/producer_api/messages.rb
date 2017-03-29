@@ -36,6 +36,8 @@ module Endpoints
 
          status 201
          MultiJson.encode({id: followup.id})
+        rescue Pliny::Errors::NotFound => e
+          raise e
         rescue
           raise Pliny::Errors::UnprocessableEntity
         end
