@@ -8,36 +8,8 @@ unless Config.rack_env == 'test'
     config.disable_monkey_patch = true
     config.root = Config.root
 
-    config.scrub_headers |= %w[
-      Authorization
-      Cookie
-      Set-Cookie
-      X-Csrf-Token
-    ]
-
-    config.scrub_fields |= %i[
-      access_token
-      api_key
-      authenticity_token
-      bouncer.refresh_token
-      bouncer.token
-      confirm_password
-      heroku_oauth_token
-      heroku_session_nonce
-      heroku_user_session
-      oauth_token
-      passwd
-      password
-      password_confirmation
-      postgres_session_nonce
-      request.cookies.signup-sso-session
-      secret
-      secret_token
-      sudo_oauth_token
-      super_user_session_secret
-      user_session_secret
-      www-sso-session
-    ]
+    config.scrub_fields  |= Rollbar::Blanket.fields
+    config.scrub_headers |= Rollbar::Blanket.headers
 
     config.exception_level_filters.merge!(
       'Telex::Emailer::DeliveryError' => 'warning'
