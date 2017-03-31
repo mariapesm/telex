@@ -4,7 +4,7 @@ function main {
   set -e
 
   add_new_env_vars
-  bundle install
+  bundle install --local
   bundle exec rake db:setup db:migrate
 }
 
