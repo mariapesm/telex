@@ -30,6 +30,7 @@ gem "sucker_punch"
 
 source 'https://packagecloud.io/heroku/gemgate/' do
   gem "rollbar-blanket", "~> 0.1.9"
+  gem "blacklist_hash", "~> 0.1.2"
 end
 
 group :development, :test do
