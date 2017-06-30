@@ -10,6 +10,10 @@ module Endpoints
         @app_info = get_app_info
       end
 
+      error Excon::Errors::Unauthorized do
+        status 401
+      end
+
       error Excon::Errors::Forbidden do
         status 403
       end
