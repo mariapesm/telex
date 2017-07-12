@@ -15,6 +15,16 @@ describe Telex::HerokuClient, '#new' do
   end
 
   it 'handles requests' do
+    Pliny::RequestStore.store[:request_id] = '12345'
+    client = Telex::HerokuClient.new
+    stub_request(:get, "#{client.uri}/teams/foobar/members").
+      with(headers: {'Request-Id'=>'12345'}).
+      to_return(status: 200, body: [{'id' => 1}].to_json)
+
+    expect(client.team_members('foobar')).to eql([{'id' => 1}])
+  end
+
+  it 'passes the current request-id' do
     client = Telex::HerokuClient.new
     stub_request(:get, "#{client.uri}/teams/foobar/members").
       to_return(status: 200, body: [{'id' => 1}].to_json)
