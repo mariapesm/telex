@@ -17,10 +17,10 @@ module Initializer
       lib/telex/**/*
       lib/serializers/base
       lib/serializers/**/*
-      lib/endpoints/base
-      lib/endpoints/**/*
       lib/mediators/base
       lib/mediators/**/*
+      lib/endpoints/base
+      lib/endpoints/**/*
       lib/middleware/**/*
       lib/routes
       lib/jobs/**/*
