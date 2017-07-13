@@ -112,5 +112,23 @@ describe Telex::HerokuClient, '#new' do
           to raise_error(Telex::HerokuClient::BadResponse)
       end
     end
+
+    it 'returns false on 401 responses' do
+      id = SecureRandom.uuid
+      client = Telex::HerokuClient.new
+
+      stub_request(:put, "#{client.uri}/users/~/capabilities").
+        with(
+          :body => {
+            capabilities: [{
+              capability: "view_metrics",
+              resource_id: id,
+              resource_type: "app"
+            }]
+          }.to_json
+        ).to_return(:status => 401, :body => "", :headers => {})
+
+      expect(client.capable?(type: "app", id: id, capability: "view_metrics")).to eql(false)
+    end
   end
 end

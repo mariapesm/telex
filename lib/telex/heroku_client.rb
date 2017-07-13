@@ -43,6 +43,8 @@ module Telex
       raise BadResponse unless response["capabilities"][0].kind_of?(Hash)
 
       return response["capabilities"][0]["capable"]
+    rescue Excon::Errors::Unauthorized
+      return false
     end
 
     def app_info(app_uuid, base_headers_only: false)
