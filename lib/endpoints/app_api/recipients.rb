@@ -78,21 +78,6 @@ module Endpoints
       def get_app_info
         heroku_client.app_info(params[:app_id], base_headers_only: true)
       end
-
-      def sinatra_error
-        env['sinatra.error']
-      end
-
-      def bad_request_message
-        case sinatra_error
-        when MultiJson::ParseError
-          "Unable to parse the JSON request"
-        when Sequel::UniqueConstraintViolation
-          "A recipient with that email already exists"
-        when Sequel::ValidationFailed, Mediators::Recipients::BadRequest
-          sinatra_error.message
-        end
-      end
     end
   end
 end

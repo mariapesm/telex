@@ -45,5 +45,22 @@ module Endpoints
       status 400
       { "id": "bad_request", "message": bad_request_message }.to_json
     end
+
+    private
+
+    def sinatra_error
+      env['sinatra.error']
+    end
+
+    def bad_request_message
+      case sinatra_error
+      when MultiJson::ParseError
+        "Unable to parse the JSON request"
+      when Sequel::UniqueConstraintViolation
+        "A recipient with that email already exists"
+      when Sequel::ValidationFailed, Mediators::Recipients::BadRequest
+        sinatra_error.message
+      end
+    end
   end
 end
