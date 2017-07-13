@@ -38,7 +38,7 @@ module Endpoints
 
     error Mediators::Recipients::LimitError do
       status 429
-      { "id": "bad_request", "message": sinatra_error.message }.to_json
+      { "id": "rate_limit_reached", "message": sinatra_error.message }.to_json
     end
 
     error MultiJson::ParseError, Sequel::ValidationFailed, Sequel::UniqueConstraintViolation, Mediators::Recipients::BadRequest do
