@@ -10,28 +10,6 @@ module Endpoints
         @app_info = get_app_info
       end
 
-      error Excon::Errors::Unauthorized do
-        status 401
-      end
-
-      error Excon::Errors::Forbidden do
-        status 403
-      end
-
-      error Mediators::Recipients::NotFound, Excon::Errors::NotFound, Pliny::Errors::NotFound do
-        status 404
-      end
-
-      error Mediators::Recipients::LimitError do
-        status 429
-        { "id": "bad_request", "message": sinatra_error.message }.to_json
-      end
-
-      error MultiJson::ParseError, Sequel::ValidationFailed, Sequel::UniqueConstraintViolation, Mediators::Recipients::BadRequest do
-        status 400
-        { "id": "bad_request", "message": bad_request_message }.to_json
-      end
-
       get "/recipients" do
         recipients = Mediators::Recipients::Lister.run(app_info: @app_info)
         respond_json(recipients)
