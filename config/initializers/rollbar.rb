@@ -12,7 +12,11 @@ unless Config.rack_env == 'test'
     config.scrub_headers |= Rollbar::Blanket.headers
 
     config.exception_level_filters.merge!(
-      'Telex::Emailer::DeliveryError' => 'warning'
+      'Telex::Emailer::DeliveryError'     => 'warning',
+      'Sinatra::NotFound'                 => 'ignore',
+      'Excon::Errors::Unauthorized'       => 'ignore',
+      'Pliny::Errors::NotFound'           => 'ignore',
+      'Mediators::Recipients::LimitError' => 'ignore'
     )
   end
 end
