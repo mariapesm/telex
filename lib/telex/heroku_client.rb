@@ -67,10 +67,14 @@ module Telex
       range = "id ..; max=1000;" if range.nil?
 
       base = {
-        "Accept"     => "application/vnd.heroku+json; version=3#{variant}",
-        "User-Agent" => "telex",
-        "Range"      => range
+        "Accept"             => "application/vnd.heroku+json; version=3#{variant}",
+        "User-Agent"         => "telex",
+        "X-Heroku-Requester" => "Telex",
+        "Range"              => range
       }
+
+      request_id = Pliny::RequestStore.store[:request_id]
+      base["Request-Id"] = request_id if request_id
 
       if base_headers_only
         base
