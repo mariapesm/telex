@@ -112,5 +112,26 @@ describe Telex::HerokuClient, '#new' do
           to raise_error(Telex::HerokuClient::BadResponse)
       end
     end
+
+    it 'throws unauthorized on a 401 response' do
+      client = Telex::HerokuClient.new
+
+      stub_request(:put, "#{client.uri}/users/~/capabilities")
+        .to_return(:status => 401, :body => "", :headers => {})
+
+      expect { client.capable?(type: "app", id: "123", capability: "view_metrics") }.
+        to raise_error(Pliny::Errors::Unauthorized)
+    end
+
+    it 'throws forbidden on a 403 response' do
+      client = Telex::HerokuClient.new
+
+      stub_request(:put, "#{client.uri}/users/~/capabilities")
+        .to_return(:status => 403, :body => "", :headers => {})
+
+      expect { client.capable?(type: "app", id: "123", capability: "view_metrics") }.
+        to raise_error(Pliny::Errors::Forbidden)
+    end
+
   end
 end
