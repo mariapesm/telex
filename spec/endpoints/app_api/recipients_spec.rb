@@ -12,6 +12,13 @@ describe Endpoints::AppAPI::Recipients do
     HerokuApiStub::APP_ID
   end
 
+  def app
+    Rack::Builder.new do
+      use Pliny::Middleware::RescueErrors
+      run Endpoints::AppAPI::Recipients
+    end
+  end
+
   before do
     stub_heroku_api
     Pliny::RequestStore.store[:heroku_client] = heroku_client
@@ -140,7 +147,7 @@ describe Endpoints::AppAPI::Recipients do
       delete "/#{app_id}/recipients/#{recipient.id}"
       expect(last_response.status).to eq(404)
     end
-    
+
     it "allows creation of the same email once deleted" do
       recipient = Fabricate(:recipient, app_id: app_id)
 

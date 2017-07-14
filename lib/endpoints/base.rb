@@ -24,43 +24,30 @@ module Endpoints
       also_reload "#{Config.root}/lib/**/*.rb"
     end
 
-    error Excon::Errors::Unauthorized do
-      status 401
-    end
-
-    error Excon::Errors::Forbidden do
-      status 403
-    end
-
-    error Sinatra::NotFound, Mediators::Recipients::NotFound, Excon::Errors::NotFound, Pliny::Errors::NotFound do
-      status 404
+    error Sinatra::NotFound, Mediators::Recipients::NotFound, Excon::Errors::NotFound do
+      raise Pliny::Errors::NotFound
     end
 
     error Mediators::Recipients::LimitError do
-      status 429
-      { "id": "rate_limit_reached", "message": sinatra_error.message }.to_json
+      raise Pliny::Errors::TooManyRequests, sinatra_error.message
     end
 
-    error MultiJson::ParseError, Sequel::ValidationFailed, Sequel::UniqueConstraintViolation, Mediators::Recipients::BadRequest do
-      status 400
-      { "id": "bad_request", "message": bad_request_message }.to_json
+    error MultiJson::ParseError do
+      raise Pliny::Errors::BadRequest, "Unable to parse the JSON request"
+    end
+
+    error Sequel::UniqueConstraintViolation do
+      raise Pliny::Errors::BadRequest, "A recipient with that email already exists"
+    end
+
+    error Sequel::ValidationFailed, Mediators::Recipients::BadRequest do
+      raise Pliny::Errors::BadRequest, sinatra_error.message
     end
 
     private
 
     def sinatra_error
       env['sinatra.error']
-    end
-
-    def bad_request_message
-      case sinatra_error
-      when MultiJson::ParseError
-        "Unable to parse the JSON request"
-      when Sequel::UniqueConstraintViolation
-        "A recipient with that email already exists"
-      when Sequel::ValidationFailed, Mediators::Recipients::BadRequest
-        sinatra_error.message
-      end
     end
   end
 end
