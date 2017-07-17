@@ -106,8 +106,8 @@ module Telex
       end
 
       content
-    rescue Excon::Errors::NotFound
-      raise Telex::HerokuClient::NotFound
+    rescue => err
+      handle_error(err)
     end
 
     def put(path, options={})
@@ -118,12 +118,25 @@ module Telex
         path:    path)
 
       MultiJson.decode(response.body)
-    rescue Excon::Errors::NotFound
-      raise Telex::HerokuClient::NotFound
+    rescue => err
+      handle_error(err)
     end
 
     def more_data?(response)
       response.status == 206 && response.headers.key?('Next-Range')
+    end
+
+    def handle_error(error)
+      case error
+      when Excon::Errors::NotFound
+        raise Telex::HerokuClient::NotFound
+      when Excon::Errors::Unauthorized
+        raise Pliny::Errors::Unauthorized
+      when Excon::Errors::Forbidden
+        raise Pliny::Errors::Forbidden
+      else
+        raise error
+      end
     end
   end
 end

@@ -16,7 +16,7 @@ module Endpoints
 
     def check_api_key
       Telex::HerokuClient.new.account_info
-    rescue Excon::Errors::Unauthorized, Excon::Errors::Forbidden
+    rescue Pliny::Errors::Unauthorized, Pliny::Errors::Forbidden
       # our API key is bad! fail the health check so we get alerted:
       halt 503
     rescue Excon::Errors::Error
