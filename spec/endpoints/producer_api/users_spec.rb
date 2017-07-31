@@ -25,7 +25,7 @@ describe Endpoints::ProducerAPI::Users do
         expect(last_response.status).to eq 403
       end
 
-      it "responsds 422 when an invalid id is used" do
+      it "responds 422 when an invalid id is used" do
         get "/apps/foo/users"
         expect(last_response.status).to eq 422
       end
@@ -51,7 +51,7 @@ describe Endpoints::ProducerAPI::Users do
         }]
       end
 
-      it "responsds 422 when an invalid id is used" do
+      it "responds 422 when an invalid id is used" do
         get "/apps/foo/users"
         expect(last_response.status).to eq 422
       end
