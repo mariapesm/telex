@@ -20,8 +20,9 @@ module Endpoints
       end
 
       def authorized?
-        # for now only allow the logdrain-remediation app to access this endpoint
-        current_producer && current_producer.name == 'logdrain-remediation'
+        # for now only allow a known list of prodcers to access this endpoint
+        current_producer &&
+          Config.users_endpoint_authorized_producers.include?(current_producer.name)
       end
 
       def current_producer

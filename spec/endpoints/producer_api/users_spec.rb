@@ -32,8 +32,12 @@ describe Endpoints::ProducerAPI::Users do
     end
 
     context "with an authorized user" do
-      let(:producer) { Fabricate(:producer, name: 'logdrain-remediation') }
+      let(:producer) { Fabricate(:producer, name: 'a-known-producer') }
       let(:user) { Fabricate(:user) }
+
+      before do
+        allow(Config).to receive(:users_endpoint_authorized_producers) { [ producer.name ] }
+      end
 
       it 'lists users' do
         expect(Mediators::Messages::AppUserFinder).to receive(:run).with(target_id: app_id) {
