@@ -26,6 +26,7 @@ Routes = Rack::Builder.new do
     use Middleware::ProducerAuthenticator
     use Pliny::Router do
       mount Endpoints::ProducerAPI::Messages
+      mount Endpoints::ProducerAPI::Users
     end
   end
 

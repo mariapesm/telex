@@ -40,4 +40,5 @@ module Config
   override :root,             File.expand_path("../../", __FILE__), string
   override :timeout,          45,    int
   override :versioning,       false, bool
+  override :users_endpoint_authorized_producers, "", array
 end
