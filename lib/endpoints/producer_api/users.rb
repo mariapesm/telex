@@ -20,7 +20,7 @@ module Endpoints
       end
 
       def authorized?
-        # for now only allow a known list of prodcers to access this endpoint
+        # for now only allow a known list of producers to access this endpoint
         current_producer &&
           Config.users_endpoint_authorized_producers.include?(current_producer.name)
       end
