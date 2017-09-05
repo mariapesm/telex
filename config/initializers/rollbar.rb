@@ -5,7 +5,7 @@ unless Config.rack_env == 'test'
     config.access_token = ENV["ROLLBAR_ACCESS_TOKEN"]
     config.logger = Pliny::RollbarLogger.new
     config.use_sucker_punch
-    config.disable_monkey_patch = true
+    config.disable_rack_monkey_patch = true
     config.root = Config.root
 
     config.scrub_fields  |= Rollbar::Blanket.fields
