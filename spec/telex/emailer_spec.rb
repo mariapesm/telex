@@ -48,7 +48,13 @@ describe Telex::Emailer do
       options.merge(body: body)
     )
 
-    expected_body = "<h2>Table Test</h2>\n\n" +
+    expected_plaintext_body =  "## Table Test\n" +
+                               "| Domain | Reason |\n" +
+                               "| :--------------------: | :--------------------: |\n" +
+                               "| www.test1.com | failure reason 1 |\n" +
+                               "| www.test3.com |\n"
+
+    expected_html_body = "<h2>Table Test</h2>\n\n" +
                     "<table><thead>\n" +
                     "<tr>\n" +
                     "<th style=\"text-align: center\">Domain</th>\n" +
@@ -66,7 +72,8 @@ describe Telex::Emailer do
                     "</tbody></table>\n"
 
     mail = emailer.deliver!
-    expect(mail.html_part.body).to include(expected_body)
+    expect(mail.text_part.body).to include(expected_plaintext_body)
+    expect(mail.html_part.body).to include(expected_html_body)
   end
 
   # see https://developers.google.com/gmail/markup/actions/actions-overview
