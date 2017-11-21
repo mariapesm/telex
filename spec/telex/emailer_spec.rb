@@ -42,6 +42,40 @@ describe Telex::Emailer do
     end
   end
 
+  it 'transforms a markdown table to an HTML table' do
+    body = File.read("./spec/telex/emailer.md")
+    emailer = Telex::Emailer.new(
+      options.merge(body: body)
+    )
+
+    expected_plaintext_body =  "## Table Test\n" +
+                               "| Domain | Reason |\n" +
+                               "| :--------------------: | :--------------------: |\n" +
+                               "| www.test1.com | failure reason 1 |\n" +
+                               "| www.test3.com |\n"
+
+    expected_html_body = "<h2>Table Test</h2>\n\n" +
+                    "<table><thead>\n" +
+                    "<tr>\n" +
+                    "<th style=\"text-align: center\">Domain</th>\n" +
+                    "<th style=\"text-align: center\">Reason</th>\n" +
+                    "</tr>\n" +
+                    "</thead><tbody>\n" +
+                    "<tr>\n" +
+                    "<td style=\"text-align: center\"><a href=\"http://www.test1.com\">www.test1.com</a></td>\n" +
+                    "<td style=\"text-align: center\">failure reason 1</td>\n" +
+                    "</tr>\n" +
+                    "<tr>\n" +
+                    "<td style=\"text-align: center\"><a href=\"http://www.test3.com\">www.test3.com</a></td>\n" +
+                    "<td style=\"text-align: center\"></td>\n" +
+                    "</tr>\n" +
+                    "</tbody></table>\n"
+
+    mail = emailer.deliver!
+    expect(mail.text_part.body).to include(expected_plaintext_body)
+    expect(mail.html_part.body).to include(expected_html_body)
+  end
+
   # see https://developers.google.com/gmail/markup/actions/actions-overview
   describe 'ld+json support for action shortcuts in GMail' do
     before do
