@@ -69,6 +69,7 @@ class Telex::Emailer
   def generate_html
     markdown = Redcarpet::Markdown.new(
       Redcarpet::Render::HTML.new(filter_html: true),
+      tables: true,
       no_intra_emphasis: true,
       autolink: true
     )
