@@ -22,6 +22,10 @@ Both of these always happen, with the same message in both places:
 
 Each message plexed to potentially several `Notifications` for each user. Telex does not de-dupe messages well.
 
+## Example Usage
+
+- [Logdrain Remediations](https://github.com/heroku/logdrain-remediation/blob/2fa6b0af6e8fef568dfddb2b70b5542960cf260a/lib/mediators/notifier.rb#L20-L25)
+- [Godzilla](https://github.com/heroku/godzilla)
 
 ## Setup
 
