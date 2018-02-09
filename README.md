@@ -22,6 +22,10 @@ Both of these always happen, with the same message in both places:
 
 Each message plexed to potentially several `Notifications` for each user. Telex does not de-dupe messages well.
 
+Telex tracks which messages are read, in two ways:
+- Emails contain a tracking pixel, like `<img src="https://telex.heroku.com/user/notifications/99d0ee9a-99c9-49b3-95dc-e046a8a1580c/read.png" height="1" width="1">`. Users who don't block image loading will have them marked as read here.
+- In Dashboard, users can click "mark all as read" to mark them as read.
+
 ## Example Usage
 
 - [Logdrain Remediations](https://github.com/heroku/logdrain-remediation/blob/2fa6b0af6e8fef568dfddb2b70b5542960cf260a/lib/mediators/notifier.rb#L20-L25)
