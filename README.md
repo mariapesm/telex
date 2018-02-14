@@ -6,14 +6,30 @@
 
 ## Overview
 
-A `Producer` is a component, team, person, etc that wants to send notifications to customers. It has its own set of credentials and name.
+To send messages through telex, you'll first need a `Producer`. A Producer is like an "Application Authorization", with a name and credentials. It can represent a component, team, person, etc that wants to send notifications to customers - or you can use a different on e for each type of message you send.
 
-A producer can send a `Message` to 𝕋𝔼𝕃𝔼𝕏 through the API directly or a client such as [minitel](https://github.com/heroku/minitel). Producers can also send follow-up to existing messages.
+Using your Producer credentials, you can send a `Message` to 𝕋𝔼𝕃𝔼𝕏 through the API directly, or using a client such as [minitel](https://github.com/heroku/minitel).
 
-A Message has a title, body and can target either an App or a single User. If it is an app, 𝕋𝔼𝕃𝔼𝕏 looks up the owner and all collaborators. If it's a user, it just looks up the user.
+A Message can target either an App or a User. If it's a user, it just looks up the user. If it is an app, 𝕋𝔼𝕃𝔼𝕏 looks up the owner and all collaborators and sends to each of those, without going through [premiumrush](https://github.com/heroku/premiumrush).
 
-The message is then plexed to potentially several `Notifications` for each user. This sends an email to the user, and the notification will show up in the user's `/user/notifications/` endpoint on 𝕋𝔼𝕃𝔼𝕏. Users can access this with a Heroku oauth token or through services such as <https://dashboard.heroku.com>. Notifications are in this endoint for one month.
+A Message has a `title` and a `body`. The body can have access to some variables such as `{{user}}` and `{{app}}`. It inserts these using a simple find-and-replace.
 
+A Message can also be sent as a `followup` to an existing message, threading them in some places.
+
+Both of these always happen, with the same message in both places:
+- An email is sent to the user. 
+- The notification shows up in Dashboard, using the telex endpoint `/user/notifications/`. This endpoint returns the most recent month's  Notifications.
+
+Each message plexed to potentially several `Notifications` for each user. Telex does not de-dupe messages well.
+
+Telex tracks which messages are read, in two ways:
+- Emails contain a tracking pixel, like `<img src="https://telex.heroku.com/user/notifications/99d0ee9a-99c9-49b3-95dc-e046a8a1580c/read.png" height="1" width="1">`. Users who don't block image loading will have them marked as read here.
+- In Dashboard, users can click "mark all as read" to mark them as read.
+
+## Example Usage
+
+- [Logdrain Remediations](https://github.com/heroku/logdrain-remediation/blob/2fa6b0af6e8fef568dfddb2b70b5542960cf260a/lib/mediators/notifier.rb#L20-L25)
+- [Godzilla](https://github.com/heroku/godzilla)
 
 ## Setup
 
