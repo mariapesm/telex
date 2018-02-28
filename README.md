@@ -6,7 +6,7 @@
 
 ## Overview
 
-To send messages through telex, you'll first need a `Producer`. A Producer is like an "Application Authorization", with a name and credentials. It can represent a component, team, person, etc that wants to send notifications to customers - or you can use a different on e for each type of message you send.
+To send messages through telex, you'll first need a `Producer`. A Producer is like an "Application Authorization", with a name and credentials. It can represent a component, team, person, etc that wants to send notifications to customers - or you can use a different one for each type of message you send.
 
 Using your Producer credentials, you can send a `Message` to 𝕋𝔼𝕃𝔼𝕏 through the API directly, or using a client such as [minitel](https://github.com/heroku/minitel).
 
