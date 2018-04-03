@@ -94,7 +94,7 @@ GEM
       pry (~> 0.9)
       yard (~> 0.9)
     public_suffix (2.0.5)
-    puma (2.16.0)
+    puma (3.11.3)
     rack (1.6.8)
     rack-protection (1.5.3)
       rack
@@ -189,7 +189,7 @@ DEPENDENCIES
   pry
   pry-byebug
   pry-doc
-  puma (~> 2.15)
+  puma (~> 3.11)
   rack-ssl
   rack-test
   rack-timeout (~> 0.4)
@@ -209,7 +209,7 @@ DEPENDENCIES
   webmock (~> 1.21)
 
 RUBY VERSION
-   ruby 2.4.1p111
+   ruby 2.4.4p296
 
 BUNDLED WITH
-   1.15.1
+   1.16.1

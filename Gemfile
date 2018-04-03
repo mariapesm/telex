@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "2.4.1"
+ruby "2.4.4"
 #ruby-gemset=telex
 
 gem "clockwork"
@@ -13,7 +13,7 @@ gem "pg"
 gem "pliny", "~> 0.16"
 gem "pry", require: false
 gem "pry-doc", require: false
-gem "puma", "~> 2.15"
+gem "puma", "~> 3.11"
 gem "rack-ssl"
 gem "rack-timeout", "~> 0.4"
 gem "rake"
