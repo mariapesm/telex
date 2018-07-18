@@ -43,6 +43,14 @@ describe Endpoints::UserAPI::Notifications do
         do_get
         expect(MultiJson.decode(last_response.body)).to eq([])
       end
+
+      it "returns a 500 when redis is unavailable" do
+        allow(Mediators::Notifications::Lister)
+          .to receive(:run).with(anything).and_raise(Redis::CannotConnectError)
+
+        do_get
+        expect(last_response.status).to eq(500)
+      end
     end
   end
 
@@ -69,6 +77,12 @@ describe Endpoints::UserAPI::Notifications do
         login(@heroku_user.api_key)
       end
 
+      specify "when redis is down" do
+        allow(Mediators::Notifications::ReadStatusUpdater).to receive(:run).and_raise(Redis::CannotConnectError)
+        do_patch
+        expect(last_response.status).to eq(500)
+      end
+
       it "returns a 404 if the notification isn't there" do
         do_patch(id: SecureRandom.uuid)
         expect(last_response.status).to eq(404)
@@ -88,6 +102,14 @@ describe Endpoints::UserAPI::Notifications do
       it 'returns a 200 when everything checks out' do
         do_patch
         expect(last_response.status).to eq(200)
+      end
+
+      it "returns a 500 when redis is unavailable" do
+        allow(Mediators::Notifications::ReadStatusUpdater)
+          .to receive(:run).with(anything).and_raise(Redis::CannotConnectError)
+
+        do_patch
+        expect(last_response.status).to eq(500)
       end
     end
   end

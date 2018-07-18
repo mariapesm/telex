@@ -16,13 +16,15 @@ module Endpoints
       end
 
       post "/recipients" do
-        recipient = Mediators::Recipients::Creator.run(
-          app_info: @app_info,
-          email: data.fetch("email", ""),
-          template: data.fetch("template", ""),
-        )
-        status 201
-        respond_json(recipient)
+        redis_retry do
+          recipient = Mediators::Recipients::Creator.run(
+            app_info: @app_info,
+            email: data.fetch("email", ""),
+            template: data.fetch("template", ""),
+          )
+          status 201
+          respond_json(recipient)
+        end
       end
 
       put "/recipients/:id/verify" do

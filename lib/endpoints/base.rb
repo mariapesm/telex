@@ -1,3 +1,5 @@
+require_relative '../redis/retry'
+
 module Endpoints
   # The base class for all Sinatra-based endpoints. Use sparingly.
   class Base < Sinatra::Base
@@ -6,6 +8,7 @@ module Endpoints
     helpers Pliny::Helpers::Encode
     helpers Pliny::Helpers::Params
     helpers Pliny::Helpers::Serialize
+    helpers Redis::Retry
 
     helpers do
       def data
@@ -22,6 +25,10 @@ module Endpoints
     configure :development do
       register Sinatra::Reloader
       also_reload "#{Config.root}/lib/**/*.rb"
+    end
+
+    error Redis::Retry::Error do
+      raise Pliny::Errors::InternalServerError
     end
 
     error Sinatra::NotFound, Mediators::Recipients::NotFound, Excon::Errors::NotFound do

@@ -1,4 +1,5 @@
 ENV["RACK_ENV"] = "test"
+ENV["REDIS_RETRY_IN_SECONDS"] = "0.1"
 
 require "bundler"
 Bundler.require(:default, :test, :development)

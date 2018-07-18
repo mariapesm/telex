@@ -65,6 +65,11 @@ describe Endpoints::ProducerAPI::Messages do
       end
     end
 
+    it "returns a 422 when redis is down" do
+      allow(Mediators::Messages::Creator).to receive(:run).with(anything).and_raise(Redis::CannotConnectError)
+      do_post
+      expect(last_response.status).to eq(422)
+    end
   end
 
   describe "POST /messages/:id/followups" do
@@ -130,6 +135,5 @@ describe Endpoints::ProducerAPI::Messages do
         expect(last_response.status).to eq(404)
       end
     end
-
   end
 end

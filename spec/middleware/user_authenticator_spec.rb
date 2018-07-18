@@ -79,5 +79,13 @@ module Middleware
         end
       end
     end
+
+    it "raises Redis::Retry when redis is down" do
+      @user_info = HerokuAPIMock.create_heroku_user
+      allow(rack_auth).to receive_messages(provided?: true, basic?: true, credentials: ["", @user_info.api_key])
+
+      allow(auther).to receive(:parse_api_key).with(anything).and_raise(Redis::CannotConnectError)
+      expect { auther.call(rack_env) }.to raise_error(Redis::Retry::Error)
+    end
   end
 end
