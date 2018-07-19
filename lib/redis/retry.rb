@@ -3,9 +3,17 @@ class Redis
     class Error < StandardError; end
 
     def redis_retry(**opts, &block)
+      opts[:attempts]    ||= 0
       opts[:finish_time] ||= retry_window.seconds.from_now
-      yield
+      log(opts[:attempts]) if opts[:attempts] > 0
+
+      yield.tap do
+        log(opts[:attempts], successful: true)
+      end
+
     rescue Redis::BaseConnectionError => e
+      opts[:attempts] += 1
+
       if Time.now < opts[:finish_time]
         sleep(0.1)
         redis_retry(opts, &block)
@@ -16,6 +24,10 @@ class Redis
 
     def retry_window
       ENV.fetch("REDIS_RETRY_IN_SECONDS", 20).to_i
+    end
+
+    def log(attempts, **opts)
+      Pliny.log({redis_retry: true, attempt: attempts}.merge(opts))
     end
   end
 end
