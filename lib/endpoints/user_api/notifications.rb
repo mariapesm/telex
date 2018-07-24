@@ -6,13 +6,17 @@ module Endpoints
       end
 
       get do
-        notes = Mediators::Notifications::Lister.run(user: current_user)
-        respond_json(notes)
+        redis_retry do
+          notes = Mediators::Notifications::Lister.run(user: current_user)
+          respond_json(notes)
+        end
       end
 
       patch '/:id' do |id|
-        note = Mediators::Notifications::ReadStatusUpdater.run(notification: get_note(id), read_status: get_status)
-        respond_json(note)
+        redis_retry do
+          note = Mediators::Notifications::ReadStatusUpdater.run(notification: get_note(id), read_status: get_status)
+          respond_json(note)
+        end
       end
 
       get '/:id/read.png' do |id|

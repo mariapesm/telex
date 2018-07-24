@@ -1,5 +1,9 @@
+require_relative "../redis/retry"
+
 module Middleware
   class UserAuthenticator
+    include Redis::Retry
+
     def initialize(app)
       @app = app
     end
@@ -12,14 +16,16 @@ module Middleware
     private
 
     def authenticate_user(env)
-      api_key = parse_api_key(env)
-      raise Pliny::Errors::Unauthorized unless api_key
+      redis_retry do
+        api_key = parse_api_key(env)
+        raise Pliny::Errors::Unauthorized unless api_key
 
-      user = lookup_user(key: api_key)
-      raise Pliny::Errors::Unauthorized unless user
+        user = lookup_user(key: api_key)
+        raise Pliny::Errors::Unauthorized unless user
 
-      Pliny::RequestStore.store[:heroku_client] = Telex::HerokuClient.new(api_key: api_key)
-      Pliny::RequestStore.store[:current_user] = user
+        Pliny::RequestStore.store[:heroku_client] = Telex::HerokuClient.new(api_key: api_key)
+        Pliny::RequestStore.store[:current_user] = user
+      end
     end
 
     def parse_api_key(env)

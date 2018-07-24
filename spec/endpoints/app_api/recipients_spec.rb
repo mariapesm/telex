@@ -69,6 +69,13 @@ describe Endpoints::AppAPI::Recipients do
         expect(Recipient[email: "yolo@yolo.com", app_id: app_id]).to_not be_nil
       end
     end
+
+    it "returns a 500 if redis is unavailable" do
+      allow(Mediators::Recipients::Creator).to receive(:run).and_raise(Redis::BaseConnectionError)
+      post "/#{app_id}/recipients", { email: "yolo@yolo.com", template: "alerting" }.to_json
+
+      expect(last_response.status).to eq(500)
+    end
   end
 
   describe "PUT /apps/:app_id/recipients/:id/verify" do
