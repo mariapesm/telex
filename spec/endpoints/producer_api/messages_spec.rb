@@ -90,6 +90,13 @@ describe Endpoints::ProducerAPI::Messages do
         expect(last_response.status).to eq(201)
       end
 
+      it "succeeds when the message belongs to a different producer" do
+        @message.producer = Fabricate(:producer)
+        @message.save
+        do_post
+        expect(last_response.status).to eq(201)
+      end
+
       it 'creates a followup' do
         expect(Followup.where(message_id: @message.id).count).to eq(0)
         do_post
@@ -124,13 +131,6 @@ describe Endpoints::ProducerAPI::Messages do
 
       it "fails with a missing message_id" do
         @message.id = SecureRandom.uuid
-        do_post
-        expect(last_response.status).to eq(404)
-      end
-
-      it "fails when the message belongs to a different producer" do
-        @message.producer = Fabricate(:producer)
-        @message.save
         do_post
         expect(last_response.status).to eq(404)
       end
