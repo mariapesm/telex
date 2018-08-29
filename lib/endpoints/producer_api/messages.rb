@@ -29,7 +29,7 @@ module Endpoints
       post '/:message_id/followups' do
         redis_retry do
           begin
-            message = Message[id: params['message_id'], producer_id: current_producer.id]
+            message = Message[id: params['message_id']]
             raise Pliny::Errors::NotFound unless message
 
             followup = Mediators::Followups::Creator.run(
