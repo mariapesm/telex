@@ -22,7 +22,7 @@ class Telex::Emailer
   def deliver!
     mail = Mail.new
     mail.to      = email
-    mail.from    = from || 'Heroku Notifications <bot@heroku.com>'
+    mail.from    = from || 'Heroku Notifications <bot@notifications.heroku.com>'
     mail.subject = subject
     if notification_id
       mail.message_id = "<#{notification_id}@notifications.heroku.com>"
