@@ -17,7 +17,7 @@ A Message has a `title` and a `body`. The body can have access to some variables
 A Message can also be sent as a `followup` to an existing message, threading them in some places.
 
 Both of these always happen, with the same message in both places:
-- An email is sent to the user. 
+- An email is sent to the user.
 - The notification shows up in Dashboard, using the telex endpoint `/user/notifications/`. This endpoint returns the most recent month's  Notifications.
 
 Each message plexed to potentially several `Notifications` for each user. Telex does not de-dupe messages well.
@@ -30,6 +30,15 @@ Telex tracks which messages are read, in two ways:
 
 - [Logdrain Remediations](https://github.com/heroku/logdrain-remediation/blob/2fa6b0af6e8fef568dfddb2b70b5542960cf260a/lib/mediators/notifier.rb#L20-L25)
 - [Godzilla](https://github.com/heroku/godzilla)
+
+## Development/Maintenance
+
+Telex is currently in maintenance only mode. Web Services handles maintenance
+updates and making sure the system is functioning properly but no new features
+are being added.
+
+If you have issues or questions, feel free to use `/pd ping` in `#core-services`
+on Slack for assistance.
 
 ## Setup
 
