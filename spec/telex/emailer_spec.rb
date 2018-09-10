@@ -7,7 +7,7 @@ describe Telex::Emailer do
 
   it 'sets from' do
     mail = emailer.deliver!
-    expect(mail.from).to eq(%w( bot@heroku.com ))
+    expect(mail.from).to eq(%w( bot@notifications.heroku.com ))
   end
 
   it 'sets a custom from' do
