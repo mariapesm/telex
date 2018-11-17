@@ -27,4 +27,12 @@ describe Mediators::Notifications::Creator do
     expect(Mail::TestMailer.deliveries.count).to be(0)
     expect(Notification.count).to be(0)
   end
+
+  it 'does not send an email when type=dashboard' do
+    @creator.send(:message).target_type = Message::DASHBOARD
+    result = nil
+    expect{ result = @creator.call }.to change(Notification, :count).by(1)
+    expect(result).to be_instance_of(Notification)
+    expect(Mail::TestMailer.deliveries.count).to be(0)
+  end
 end

@@ -7,9 +7,7 @@ module Mediators::Notifications
 
     def call
       self.notification = Notification.create(notifiable: notifiable, message_id: message.id)
-      # One possibility. Just jotting down notes
-      # send_email unless message.target_type == Message::DASHBOARD
-      send_email
+      send_email unless message.target_type == Message::DASHBOARD
       notification
     rescue Sequel::ValidationFailed, Sequel::UniqueConstraintViolation
       # Notification already queued, just ignore.
