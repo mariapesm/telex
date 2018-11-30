@@ -7,7 +7,7 @@ module Mediators::Messages
       case type
       when Message::USER
         UserUserFinder.new(target_id: message.target_id)
-      when Message::APP
+      when Message::APP, Message::DASHBOARD
         AppUserFinder.new(target_id: message.target_id)
       when Message::EMAIL
         EmailUserFinder.new(target_id: message.target_id)
