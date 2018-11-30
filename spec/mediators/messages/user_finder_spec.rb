@@ -15,7 +15,7 @@ describe UserFinder, '.from_message' do
     expect( finder_from_message_type('app') ).to be_instance_of(AppUserFinder)
   end
 
-  it 'creates a finder for messages targeting an dashboard' do
+  it 'creates a finder for messages targeting a dashboard' do
     expect( finder_from_message_type('dashboard') ).to be_instance_of(AppUserFinder)
   end
 
